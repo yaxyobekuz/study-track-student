@@ -57,3 +57,8 @@ export const statisticsAPI = {
   getStudentWeekly: (studentId) =>
     http.get(`/api/statistics/weekly/current/${studentId}`),
 };
+
+export const coinsAPI = {
+  getBalance: () => http.get("/api/coins/balance"),
+  getTransactions: (params) => http.get("/api/coins/transactions", { params }),
+};
