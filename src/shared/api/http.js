@@ -49,6 +49,10 @@ export const authAPI = {
   getMe: () => http.get("/api/auth/me"),
 };
 
+export const usersAPI = {
+  updateProfile: (data) => http.put("/api/users/me", data),
+};
+
 export const statisticsAPI = {
   getStudentWeekly: (studentId) =>
     http.get(`/api/statistics/weekly/current/${studentId}`),
