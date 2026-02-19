@@ -12,6 +12,7 @@ import ProfilePage from "@/features/profile/pages/ProfilePage";
 import DashboardPage from "@/features/dashboard/pages/DashboardPage";
 import ProfileEditPage from "@/features/profile/pages/ProfileEditPage";
 import GetStartedPage from "@/features/get-started/pages/GetStartedPage";
+import TransactionsPage from "@/features/transactions/pages/TransactionsPage";
 
 // Router
 import { Routes as RoutesWrapper, Route, Navigate } from "react-router-dom";
@@ -34,6 +35,7 @@ const Routes = () => {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/edit" element={<ProfileEditPage />} />
+          <Route path="/transactions" element={<TransactionsPage />} />
         </Route>
       </Route>
 
