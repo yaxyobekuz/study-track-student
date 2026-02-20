@@ -1,6 +1,3 @@
-// API
-import { authAPI } from "@/shared/api/http";
-
 // Tanstack Query
 import { useQuery } from "@tanstack/react-query";
 
@@ -9,6 +6,9 @@ import { Navigate, Outlet } from "react-router-dom";
 
 // Icons
 import logoIcon from "@/shared/assets/icons/logo.svg";
+
+// API
+import { authAPI } from "@/features/auth/api/auth.api";
 
 const AuthGuard = () => {
   const token = localStorage.getItem("token");

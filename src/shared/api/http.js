@@ -40,25 +40,3 @@ http.interceptors.response.use(
 );
 
 export default http;
-
-// ============ API Modules ============
-
-export const authAPI = {
-  register: (data) => http.post("/api/auth/register", data),
-  login: (data) => http.post("/api/auth/login", data),
-  getMe: () => http.get("/api/auth/me"),
-};
-
-export const usersAPI = {
-  updateProfile: (data) => http.put("/api/users/me", data),
-};
-
-export const statisticsAPI = {
-  getStudentWeekly: (studentId) =>
-    http.get(`/api/statistics/weekly/current/${studentId}`),
-};
-
-export const coinsAPI = {
-  getBalance: () => http.get("/api/coins/balance"),
-  getTransactions: (params) => http.get("/api/coins/transactions", { params }),
-};
