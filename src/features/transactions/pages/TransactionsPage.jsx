@@ -1,9 +1,6 @@
 // React
 import { useState } from "react";
 
-// API
-import { coinsAPI } from "@/shared/api/http";
-
 // TanStack Query
 import { useQuery } from "@tanstack/react-query";
 
@@ -15,6 +12,9 @@ import Card from "@/shared/components/ui/Card";
 import List from "@/shared/components/ui/List";
 import LoaderCard from "@/shared/components/ui/LoaderCard";
 import BottomNavbar from "@/shared/components/ui/BottomNavbar";
+
+// API
+import { coinsAPI } from "@/features/transactions/api/coins.api";
 
 // Icons
 import { Coins, ChevronLeft, ChevronRight, ArrowDownLeft } from "lucide-react";

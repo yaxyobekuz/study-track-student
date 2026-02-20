@@ -1,18 +1,18 @@
 // Toast
 import { toast } from "sonner";
 
-// API
-import { authAPI } from "@/shared/api/http";
-
 // Images
 import { logo } from "@/shared/assets/images";
+
+// Router
+import { useNavigate } from "react-router-dom";
+
+// API
+import { authAPI } from "@/features/auth/api/auth.api";
 
 // Components
 import Card from "@/shared/components/ui/Card";
 import { Button } from "@/shared/components/shadcn/button";
-
-// Router
-import { useNavigate } from "react-router-dom";
 
 // Hooks
 import useObjectState from "@/shared/hooks/useObjectState";

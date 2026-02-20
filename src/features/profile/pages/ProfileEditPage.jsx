@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // API
-import { authAPI, usersAPI } from "@/shared/api/http";
+import { authAPI } from "@/features/auth/api/auth.api";
+import { usersAPI } from "@/features/profile/api/users.api";
 
 // Components
 import Card from "@/shared/components/ui/Card";

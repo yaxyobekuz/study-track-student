@@ -1,9 +1,6 @@
 // TanStack Query
 import { useQuery } from "@tanstack/react-query";
 
-// API
-import { authAPI, statisticsAPI } from "@/shared/api/http";
-
 // Icons
 import { Users, Award, School, BarChart2 } from "lucide-react";
 
@@ -12,6 +9,10 @@ import Card from "@/shared/components/ui/Card";
 import StoriesPanel from "../components/StoriesPanel";
 import LoaderCard from "@/shared/components/ui/LoaderCard";
 import BottomNavbar from "@/shared/components/ui/BottomNavbar";
+
+// API
+import { authAPI } from "@/features/auth/api/auth.api";
+import { statisticsAPI } from "@/features/dashboard/api/statistics.api";
 
 const DashboardPage = () => {
   return (

@@ -4,11 +4,11 @@ import { LogOut } from "lucide-react";
 // Router
 import { Link } from "react-router-dom";
 
-// API
-import { authAPI } from "@/shared/api/http";
-
 // Tanstack Query
 import { useQuery } from "@tanstack/react-query";
+
+// API
+import { authAPI } from "@/features/auth/api/auth.api";
 
 // Components
 import Card from "@/shared/components/ui/Card";
