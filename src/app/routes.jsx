@@ -1,3 +1,11 @@
+// Router
+import {
+  Route,
+  Outlet,
+  Navigate,
+  Routes as RoutesWrapper,
+} from "react-router-dom";
+
 // Layouts
 import RootLayout from "@/shared/layouts/RootLayout.jsx";
 
@@ -5,17 +13,29 @@ import RootLayout from "@/shared/layouts/RootLayout.jsx";
 import AuthGuard from "@/shared/components/guards/AuthGuard";
 import GuestGuard from "@/shared/components/guards/GuestGuard";
 
-// Pages
+// Home page
 import HomePage from "@/features/home/pages/HomePage";
+
+// Auth pages
 import LoginPage from "@/features/auth/pages/LoginPage";
-import ProfilePage from "@/features/profile/pages/ProfilePage";
+
+// Dashboard page
 import DashboardPage from "@/features/dashboard/pages/DashboardPage";
+
+// Profile pages
+import ProfilePage from "@/features/profile/pages/ProfilePage";
 import ProfileEditPage from "@/features/profile/pages/ProfileEditPage";
+
+// Get started pages
 import GetStartedPage from "@/features/get-started/pages/GetStartedPage";
+
+// Transactions page
 import TransactionsPage from "@/features/transactions/pages/TransactionsPage";
 
-// Router
-import { Routes as RoutesWrapper, Route, Navigate } from "react-router-dom";
+// Market pages
+import MarketProductsPage from "@/features/market/pages/MarketProductsPage";
+import MarketMyOrdersPage from "@/features/market/pages/MarketMyOrdersPage";
+import MarketProductDetailPage from "@/features/market/pages/MarketProductDetailPage";
 
 const Routes = () => {
   return (
@@ -36,6 +56,16 @@ const Routes = () => {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/edit" element={<ProfileEditPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
+
+          <Route path="/market" element={<Outlet />}>
+            <Route index element={<MarketProductsPage />} />
+            <Route path="orders" element={<MarketMyOrdersPage />} />
+            <Route path="products" element={<MarketProductsPage />} />
+            <Route
+              path="products/:productId"
+              element={<MarketProductDetailPage />}
+            />
+          </Route>
         </Route>
       </Route>
 
