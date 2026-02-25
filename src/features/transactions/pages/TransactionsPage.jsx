@@ -1,3 +1,12 @@
+// Icons
+import {
+  Coins,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpRight,
+  ArrowDownLeft,
+} from "lucide-react";
+
 // React
 import { useState } from "react";
 
@@ -7,6 +16,12 @@ import { useQuery } from "@tanstack/react-query";
 // Utils
 import { formatUzDate } from "@/shared/utils/formatDate";
 
+// Data
+import {
+  debitTransactionTypes,
+  transactionTypeLabels,
+} from "@/features/transactions/data/transactionTypes.data";
+
 // Components
 import Card from "@/shared/components/ui/Card";
 import List from "@/shared/components/ui/List";
@@ -15,9 +30,6 @@ import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 
 // API
 import { coinsAPI } from "@/features/transactions/api/coins.api";
-
-// Icons
-import { Coins, ChevronLeft, ChevronRight, ArrowDownLeft } from "lucide-react";
 
 const TransactionsPage = () => {
   const [page, setPage] = useState(1);
@@ -36,18 +48,35 @@ const TransactionsPage = () => {
 
   const transactionItems = (data?.transactions ?? []).map((tx) => ({
     key: tx._id,
-    icon: ArrowDownLeft,
-    title: tx.description,
-    gradientTo: "to-green-700",
-    gradientFrom: "from-green-400",
+    icon: debitTransactionTypes.includes(tx.type)
+      ? ArrowUpRight
+      : ArrowDownLeft,
+    title: transactionTypeLabels[tx.type] || tx.description,
+    gradientTo: debitTransactionTypes.includes(tx.type)
+      ? "to-red-700"
+      : "to-green-700",
+    gradientFrom: debitTransactionTypes.includes(tx.type)
+      ? "from-red-400"
+      : "from-green-400",
     description: formatUzDate(tx.date),
-    trailing: <p className="font-bold text-green-600 text-sm">+{tx.amount}</p>,
+    trailing: (
+      <p
+        className={`font-bold text-sm ${
+          debitTransactionTypes.includes(tx.type)
+            ? "text-red-600"
+            : "text-green-600"
+        }`}
+      >
+        {debitTransactionTypes.includes(tx.type) ? "-" : "+"}
+        {tx.amount}
+      </p>
+    ),
   }));
 
   return (
     <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
       <div className="container pt-5 space-y-5">
-        <h1 className="text-blue-500 font-bold text-xl">M Coin</h1>
+        <h1 className="text-blue-500 font-bold text-xl">Tangalar</h1>
 
         {/* Balans kartasi */}
         <Card title="Joriy balans">
@@ -56,7 +85,7 @@ const TransactionsPage = () => {
             <span className="text-4xl font-bold text-gray-900">
               {balanceData?.coinBalance ?? 0}
             </span>
-            <span className="text-lg text-gray-400 font-medium">coin</span>
+            <span className="text-lg text-gray-400 font-medium">tanga</span>
           </div>
         </Card>
 
