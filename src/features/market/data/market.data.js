@@ -1,6 +1,6 @@
 export const marketTabs = [
-  { label: "Mahsulotlar", path: "/market" },
-  { label: "Buyurtmalarim", path: "/market/orders" },
+  { value: "products", label: "Mahsulotlar", path: "/market/products" },
+  { value: "orders", label: "Buyurtmalarim", path: "/market/orders" },
 ];
 
 export const marketOrderStatusLabels = {
