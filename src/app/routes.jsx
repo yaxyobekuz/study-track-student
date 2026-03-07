@@ -37,6 +37,9 @@ import MarketProductsPage from "@/features/market/pages/MarketProductsPage";
 import MarketMyOrdersPage from "@/features/market/pages/MarketMyOrdersPage";
 import MarketProductDetailPage from "@/features/market/pages/MarketProductDetailPage";
 
+// Penalties
+import MyPenaltiesPage from "@/features/penalties/pages/MyPenaltiesPage";
+
 const Routes = () => {
   return (
     <RoutesWrapper>
@@ -56,6 +59,9 @@ const Routes = () => {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/edit" element={<ProfileEditPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
+
+          {/* Penalties */}
+          <Route path="/penalties" element={<MyPenaltiesPage />} />
 
           <Route path="/market" element={<Outlet />}>
             <Route index element={<MarketProductsPage />} />

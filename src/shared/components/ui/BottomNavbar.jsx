@@ -5,12 +5,13 @@ import { cn } from "../../utils/cn";
 import { NavLink } from "react-router-dom";
 
 // Icons
-import { Home, User, Coins, Store } from "lucide-react";
+import { Home, User, Coins, Store, AlertTriangle } from "lucide-react";
 
 const BottomNavbar = () => {
   const navItems = [
     { path: "/dashboard", label: "Asosiy", icon: Home },
     { path: "/market", label: "Do'kon", icon: Store },
+    { path: "/penalties", label: "Jarimalar", icon: AlertTriangle },
     { path: "/transactions", label: "Tangalar", icon: Coins },
     { path: "/profile", label: "Profil", icon: User },
   ];
