@@ -52,7 +52,7 @@ const WeeklyStats = () => {
             gradientFrom: "from-lime-300",
             trailing: (
               <Counter
-                value={123 ?? simpleStats?.totalSum ?? 0}
+                value={simpleStats?.totalSum ?? 0}
                 className="font-semibold text-lime-600 xs:text-lg sm:font-bold sm:text-xl md:text-2xl"
               />
             ),
@@ -64,7 +64,7 @@ const WeeklyStats = () => {
             gradientFrom: "from-emerald-300",
             trailing: (
               <Counter
-                value={32 ?? simpleStats?.totalGrades ?? 0}
+                value={simpleStats?.totalGrades ?? 0}
                 className="font-semibold text-emerald-600 xs:text-lg sm:font-bold sm:text-xl md:text-2xl"
               />
             ),
@@ -91,7 +91,7 @@ const WeeklyStats = () => {
             ? rankings?.classRanks.map((classRank) => ({
                 icon: Users,
                 gradientTo: "to-sky-700",
-                title: `${classRank.class?.name}dagi reyting`,
+                title: classRank.class?.name,
                 gradientFrom: "from-sky-300",
                 trailing: (
                   <p className="font-semibold text-sky-600 xs:text-lg sm:font-bold sm:text-xl md:text-2xl">
