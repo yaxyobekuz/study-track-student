@@ -40,6 +40,10 @@ import MarketProductDetailPage from "@/features/market/pages/MarketProductDetail
 // Penalties
 import MyPenaltiesPage from "@/features/penalties/pages/MyPenaltiesPage";
 
+// Game pages
+import GamePage from "@/features/games/pages/GamePage";
+import GamesPage from "@/features/games/pages/GamesPage";
+
 const Routes = () => {
   return (
     <RoutesWrapper>
@@ -63,6 +67,7 @@ const Routes = () => {
           {/* Penalties */}
           <Route path="/penalties" element={<MyPenaltiesPage />} />
 
+          {/* Market */}
           <Route path="/market" element={<Outlet />}>
             <Route index element={<MarketProductsPage />} />
             <Route path="orders" element={<MarketMyOrdersPage />} />
@@ -71,6 +76,12 @@ const Routes = () => {
               path="products/:productId"
               element={<MarketProductDetailPage />}
             />
+          </Route>
+
+          {/* Games */}
+          <Route path="/games" element={<Outlet />}>
+            <Route index element={<GamesPage />} />
+            <Route path=":gameId" element={<GamePage />} />
           </Route>
         </Route>
       </Route>
