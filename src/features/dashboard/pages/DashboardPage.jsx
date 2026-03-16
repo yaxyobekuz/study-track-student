@@ -1,3 +1,6 @@
+// Icons
+import { ChevronRight } from "lucide-react";
+
 // Data
 import { topNavItems } from "../data/nav.data";
 
@@ -25,6 +28,7 @@ const DashboardPage = () => {
             gradientTo: item.gradientTo,
             description: item.description,
             gradientFrom: item.gradientFrom,
+            trailing: <ChevronRight className="size-5" strokeWidth={1.5} />,
           }))}
         />
 
