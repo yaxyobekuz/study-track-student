@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 // API
-import { penaltiesAPI } from "@/shared/api/penalties.api";
+import { penaltiesAPI } from "@/features/penalties/api/penalties.api";
 import { authAPI } from "@/features/auth/api/auth.api";
 
 /**
