@@ -8,6 +8,9 @@ const initialState = {
   profile: initialModalData,
   marketOrder: initialModalData,
   cancelMarketOrder: initialModalData,
+
+  // Bug Report
+  bugReport: initialModalData,
 };
 
 export const modalSlice = createSlice({

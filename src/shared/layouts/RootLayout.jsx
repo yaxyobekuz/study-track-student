@@ -7,6 +7,9 @@ import { useQuery } from "@tanstack/react-query";
 // API
 import { authAPI } from "@/features/auth/api/auth.api";
 
+// Components
+import BugReport from "../components/layout/BugReport";
+
 // Blocked page
 import BlockedPage from "@/features/penalties/pages/BlockedPage";
 
@@ -18,13 +21,12 @@ const RootLayout = () => {
     enabled: Boolean(localStorage.getItem("authToken")),
   });
 
-  if (user?.penaltyPoints >= 12) {
-    return <BlockedPage />;
-  }
+  if (user?.penaltyPoints >= 12) return <BlockedPage />;
 
   return (
     <div className="bg-gray-100">
       <Outlet />
+      <BugReport />
     </div>
   );
 };
