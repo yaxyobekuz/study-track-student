@@ -51,7 +51,7 @@ const TransactionsPage = () => {
     icon: debitTransactionTypes.includes(tx.type)
       ? ArrowUpRight
       : ArrowDownLeft,
-    title: transactionTypeLabels[tx.type] || tx.description,
+    title: tx.description || transactionTypeLabels[tx.type],
     gradientTo: debitTransactionTypes.includes(tx.type)
       ? "to-red-700"
       : "to-green-700",
