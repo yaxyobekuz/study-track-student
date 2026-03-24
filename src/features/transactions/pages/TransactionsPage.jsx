@@ -46,7 +46,9 @@ const TransactionsPage = () => {
     keepPreviousData: true,
   });
 
-  const transactionItems = (data?.transactions ?? []).map((tx) => ({
+  const transactions = data?.data ?? [];
+
+  const transactionItems = transactions.map((tx) => ({
     key: tx._id,
     icon: debitTransactionTypes.includes(tx.type)
       ? ArrowUpRight
@@ -92,7 +94,7 @@ const TransactionsPage = () => {
         {/* Tranzaksiyalar */}
         {isLoading ? (
           <LoaderCard className="bg-transparent p-0 xs:p-0" />
-        ) : !data?.transactions?.length ? (
+        ) : !transactions.length ? (
           <div className="flex flex-col items-center justify-center py-10 text-gray-400">
             <Coins className="size-10 mb-2 opacity-30" />
             <p className="text-sm">Hali tranzaksiyalar yo'q</p>
