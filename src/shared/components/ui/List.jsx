@@ -1,5 +1,8 @@
-import { Link } from "react-router-dom";
+// Utils
 import { cn } from "@/shared/utils/cn";
+
+// Router
+import { Link } from "react-router-dom";
 
 /**
  * List - Renders a list of items using ListItem.
@@ -102,9 +105,14 @@ const ListItem = ({
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-gray-900 truncate">{title}</h3>
+          <h3 className="text-sm leading-6 font-semibold text-gray-900 truncate xs:leading-6 xs:text-base">
+            {title}
+          </h3>
+
           {description && (
-            <p className="text-sm text-gray-500 line-clamp-2">{description}</p>
+            <p className="text-xs text-gray-500 line-clamp-2 xs:text-sm">
+              {description}
+            </p>
           )}
         </div>
 
