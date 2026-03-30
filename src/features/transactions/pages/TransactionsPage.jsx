@@ -26,7 +26,7 @@ import {
 import Card from "@/shared/components/ui/Card";
 import List from "@/shared/components/ui/List";
 import LoaderCard from "@/shared/components/ui/LoaderCard";
-import BottomNavbar from "@/shared/components/ui/BottomNavbar";
+import BackHeader from "@/shared/components/layout/BackHeader";
 
 // API
 import { coinsAPI } from "@/features/transactions/api/coins.api";
@@ -77,9 +77,9 @@ const TransactionsPage = () => {
 
   return (
     <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
-      <div className="container pt-5 space-y-5">
-        <h1 className="text-blue-500 font-bold text-xl">Tangalar</h1>
+      <BackHeader href="/" title="Tangalar" />
 
+      <div className="container pt-5 space-y-5">
         {/* Balans kartasi */}
         <Card title="Joriy balans">
           <div className="flex items-center justify-center gap-2 py-2">
@@ -128,8 +128,6 @@ const TransactionsPage = () => {
           </div>
         )}
       </div>
-
-      <BottomNavbar />
     </div>
   );
 };
