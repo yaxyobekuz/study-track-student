@@ -89,7 +89,7 @@ const PIE_COLORS = [
   "#06b6d4", // moviy
   "#ec4899", // pushti
   "#84cc16", // o'tko'k
-  "#6366f1", // indigo
+  "#6366f1", // blue
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
