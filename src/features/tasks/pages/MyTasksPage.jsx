@@ -62,7 +62,7 @@ const MyTasksPage = () => {
                 }}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                   statusFilter === opt.value
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-blue-600 text-white"
                     : "bg-white text-gray-600"
                 }`}
               >

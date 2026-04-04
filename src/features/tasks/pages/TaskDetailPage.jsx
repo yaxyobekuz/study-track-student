@@ -206,7 +206,7 @@ const TaskDetailPage = () => {
         {canSubmit && !showSubmitForm && (
           <button
             onClick={() => setShowSubmitForm(true)}
-            className="w-full py-3 rounded-xl bg-indigo-600 text-white font-medium text-sm"
+            className="w-full py-3 rounded-xl bg-blue-600 text-white font-medium text-sm"
           >
             Bajarildi deb belgilash
           </button>
@@ -223,7 +223,7 @@ const TaskDetailPage = () => {
                   onChange={(e) => setNote(e.target.value)}
                   rows={3}
                   placeholder="Bajarilgan ish haqida qisqacha..."
-                  className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                  className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
               </div>
               <div>
@@ -247,7 +247,7 @@ const TaskDetailPage = () => {
                 <button
                   type="submit"
                   disabled={submitMutation.isPending}
-                  className="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white font-medium text-sm disabled:opacity-60"
+                  className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white font-medium text-sm disabled:opacity-60"
                 >
                   {submitMutation.isPending ? "Yuborilmoqda..." : "Yuborish"}
                 </button>
@@ -312,7 +312,7 @@ const AttachmentItem = ({ attachment }) => {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 p-3 rounded-xl border text-sm text-indigo-600"
+      className="flex items-center gap-2 p-3 rounded-xl border text-sm text-blue-600"
     >
       {originalName || "Fayl yuklab olish"}
     </a>
