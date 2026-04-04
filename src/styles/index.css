@@ -79,7 +79,7 @@
 
   table {
     thead {
-      @apply bg-indigo-500;
+      @apply bg-blue-500;
     }
 
     thead th {
