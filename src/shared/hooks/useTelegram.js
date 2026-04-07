@@ -44,13 +44,13 @@ const syncTailwindTheme = (themeParams, colorScheme) => {
   else root.classList.remove("dark");
 
   const map = {
-    bg_color: "--app-background",
-    text_color: "--app-foreground",
-    button_color: "--app-primary",
-    button_text_color: "--app-primary-foreground",
-    secondary_bg_color: "--app-secondary",
-    hint_color: "--app-muted-foreground",
-    link_color: "--app-ring",
+    bg_color: "--mini-app-background",
+    text_color: "--mini-app-foreground",
+    button_color: "--mini-app-primary",
+    button_text_color: "--mini-app-primary-foreground",
+    secondary_bg_color: "--mini-app-secondary",
+    hint_color: "--mini-app-muted-foreground",
+    link_color: "--mini-app-ring",
   };
 
   Object.entries(map).forEach(([tgKey, cssVar]) => {
