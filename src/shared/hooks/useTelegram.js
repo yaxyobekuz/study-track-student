@@ -32,30 +32,30 @@ const hexToHsl = (hex) => {
 };
 
 /**
- * Apply Telegram themeParams into app-scoped HSL CSS variables and handle dark mode class.
+ * Expose Telegram theme params as isolated CSS variables without mutating app design tokens.
  * @param {Object} themeParams - Telegram theme color tokens
  * @param {string} colorScheme - "light" | "dark"
  */
-const syncTailwindTheme = (themeParams, colorScheme) => {
+const syncTelegramThemeVars = (themeParams, colorScheme) => {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
 
-  if (colorScheme === "dark") root.classList.add("dark");
-  else root.classList.remove("dark");
+  root.dataset.telegramColorScheme = colorScheme || "light";
 
   const map = {
-    bg_color: "--mini-app-background",
-    text_color: "--mini-app-foreground",
-    button_color: "--mini-app-primary",
-    button_text_color: "--mini-app-primary-foreground",
-    secondary_bg_color: "--mini-app-secondary",
-    hint_color: "--mini-app-muted-foreground",
-    link_color: "--mini-app-ring",
+    bg_color: "--tg-app-bg-color",
+    text_color: "--tg-app-text-color",
+    button_color: "--tg-app-button-color",
+    button_text_color: "--tg-app-button-text-color",
+    secondary_bg_color: "--tg-app-secondary-bg-color",
+    hint_color: "--tg-app-hint-color",
+    link_color: "--tg-app-link-color",
   };
 
   Object.entries(map).forEach(([tgKey, cssVar]) => {
     if (themeParams[tgKey]) {
-      root.style.setProperty(cssVar, hexToHsl(themeParams[tgKey]));
+      root.style.setProperty(cssVar, themeParams[tgKey]);
+      root.style.setProperty(`${cssVar}-hsl`, hexToHsl(themeParams[tgKey]));
     }
   });
 };
@@ -223,7 +223,7 @@ const useTelegram = () => {
     setViewportHeight(tg.viewportHeight);
     setViewportStableHeight(tg.viewportStableHeight);
     setIsExpanded(tg.isExpanded);
-    syncTailwindTheme(tg.themeParams, tg.colorScheme);
+    syncTelegramThemeVars(tg.themeParams, tg.colorScheme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -234,7 +234,7 @@ const useTelegram = () => {
     const handleThemeChanged = () => {
       setColorScheme(tg.colorScheme);
       setThemeParams(tg.themeParams);
-      syncTailwindTheme(tg.themeParams, tg.colorScheme);
+      syncTelegramThemeVars(tg.themeParams, tg.colorScheme);
     };
 
     const handleViewportChanged = () => {
