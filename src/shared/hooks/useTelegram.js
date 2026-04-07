@@ -32,7 +32,7 @@ const hexToHsl = (hex) => {
 };
 
 /**
- * Apply Telegram themeParams into Tailwind's HSL CSS variables and handle dark mode class.
+ * Apply Telegram themeParams into app-scoped HSL CSS variables and handle dark mode class.
  * @param {Object} themeParams - Telegram theme color tokens
  * @param {string} colorScheme - "light" | "dark"
  */
@@ -44,13 +44,13 @@ const syncTailwindTheme = (themeParams, colorScheme) => {
   else root.classList.remove("dark");
 
   const map = {
-    bg_color: "--background",
-    text_color: "--foreground",
-    button_color: "--primary",
-    button_text_color: "--primary-foreground",
-    secondary_bg_color: "--secondary",
-    hint_color: "--muted-foreground",
-    link_color: "--ring",
+    bg_color: "--app-background",
+    text_color: "--app-foreground",
+    button_color: "--app-primary",
+    button_text_color: "--app-primary-foreground",
+    secondary_bg_color: "--app-secondary",
+    hint_color: "--app-muted-foreground",
+    link_color: "--app-ring",
   };
 
   Object.entries(map).forEach(([tgKey, cssVar]) => {
