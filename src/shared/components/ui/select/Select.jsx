@@ -10,6 +10,9 @@ import {
   Select as SelectWrapper,
 } from "@/shared/components/shadcn/select";
 
+// Hooks
+import useSound from "@/shared/hooks/useSound";
+
 const Select = ({
   onChange,
   onOpenChange,
@@ -18,8 +21,13 @@ const Select = ({
   triggerClassName = "",
   ...props
 }) => {
+  const { playSound } = useSound();
   const handleChange = (e) => onChange?.(e);
-  const handleOpenChange = (e) => onOpenChange?.(e);
+
+  const handleOpenChange = (e) => {
+    onOpenChange?.(e);
+    playSound("notification-pop");
+  };
 
   return (
     <SelectWrapper
@@ -43,21 +51,15 @@ const Select = ({
       <SelectContent>
         {/* Options */}
         {!isLoading &&
-          options.map((opt) =>
-            typeof opt === "object" ? (
-              <SelectItem
-                key={opt.value}
-                value={opt.value}
-                disabled={opt.disabled}
-              >
-                {opt.label}
-              </SelectItem>
-            ) : (
-              <SelectItem key={opt} value={opt}>
-                {opt}
-              </SelectItem>
-            ),
-          )}
+          options.map((opt) => (
+            <SelectItem
+              key={opt.value}
+              value={opt.value}
+              disabled={opt.disabled}
+            >
+              {opt.label}
+            </SelectItem>
+          ))}
 
         {/* Loading */}
         {isLoading && (
