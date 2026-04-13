@@ -8,6 +8,7 @@ import { useState } from "react";
  */
 const useObjectState = (initialState = {}) => {
   const [state, setState] = useState(initialState);
+  const [savedInitialState] = useState(initialState);
 
   /**
    * Updates a single key in state.
@@ -29,9 +30,7 @@ const useObjectState = (initialState = {}) => {
   /**
    * Resets state back to the initial object.
    */
-  const resetState = () => {
-    setState(initialState);
-  };
+  const resetState = () => setState(savedInitialState);
 
   return { ...state, state, setField, setFields, resetState };
 };
