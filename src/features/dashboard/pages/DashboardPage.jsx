@@ -25,11 +25,10 @@ const DashboardPage = () => {
   const {
     isPremium,
     PremiumEmojiIcon,
-    premiumNameColor,
     premiumNameColorClass,
   } = usePremium();
 
-  setHeaderColor(premiumNameColor || "#3b82f6");
+  setHeaderColor("#3b82f6");
 
   return (
     <div className="min-h-screen pb-40 bg-gray-100 animate__animated animate__fadeIn">
