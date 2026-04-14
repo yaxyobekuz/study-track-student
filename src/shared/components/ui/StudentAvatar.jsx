@@ -32,7 +32,7 @@ const StudentAvatar = ({
       {isPremium && profilePictureUrl && (
         <AvatarImage src={profilePictureUrl} alt={fallbackName} />
       )}
-      <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold">
+      <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold object-cover">
         {initials}
       </AvatarFallback>
 
