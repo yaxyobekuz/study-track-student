@@ -1,14 +1,12 @@
+// Lottie
 import Lottie from "lottie-react";
+
+// Utils
+import { cn } from "@/shared/utils/cn";
+
+// Data
 import { getEmojiAnimation } from "@/shared/data/premiumEmojis.data";
 
-/**
- * Renders a looping Lottie emoji badge for the given emojiId.
- * Renders nothing if emojiId is null/undefined/unrecognized.
- *
- * @param {object} props
- * @param {number|null} props.emojiId
- * @param {string} [props.className] - Size/position classes (default: "size-6")
- */
 const PremiumEmojiDisplay = ({ emojiId, className = "size-6" }) => {
   const animationData = getEmojiAnimation(emojiId);
   if (!animationData) return null;
@@ -17,8 +15,8 @@ const PremiumEmojiDisplay = ({ emojiId, className = "size-6" }) => {
     <Lottie
       loop
       autoplay
-      className={className}
       animationData={animationData}
+      className={cn("shrink-0", className)}
     />
   );
 };
