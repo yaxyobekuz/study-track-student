@@ -175,7 +175,7 @@ const ProfileEditPage = () => {
                 <StudentAvatar
                   size="lg"
                   isPremium
-                  mySmProfilePictureUrl={mySmProfilePictureUrl}
+                  profilePictureUrl={mySmProfilePictureUrl}
                   fallbackName={me?.fullName || me?.firstName || ""}
                 />
 

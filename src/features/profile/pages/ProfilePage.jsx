@@ -27,10 +27,9 @@ const ProfilePage = () => {
   const { setHeaderColor } = useTelegram();
   const { openModal } = useModal("premiumBuy");
   const { me, mySmProfilePictureUrl, myIsPremium } = useMe();
-  const { premiumNameColor, PremiumEmojiIcon, premiumNameColorClass } =
-    usePremium(me);
+  const { PremiumEmojiIcon, premiumNameColorClass } = usePremium(me);
 
-  setHeaderColor(premiumNameColor || "#3b82f6");
+  setHeaderColor("#3b82f6");
 
   const handleLogout = () => {
     const shouldLogout = confirm("Haqiqatan ham chiqmoqchimisiz?");
@@ -44,14 +43,7 @@ const ProfilePage = () => {
     <div className="min-h-screen pt-5 pb-40 animate__animated animate__fadeIn">
       <div className="container space-y-4">
         {/* Title */}
-        <h1
-          className={cn(
-            "text-primary font-bold text-xl",
-            premiumNameColorClass,
-          )}
-        >
-          Profil
-        </h1>
+        <h1 className="text-primary font-bold text-xl">Profil</h1>
 
         {/* Primary Details */}
         <Card title="Umumiy ma'lumotlar" className="space-y-4">
