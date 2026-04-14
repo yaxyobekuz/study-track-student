@@ -15,3 +15,12 @@ export const NAME_COLOR_CLASS_MAP = {
   red: "text-red-500",
   pink: "text-pink-500",
 };
+
+export const NAME_COLOR_MAP = {
+  blue: "#3b82f6",
+  purple: "#a855f7",
+  green: "#22c55e",
+  gold: "#f59e0b",
+  red: "#ef4444",
+  pink: "#ec4899",
+};
