@@ -51,6 +51,7 @@ import GamesPage from "@/features/games/pages/GamesPage";
 // Statistics pages
 import StatisticsStatsPage from "@/features/statistics/pages/StatisticsStatsPage";
 import StatisticsScoreboardPage from "@/features/statistics/pages/StatisticsScoreboardPage";
+import MarketLayout from "@/features/market/layouts/MarketLayout";
 
 const Routes = () => {
   return (
@@ -74,7 +75,10 @@ const Routes = () => {
 
           {/* Statistics */}
           <Route path="/statistics" element={<Outlet />}>
-            <Route index element={<Navigate to="/statistics/stats" replace />} />
+            <Route
+              index
+              element={<Navigate to="/statistics/stats" replace />}
+            />
             <Route path="stats" element={<StatisticsStatsPage />} />
             <Route path="scoreboard" element={<StatisticsScoreboardPage />} />
           </Route>
@@ -87,15 +91,15 @@ const Routes = () => {
           <Route path="/tasks/:taskId" element={<TaskDetailPage />} />
 
           {/* Market */}
-          <Route path="/market" element={<Outlet />}>
+          <Route path="/market" element={<MarketLayout />}>
             <Route index element={<MarketProductsPage />} />
             <Route path="orders" element={<MarketMyOrdersPage />} />
             <Route path="products" element={<MarketProductsPage />} />
-            <Route
-              path="products/:productId"
-              element={<MarketProductDetailPage />}
-            />
           </Route>
+          <Route
+            path="/market/products/:productId"
+            element={<MarketProductDetailPage />}
+          />
 
           {/* Games */}
           <Route path="/games" element={<Outlet />}>
