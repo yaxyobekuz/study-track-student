@@ -23,18 +23,13 @@ import { marketAPI } from "@/features/market/api/market.api";
 // Components
 import List from "@/shared/components/ui/List";
 import Card from "@/shared/components/ui/Card";
-import { Button } from "@/shared/components/shadcn/button";
+import Button from "@/shared/components/ui/button/Button";
 import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 import ModalWrapper from "@/shared/components/ui/ModalWrapper";
-import MarketTabs from "@/features/market/components/MarketTabs";
 
 // Tanstack Query
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-/**
- * Student market orders page.
- * @returns {JSX.Element} My orders page.
- */
 const MarketMyOrdersPage = () => {
   const queryClient = useQueryClient();
   const { openModal } = useModal();
@@ -108,50 +103,46 @@ const MarketMyOrdersPage = () => {
     };
   });
 
+  if (isLoading) {
+    return <Card className="text-center py-10">Yuklanmoqda...</Card>;
+  }
+
+  if (!orders?.length) {
+    return (
+      <Card className="text-center py-10 text-gray-500">
+        Buyurtmalar mavjud emas
+      </Card>
+    );
+  }
+
   return (
-    <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
-      <div className="container pt-5 space-y-4">
-        {/* Title */}
-        <h1 className="text-blue-500 font-bold text-xl">Do'kon</h1>
+    <>
+      <List items={orderItems} />
 
-        {/* Tabs */}
-        <MarketTabs />
+      {/* Pagination */}
+      {pagination?.totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2 text-sm">
+          <button
+            disabled={!pagination.hasPrevPage}
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+            className="px-3 py-1 rounded-md bg-white disabled:opacity-50"
+          >
+            Oldingi
+          </button>
 
-        {isLoading ? (
-          <Card className="text-center py-10">Yuklanmoqda...</Card>
-        ) : orders.length === 0 ? (
-          <Card className="text-center py-10 text-gray-500">
-            Buyurtmalar mavjud emas
-          </Card>
-        ) : (
-          <List items={orderItems} />
-        )}
+          <span className="text-gray-500">
+            {pagination.page} / {pagination.totalPages}
+          </span>
 
-        {/* Pagination */}
-        {pagination?.totalPages > 1 && (
-          <div className="flex items-center justify-between pt-2 text-sm">
-            <button
-              disabled={!pagination.hasPrevPage}
-              onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-              className="px-3 py-1 rounded-md bg-white disabled:opacity-50"
-            >
-              Oldingi
-            </button>
-
-            <span className="text-gray-500">
-              {pagination.page} / {pagination.totalPages}
-            </span>
-
-            <button
-              disabled={!pagination.hasNextPage}
-              onClick={() => setPage((prev) => prev + 1)}
-              className="px-3 py-1 rounded-md bg-white disabled:opacity-50"
-            >
-              Keyingi
-            </button>
-          </div>
-        )}
-      </div>
+          <button
+            disabled={!pagination.hasNextPage}
+            onClick={() => setPage((prev) => prev + 1)}
+            className="px-3 py-1 rounded-md bg-white disabled:opacity-50"
+          >
+            Keyingi
+          </button>
+        </div>
+      )}
 
       {/* Cancel Order Modal */}
       <ModalWrapper
@@ -164,18 +155,10 @@ const MarketMyOrdersPage = () => {
 
       {/* Bottom Navbar */}
       <BottomNavbar />
-    </div>
+    </>
   );
 };
 
-/**
- * Confirmation modal body for order cancellation.
- * @param {object} props Component props.
- * @param {object} props.cancelMutation Cancellation mutation instance.
- * @param {Function} props.close Modal close callback.
- * @param {string} props.orderId Selected order id.
- * @returns {JSX.Element} Modal content.
- */
 const CancelOrderContent = ({ cancelMutation, close, orderId }) => {
   const handleCancelOrder = () => {
     cancelMutation.mutate(orderId, { onSuccess: close });
