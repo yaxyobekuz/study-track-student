@@ -10,7 +10,7 @@ const PREMIUM_BENEFITS = [
   "Profil rasmi yuklash",
   "Animatsion emoji badge (ism yonida)",
   "Liderlar jadvalida profil rasm va emoji ko'rsatilishi",
-  "Maxsus ko'rsatma ism (laqab) qo'yish",
+  "Maxsus ko'rsatma ism (taxallus) qo'yish",
   "Ism rangini tanlash",
 ];
 

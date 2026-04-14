@@ -266,27 +266,25 @@ const ProfileEditPage = () => {
                 </Card>
 
                 {/* Display name */}
-                <Card title="Ko'rsatma ism (laqab)" className="space-y-4">
-                  <div className="flex gap-4">
-                    <InputField
-                      type="text"
-                      maxLength={48}
-                      value={displayName}
-                      placeholder="Laqabingizni kiriting"
-                      onChange={(e) => setDisplayName(e.target.value)}
-                    />
+                <Card title="Ko'rsatma ism (taxallus)" className="space-y-4">
+                  <InputField
+                    type="text"
+                    maxLength={48}
+                    label="Taxallus"
+                    value={displayName}
+                    placeholder="Taxallusingizni kiriting"
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    description="Liderlar jadvalida haqiqiy ismingiz o'rniga ko'rsatiladi"
+                  />
 
-                    <Button
-                      type="button"
-                      onClick={() => setDisplayNameMutation.mutate(displayName)}
-                      disabled={setDisplayNameMutation.isPending}
-                    >
-                      Saqlash
-                    </Button>
-                  </div>
-                  <p className="text-xs text-gray-400">
-                    Liderlar jadvalida haqiqiy ismingiz o'rniga ko'rsatiladi
-                  </p>
+                  <Button
+                    type="button"
+                    className="w-full"
+                    disabled={setDisplayNameMutation.isPending}
+                    onClick={() => setDisplayNameMutation.mutate(displayName)}
+                  >
+                    Saqlash
+                  </Button>
                 </Card>
 
                 {/* Name color */}
