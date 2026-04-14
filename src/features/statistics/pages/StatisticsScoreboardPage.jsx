@@ -1,22 +1,30 @@
 // React
 import { useState } from "react";
 
-// TanStack Query
-import { useQuery } from "@tanstack/react-query";
-
 // Icons
 import { Trophy } from "lucide-react";
 
-// Components
-import List, { ListItem } from "@/shared/components/ui/List";
-import Counter from "@/shared/components/ui/Counter";
-import LoaderCard from "@/shared/components/ui/LoaderCard";
-import BottomNavbar from "@/shared/components/ui/BottomNavbar";
-import StatisticsTabs from "@/features/statistics/components/StatisticsTabs";
+// Utils
+import { cn } from "@/shared/utils/cn";
+
+// TanStack Query
+import { useQuery } from "@tanstack/react-query";
+
+// Static data
+import { NAME_COLOR_CLASS_MAP } from "@/shared/data/nameColors.data";
 
 // API
 import { authAPI } from "@/features/auth/api/auth.api";
 import { statisticsAPI } from "@/features/statistics/api/statistics.api";
+
+// Components
+import Counter from "@/shared/components/ui/Counter";
+import LoaderCard from "@/shared/components/ui/LoaderCard";
+import List, { ListItem } from "@/shared/components/ui/List";
+import BottomNavbar from "@/shared/components/ui/BottomNavbar";
+import StudentAvatar from "@/shared/components/ui/StudentAvatar";
+import StatisticsTabs from "@/features/statistics/components/StatisticsTabs";
+import PremiumEmojiDisplay from "@/shared/components/ui/PremiumEmojiDisplay";
 
 const StatisticsScoreboardPage = () => {
   const [page, setPage] = useState(1);
@@ -28,17 +36,14 @@ const StatisticsScoreboardPage = () => {
 
   const studentId = me?._id;
 
-  // O'z haftalik natijasi (dashboard da allaqachon cached)
   const { data: myStats } = useQuery({
     queryKey: ["statistics", "student-weekly", studentId],
     queryFn: () =>
       statisticsAPI
         .getStudentWeekly(studentId)
         .then((res) => res.data?.data || null),
-    enabled: !!studentId,
   });
 
-  // Maktab bo'yicha reyting ro'yxati
   const { data: rankingsData, isLoading } = useQuery({
     queryKey: ["statistics", "school-rankings", page],
     queryFn: () =>
@@ -51,6 +56,9 @@ const StatisticsScoreboardPage = () => {
   const rankings = rankingsData?.data?.rankings || [];
   const pagination = rankingsData?.pagination;
 
+  const myIsPremium = me?.premium?.isActive;
+  const myProfilePictureUrl = me?.profilePicture?.variants?.sm?.url || null;
+
   return (
     <div className="min-h-screen pb-36 bg-gray-100 animate__animated animate__fadeIn">
       <div className="container pt-5 space-y-4">
@@ -61,11 +69,32 @@ const StatisticsScoreboardPage = () => {
         {/* O'z natijasi */}
         {myStats && (
           <ListItem
-            icon={Trophy}
+            icon={
+              myIsPremium
+                ? () => (
+                    <StudentAvatar
+                      isPremium
+                      fallbackName={me?.fullName || ""}
+                      className="rounded-none size-full"
+                      profilePictureUrl={myProfilePictureUrl}
+                      emojiBadgeId={me?.emojiBadgeId || null}
+                    />
+                  )
+                : Trophy
+            }
             className="rounded-2xl"
             gradientTo="to-green-700"
             gradientFrom="from-green-400"
-            title={me?.fullName || "..."}
+            title={
+              myIsPremium && me?.displayName
+                ? me.displayName
+                : me?.fullName || "..."
+            }
+            titleClassName={
+              myIsPremium && me?.nameColor
+                ? NAME_COLOR_CLASS_MAP[me.nameColor]
+                : ""
+            }
             trailing={
               <div className="text-right">
                 <p className="text-xs text-gray-500">Ball</p>
@@ -83,35 +112,72 @@ const StatisticsScoreboardPage = () => {
         ) : rankings.length === 0 ? (
           <ListItem
             icon={Trophy}
-            gradientFrom="from-gray-300"
+            className="rounded-2xl"
             gradientTo="to-gray-400"
             title="Natija topilmadi"
+            gradientFrom="from-gray-300"
             description="Joriy haftada hech qanday natija mavjud emas"
-            className="rounded-2xl"
           />
         ) : (
           <List
             items={rankings.map((item) => {
               const isMe = item.student._id === me?._id;
+              const isPremium = item.student.premium?.isActive;
               const description = item?.classes?.map((c) => c.name).join(", ");
 
-              const Icon = () => (
-                <span className="font-bold text-white text-xs xs:text-sm">
-                  {item.rank}
-                </span>
-              );
+              const displayTitle =
+                isPremium && item.student.displayName
+                  ? item.student.displayName
+                  : item.student.fullName;
+
+              const titleColor =
+                isPremium && item.student.nameColor
+                  ? NAME_COLOR_CLASS_MAP[item.student.nameColor] || ""
+                  : "";
+
+              const Icon = isPremium
+                ? () => (
+                    <StudentAvatar
+                      isPremium
+                      className="rounded-none size-full"
+                      fallbackName={item.student.fullName || ""}
+                      profilePictureUrl={item.student.profilePictureUrl || null}
+                      emojiBadgeId={item.student.emojiBadgeId || null}
+                    />
+                  )
+                : () => (
+                    <span className="font-bold text-white text-xs xs:text-sm">
+                      {item.rank}
+                    </span>
+                  );
+
+              const rankProps = getRankProps(item.rank);
 
               return {
                 description,
                 icon: Icon,
                 key: item.student._id,
-                title: item.student.fullName,
-                className: isMe ? "border-2 border-primary" : "",
-                ...getRankProps(item.rank),
+                title: displayTitle,
+                titleClassName: titleColor,
+                className: cn(
+                  isMe ? "border-2 border-primary" : "",
+                  isPremium ? "ring-1 ring-yellow-200" : "",
+                  rankProps.className,
+                ),
+                gradientFrom: rankProps.gradientFrom,
+                gradientTo: rankProps.gradientTo,
                 trailing: (
-                  <span className="font-bold text-base text-primary">
-                    {item.totalSum}
-                  </span>
+                  <div className="flex items-center gap-1">
+                    {isPremium && item.student.emojiBadgeId && (
+                      <PremiumEmojiDisplay
+                        emojiId={item.student.emojiBadgeId}
+                        className="size-5"
+                      />
+                    )}
+                    <span className="font-bold text-base text-primary">
+                      {item.totalSum}
+                    </span>
+                  </div>
                 ),
               };
             })}
