@@ -9,7 +9,6 @@ import { marketAPI } from "@/features/market/api/market.api";
 
 // Components
 import Card from "@/shared/components/ui/Card";
-import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 import MarketProductCard from "@/features/market/components/MarketProductCard";
 
 const MarketProductsPage = () => {
@@ -70,8 +69,6 @@ const MarketProductsPage = () => {
           </button>
         </div>
       )}
-
-      <BottomNavbar />
     </>
   );
 };

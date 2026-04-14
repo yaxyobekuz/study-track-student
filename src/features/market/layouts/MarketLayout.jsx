@@ -4,12 +4,13 @@ import { cn } from "@/shared/utils/cn";
 // Router
 import { Outlet } from "react-router-dom";
 
-// Components
-import MarketTabs from "../components/MarketTabs";
-
 // Hooks
 import useTelegram from "@/shared/hooks/useTelegram";
 import usePremium from "@/features/premium/hooks/usePremium";
+
+// Components
+import MarketTabs from "../components/MarketTabs";
+import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 
 const MarketLayout = () => {
   const { setHeaderColor } = useTelegram();
@@ -36,6 +37,9 @@ const MarketLayout = () => {
         {/* Content */}
         <Outlet />
       </div>
+
+      {/* Bottom Navbar */}
+      <BottomNavbar />
     </div>
   );
 };

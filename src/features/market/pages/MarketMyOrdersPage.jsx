@@ -24,7 +24,6 @@ import { marketAPI } from "@/features/market/api/market.api";
 import List from "@/shared/components/ui/List";
 import Card from "@/shared/components/ui/Card";
 import Button from "@/shared/components/ui/button/Button";
-import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 import ModalWrapper from "@/shared/components/ui/ModalWrapper";
 
 // Tanstack Query
@@ -152,9 +151,6 @@ const MarketMyOrdersPage = () => {
       >
         <CancelOrderContent cancelMutation={cancelMutation} />
       </ModalWrapper>
-
-      {/* Bottom Navbar */}
-      <BottomNavbar />
     </>
   );
 };
