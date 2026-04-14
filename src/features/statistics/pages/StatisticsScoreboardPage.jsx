@@ -141,8 +141,8 @@ const StatisticsScoreboardPage = () => {
                       isPremium
                       className="rounded-none size-full"
                       fallbackName={item.student.fullName || ""}
-                      profilePictureUrl={item.student.profilePictureUrl || null}
                       emojiBadgeId={item.student.emojiBadgeId || null}
+                      profilePictureUrl={item.student.profilePictureUrl || null}
                     />
                   )
                 : () => (
@@ -161,7 +161,7 @@ const StatisticsScoreboardPage = () => {
                 titleClassName: titleColor,
                 className: cn(
                   isMe ? "border-2 border-primary" : "",
-                  isPremium ? "ring-1 ring-yellow-200" : "",
+                  isPremium && !isMe ? "ring-2 ring-yellow-300" : "",
                   rankProps.className,
                 ),
                 gradientFrom: rankProps.gradientFrom,
@@ -219,7 +219,7 @@ const getRankProps = (rank) => {
       gradientFrom: "from-yellow-400",
       gradientTo: "to-yellow-700",
       className:
-        "bg-gradient-to-bl from-yellow-50 via-white to-yellow-100 border border-yellow-200",
+        "bg-gradient-to-tr from-yellow-50 to-white border-2 border-yellow-300",
     };
   }
 
@@ -228,7 +228,7 @@ const getRankProps = (rank) => {
       gradientFrom: "from-gray-400",
       gradientTo: "to-gray-700",
       className:
-        "bg-gradient-to-bl from-gray-50 via-white to-gray-100 border border-gray-200",
+        "bg-gradient-to-tr from-gray-50 to-white border-2 border-gray-300",
     };
   }
 
@@ -237,7 +237,7 @@ const getRankProps = (rank) => {
       gradientFrom: "from-orange-400",
       gradientTo: "to-orange-700",
       className:
-        "bg-gradient-to-bl from-orange-50 via-white to-orange-100 border border-orange-200",
+        "bg-gradient-to-tr from-orange-50 to-white border-2 border-orange-300",
     };
   }
 
