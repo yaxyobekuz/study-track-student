@@ -1,18 +1,22 @@
+// Toaster
 import { toast } from "sonner";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { premiumAPI } from "@/features/premium/api/premium.api";
-import { authAPI } from "@/features/auth/api/auth.api";
-import ModalWrapper from "@/shared/components/ui/ModalWrapper";
-import PremiumEmojiDisplay from "@/shared/components/ui/PremiumEmojiDisplay";
+// Utils
 import { cn } from "@/shared/utils/cn";
 
+// API
+import { authAPI } from "@/features/auth/api/auth.api";
+import { premiumAPI } from "@/features/premium/api/premium.api";
+
+// Components
+import ModalWrapper from "@/shared/components/ui/ModalWrapper";
+import PremiumEmojiDisplay from "@/shared/components/ui/PremiumEmojiDisplay";
+
+// Tanstack Query
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 const EmojiSelectorModal = () => (
-  <ModalWrapper
-    name="emojiSelector"
-    title="Emoji tanlash"
-    description="Ism yonida chiqadigan animatsion emojini tanlang"
-  >
+  <ModalWrapper name="emojiSelector" title="Emoji tanlash">
     <Content />
   </ModalWrapper>
 );
@@ -30,9 +34,6 @@ const Content = ({ close }) => {
     queryFn: () => premiumAPI.getAvailableEmojis().then((res) => res.data.data),
   });
 
-  console.log(emojisRes);
-  
-
   const emojis = emojisRes || [];
   const currentEmojiId = profile?.emojiBadgeId;
 
@@ -48,34 +49,41 @@ const Content = ({ close }) => {
     },
   });
 
-  if (isLoading) {
-    return <div className="py-8 text-center text-sm text-gray-500">Yuklanmoqda...</div>;
-  }
+  if (isLoading) return <SkeletonLoader />;
 
   return (
-    <div className="grid grid-cols-3 gap-3 pb-1">
+    <div className="grid grid-cols-4 gap-3 pb-4">
       {emojis.map((emoji) => {
         const isSelected = currentEmojiId === emoji.emojiId;
         return (
           <button
             key={emoji.emojiId}
-            type="button"
             disabled={setEmojiBadgeMutation.isPending}
             onClick={() => setEmojiBadgeMutation.mutate(emoji.emojiId)}
             className={cn(
-              "flex flex-col items-center gap-1 rounded-xl border-2 p-3 text-xs font-medium transition-colors",
+              "flex items-center justify-center rounded-lg border-2 w-full h-16 transition-colors duration-200",
               isSelected
-                ? "border-blue-500 bg-blue-50 text-blue-700"
-                : "border-transparent bg-gray-50 text-gray-600 hover:border-gray-200 hover:bg-gray-100"
+                ? "border-blue-500 bg-blue-50"
+                : "border-transparent bg-gray-50 hover:bg-gray-100",
             )}
           >
             <PremiumEmojiDisplay emojiId={emoji.emojiId} className="size-10" />
-            <span>{emoji.label}</span>
           </button>
         );
       })}
     </div>
   );
 };
+
+const SkeletonLoader = () => (
+  <div className="grid grid-cols-4 gap-3 pb-4">
+    {Array.from({ length: 20 }).map((_, index) => (
+      <button
+        key={index}
+        className="flex items-center justify-center rounded-lg border-2 w-full h-16 transition-colors duration-200 border-transparent bg-gray-50"
+      />
+    ))}
+  </div>
+);
 
 export default EmojiSelectorModal;
