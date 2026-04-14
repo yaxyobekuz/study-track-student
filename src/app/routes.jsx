@@ -52,6 +52,7 @@ import GamesPage from "@/features/games/pages/GamesPage";
 import StatisticsStatsPage from "@/features/statistics/pages/StatisticsStatsPage";
 import StatisticsScoreboardPage from "@/features/statistics/pages/StatisticsScoreboardPage";
 import MarketLayout from "@/features/market/layouts/MarketLayout";
+import StatisticsLayout from "@/features/statistics/layouts/StatisticsLayout";
 
 const Routes = () => {
   return (
@@ -74,7 +75,7 @@ const Routes = () => {
           <Route path="/transactions" element={<TransactionsPage />} />
 
           {/* Statistics */}
-          <Route path="/statistics" element={<Outlet />}>
+          <Route path="/statistics" element={<StatisticsLayout />}>
             <Route
               index
               element={<Navigate to="/statistics/stats" replace />}
