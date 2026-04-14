@@ -1,3 +1,6 @@
+// Utils
+import { cn } from "@/shared/utils/cn";
+
 // Router
 import { Link } from "react-router-dom";
 
@@ -9,23 +12,44 @@ import { ChevronRight, Mails, Sparkle } from "lucide-react";
 
 // Hooks
 import useTelegram from "@/shared/hooks/useTelegram";
+import usePremium from "@/features/premium/hooks/usePremium";
 
 // Components
-import List, { ListItem } from "@/shared/components/ui/List";
 import WeeklyStats from "../components/WeeklyStats";
 import StoriesPanel from "../components/StoriesPanel";
+import List, { ListItem } from "@/shared/components/ui/List";
 import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 
 const DashboardPage = () => {
   const { setHeaderColor } = useTelegram();
-  setHeaderColor("#3b82f6 ");
+  const {
+    isPremium,
+    PremiumEmojiIcon,
+    premiumNameColor,
+    premiumNameColorClass,
+  } = usePremium();
+
+  setHeaderColor(premiumNameColor || "#3b82f6");
 
   return (
     <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
       <div className="container pt-5 space-y-5">
         {/* Top */}
         <div className="flex items-center justify-between">
-          <h1 className="text-primary font-bold text-xl">MBSI School</h1>
+          {/* Title */}
+          <div className="flex items-center gap-3.5">
+            <h1
+              className={cn(
+                "text-primary font-bold text-xl",
+                premiumNameColorClass,
+              )}
+            >
+              MBSI School
+            </h1>
+
+            {/* Emoji badge */}
+            <PremiumEmojiIcon />
+          </div>
 
           {/* Tasks link */}
           <Link
@@ -40,15 +64,17 @@ const DashboardPage = () => {
         <StoriesPanel />
 
         {/* Premium */}
-        <ListItem
-          to="/profile"
-          icon={Sparkle}
-          title="MBSI Premium"
-          className="rounded-2xl"
-          gradientTo="to-yellow-700"
-          gradientFrom="from-yellow-700"
-          trailing={<ChevronRight className="size-5" strokeWidth={1.5} />}
-        />
+        {!isPremium && (
+          <ListItem
+            to="/profile"
+            icon={Sparkle}
+            title="MBSI Premium"
+            className="rounded-2xl"
+            gradientTo="to-yellow-700"
+            gradientFrom="from-yellow-700"
+            trailing={<ChevronRight className="size-5" strokeWidth={1.5} />}
+          />
+        )}
 
         <List
           items={topNavItems.map((item) => ({
