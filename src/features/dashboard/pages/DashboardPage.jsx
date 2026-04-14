@@ -32,7 +32,7 @@ const DashboardPage = () => {
   setHeaderColor(premiumNameColor || "#3b82f6");
 
   return (
-    <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
+    <div className="min-h-screen pb-40 bg-gray-100 animate__animated animate__fadeIn">
       <div className="container pt-5 space-y-5">
         {/* Top */}
         <div className="flex items-center justify-between">

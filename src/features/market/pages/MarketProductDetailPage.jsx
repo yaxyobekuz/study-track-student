@@ -17,10 +17,6 @@ import { Button } from "@/shared/components/shadcn/button";
 import BackHeader from "@/shared/components/layout/BackHeader";
 import MarketOrderModal from "@/features/market/components/MarketOrderModal";
 
-/**
- * Product detail page for students.
- * @returns {JSX.Element} Market product detail page.
- */
 const MarketProductDetailPage = () => {
   const { openModal } = useModal();
   const { productId } = useParams();

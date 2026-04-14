@@ -19,7 +19,7 @@ const MarketLayout = () => {
   setHeaderColor(premiumNameColor || "#3b82f6");
 
   return (
-    <div className="min-h-screen pb-28 animate__animated animate__fadeIn">
+    <div className="min-h-screen pb-40 animate__animated animate__fadeIn">
       <div className="container pt-5 space-y-4">
         {/* Title */}
         <h1
