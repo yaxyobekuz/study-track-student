@@ -36,6 +36,7 @@ const List = ({ items = [], className = "", itemClassName = "", getKey }) => {
           gradientFrom={item.gradientFrom}
           gradientTo={item.gradientTo}
           iconClassName={item.iconClassName}
+          titleClassName={item.titleClassName}
           to={item.to}
           onClick={item.onClick}
           disabled={item.disabled}
@@ -72,6 +73,7 @@ const ListItem = ({
   to,
   onClick,
   className = "",
+  titleClassName = "",
   gradientFrom = "from-gray-300",
   gradientTo = "to-gray-500",
   disabled = false,
@@ -105,7 +107,7 @@ const ListItem = ({
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm leading-6 font-semibold text-gray-900 truncate xs:leading-6 xs:text-base">
+          <h3 className={cn("text-sm leading-6 font-semibold text-gray-900 truncate xs:leading-6 xs:text-base", titleClassName)}>
             {title}
           </h3>
 
