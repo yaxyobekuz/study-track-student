@@ -15,8 +15,21 @@ const useMe = () => {
   });
 
   const isPremium = me?.premium?.isActive;
+  const mySmProfilePictureUrl = me?.profilePicture?.variants?.sm?.url || null;
+  const myMdProfilePictureUrl = me?.profilePicture?.variants?.md?.url || null;
+  const myLgProfilePictureUrl = me?.profilePicture?.variants?.lg?.url || null;
 
-  return { isError, me, isLoading, isPremium };
+  return {
+    me,
+    isError,
+    isLoading,
+    isPremium,
+    myId: me?._id,
+    mySmProfilePictureUrl,
+    myMdProfilePictureUrl,
+    myLgProfilePictureUrl,
+    myIsPremium: isPremium,
+  };
 };
 
 export default useMe;
