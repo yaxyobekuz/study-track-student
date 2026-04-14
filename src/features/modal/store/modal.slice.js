@@ -11,6 +11,10 @@ const initialState = {
 
   // Bug Report
   bugReport: initialModalData,
+
+  // Premium
+  premiumBuy: initialModalData,
+  emojiSelector: initialModalData,
 };
 
 export const modalSlice = createSlice({
