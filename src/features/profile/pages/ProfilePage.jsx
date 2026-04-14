@@ -14,6 +14,14 @@ import { authAPI } from "@/features/auth/api/auth.api";
 import Card from "@/shared/components/ui/Card";
 import { Button } from "@/shared/components/shadcn/button";
 import BottomNavbar from "@/shared/components/ui/BottomNavbar";
+import StudentAvatar from "@/shared/components/ui/StudentAvatar";
+import PremiumBuyModal from "@/features/premium/components/PremiumBuyModal";
+
+// Hooks
+import useModal from "@/shared/hooks/useModal";
+
+// Utils
+import { formatUzDate } from "@/shared/utils/formatDate";
 
 const ProfilePage = () => {
   const {
@@ -25,6 +33,8 @@ const ProfilePage = () => {
     queryFn: () => authAPI.getMe().then((res) => res.data.data),
   });
 
+  const { openModal } = useModal("premiumBuy");
+
   const handleLogout = () => {
     const shouldLogout = confirm("Haqiqatan ham chiqmoqchimisiz?");
     if (!shouldLogout) return;
@@ -33,8 +43,10 @@ const ProfilePage = () => {
     window.location.href = "/login";
   };
 
+  const isPremium = profile?.premium?.isActive;
+
   return (
-    <div className="min-h-screen pt-5 pb-20 space-y-5 animate__animated animate__fadeIn">
+    <div className="min-h-screen pt-5 pb-28 space-y-5 animate__animated animate__fadeIn">
       <div className="container space-y-5">
         {/* Top */}
         <h1 className="text-blue-500 font-bold text-xl">Profil</h1>
@@ -52,25 +64,25 @@ const ProfilePage = () => {
         {!isLoading && !isError && (
           <>
             <Card title="Umumiy ma'lumotlar" className="space-y-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Ism</span>
-                <span className="font-medium text-gray-900">
-                  {profile?.firstName || "-"}
-                </span>
-              </div>
+              {/* Avatar */}
+              <div className="flex items-center gap-3.5">
+                <StudentAvatar
+                  size="lg"
+                  isPremium={isPremium}
+                  emojiBadgeId={profile?.emojiBadgeId || null}
+                  fallbackName={profile?.fullName || profile?.firstName || ""}
+                  profilePictureUrl={
+                    profile?.profilePicture?.variants?.sm?.url || null
+                  }
+                />
 
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Familiya</span>
-                <span className="font-medium text-gray-900">
-                  {profile?.lastName || "-"}
-                </span>
-              </div>
+                <div className="space-y-1 text-sm font-medium xs:text-base">
+                  <h3 className="">{profile?.fullName}</h3>
 
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Username</span>
-                <span className="font-medium text-gray-900">
-                  {profile?.username || "-"}
-                </span>
+                  <span className="font-medium text-gray-500 text-xs xs:text-sm">
+                    @{profile?.username}
+                  </span>
+                </div>
               </div>
 
               <div className="flex items-center justify-between text-sm">
@@ -82,6 +94,55 @@ const ProfilePage = () => {
                 </span>
               </div>
             </Card>
+
+            {/* Premium status */}
+            {isPremium ? (
+              <Card title="MBSI Premium" className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
+                    ✦ Premium
+                  </span>
+                </div>
+
+                {profile.premium.expiresAt && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">Muddati</span>
+                    <span className="font-medium text-gray-900">
+                      {formatUzDate(profile.premium.expiresAt)}
+                    </span>
+                  </div>
+                )}
+                {profile.displayName && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">Ko'rsatma ism</span>
+                    <span className="font-medium text-gray-900">
+                      {profile.displayName}
+                    </span>
+                  </div>
+                )}
+                <Button className="w-full" asChild>
+                  <Link to="/profile/edit">Premium sozlamalari</Link>
+                </Button>
+              </Card>
+            ) : (
+              <Card className="bg-gradient-to-t from-yellow-100 to-orange-50 space-y-3">
+                <p className="text-sm font-semibold text-yellow-800">
+                  MBSI Premium
+                </p>
+
+                <p className="text-xs text-yellow-700">
+                  Profil rasm, animatsion emoji, ko'rsatma ism va ism rangi kabi
+                  imkoniyatlarni oching.
+                </p>
+
+                <Button
+                  onClick={() => openModal("premiumBuy")}
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
+                >
+                  Sotib olish
+                </Button>
+              </Card>
+            )}
 
             <Card title="Sinflar" className="space-y-3">
               {profile?.classes?.length ? (
@@ -117,6 +178,7 @@ const ProfilePage = () => {
         )}
       </div>
 
+      <PremiumBuyModal />
       <BottomNavbar />
     </div>
   );
