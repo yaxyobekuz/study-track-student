@@ -93,7 +93,7 @@ const ListItem = ({
         {Icon && (
           <div
             className={cn(
-              "size-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br xs:size-12",
+              "size-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br overflow-hidden xs:size-12",
               gradientFrom,
               gradientTo,
             )}
