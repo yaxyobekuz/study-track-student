@@ -1,19 +1,20 @@
-// Icons
-import { ChevronRight, Mails } from "lucide-react";
+// Router
+import { Link } from "react-router-dom";
 
 // Data
 import { topNavItems } from "../data/nav.data";
+
+// Icons
+import { ChevronRight, Mails, Sparkle } from "lucide-react";
 
 // Hooks
 import useTelegram from "@/shared/hooks/useTelegram";
 
 // Components
-import List from "@/shared/components/ui/List";
+import List, { ListItem } from "@/shared/components/ui/List";
 import WeeklyStats from "../components/WeeklyStats";
 import StoriesPanel from "../components/StoriesPanel";
 import BottomNavbar from "@/shared/components/ui/BottomNavbar";
-import Button from "@/shared/components/ui/button/Button";
-import { Link } from "react-router-dom";
 
 const DashboardPage = () => {
   const { setHeaderColor } = useTelegram();
@@ -23,7 +24,6 @@ const DashboardPage = () => {
     <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
       <div className="container pt-5 space-y-5">
         {/* Top */}
-
         <div className="flex items-center justify-between">
           <h1 className="text-primary font-bold text-xl">MBSI School</h1>
 
@@ -38,6 +38,17 @@ const DashboardPage = () => {
 
         {/* Stories Panel */}
         <StoriesPanel />
+
+        {/* Premium */}
+        <ListItem
+          to="/profile"
+          icon={Sparkle}
+          title="MBSI Premium"
+          className="rounded-2xl"
+          gradientTo="to-yellow-700"
+          gradientFrom="from-yellow-700"
+          trailing={<ChevronRight className="size-5" strokeWidth={1.5} />}
+        />
 
         <List
           items={topNavItems.map((item) => ({
