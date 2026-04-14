@@ -11,7 +11,7 @@ import { premiumAPI } from "@/features/premium/api/premium.api";
 
 // Components
 import Card from "@/shared/components/ui/Card";
-import { Button } from "@/shared/components/shadcn/button";
+import Button from "@/shared/components/ui/button/Button";
 import BackHeader from "@/shared/components/layout/BackHeader";
 import StudentAvatar from "@/shared/components/ui/StudentAvatar";
 import InputField from "@/shared/components/ui/input/InputField";
@@ -219,6 +219,7 @@ const ProfileEditPage = () => {
                           ? "Yuklanmoqda..."
                           : "Rasm yuklash"}
                       </Button>
+
                       {profilePictureUrl && (
                         <Button
                           type="button"
@@ -255,6 +256,7 @@ const ProfileEditPage = () => {
                         ?
                       </div>
                     )}
+
                     <Button
                       type="button"
                       variant="secondary"
@@ -270,7 +272,6 @@ const ProfileEditPage = () => {
                   <InputField
                     type="text"
                     maxLength={48}
-                    label="Taxallus"
                     value={displayName}
                     placeholder="Taxallusingizni kiriting"
                     onChange={(e) => setDisplayName(e.target.value)}
@@ -330,16 +331,18 @@ const ProfileEditPage = () => {
                 <p className="text-sm font-semibold text-yellow-800">
                   Premium funksiyalar
                 </p>
+
                 <p className="text-xs text-yellow-700">
                   Profil rasm, emoji badge, ko'rsatma ism va ism rangini sozlash
                   uchun MBSI Premium oling.
                 </p>
+
                 <Button
                   type="button"
                   className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
                   onClick={() => openPremiumModal("premiumBuy")}
                 >
-                  Premium olish — 100 tanga
+                  Premium olish - 100 tanga
                 </Button>
               </div>
             )}

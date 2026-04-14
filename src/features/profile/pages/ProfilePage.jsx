@@ -100,7 +100,7 @@ const ProfilePage = () => {
               <Card title="MBSI Premium" className="space-y-3">
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
-                    ✦ Premium
+                    ✦ Obuna faollashtirilgan
                   </span>
                 </div>
 
@@ -112,17 +112,15 @@ const ProfilePage = () => {
                     </span>
                   </div>
                 )}
+
                 {profile.displayName && (
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Ko'rsatma ism</span>
+                    <span className="text-gray-500">Taxallus</span>
                     <span className="font-medium text-gray-900">
                       {profile.displayName}
                     </span>
                   </div>
                 )}
-                <Button className="w-full" asChild>
-                  <Link to="/profile/edit">Premium sozlamalari</Link>
-                </Button>
               </Card>
             ) : (
               <Card className="bg-gradient-to-t from-yellow-100 to-orange-50 space-y-3">
@@ -131,7 +129,7 @@ const ProfilePage = () => {
                 </p>
 
                 <p className="text-xs text-yellow-700">
-                  Profil rasm, animatsion emoji, ko'rsatma ism va ism rangi kabi
+                  Profil rasm, animatsion emoji, taxallus va ism rangi kabi
                   imkoniyatlarni oching.
                 </p>
 
