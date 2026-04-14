@@ -10,6 +10,15 @@ import {
   greetingEmojiAnimation,
   statsBarEmojiAnimation,
   lockWithKeyEmojiAnimation,
+  bloodyHeartEmojiAnimation,
+  blueCheckmarkEmojiAnimation,
+  goldenCheckmarkEmojiAnimation,
+  goldenCrownEmojiAnimation,
+  greenCheckmarkEmojiAnimation,
+  horizontalStarEmojiAnimation,
+  magicPremiumEmojiAnimation,
+  mbsiLogoEmojiAnimation,
+  premiumStarEmojiAnimation,
 } from "@/shared/assets/animations";
 
 export const PREMIUM_EMOJI_MAP = {
@@ -24,6 +33,15 @@ export const PREMIUM_EMOJI_MAP = {
   9: { animation: adminEmojiAnimation, label: "Admin" },
   10: { animation: teacherEmojiAnimation, label: "O'qituvchi" },
   11: { animation: lockWithKeyEmojiAnimation, label: "Qulf" },
+  12: { animation: bloodyHeartEmojiAnimation, label: "Yurak" },
+  13: { animation: blueCheckmarkEmojiAnimation, label: "Ko'k belgi" },
+  14: { animation: goldenCheckmarkEmojiAnimation, label: "Oltin belgi" },
+  15: { animation: goldenCrownEmojiAnimation, label: "Oltin toj" },
+  16: { animation: greenCheckmarkEmojiAnimation, label: "Yashil belgi" },
+  17: { animation: horizontalStarEmojiAnimation, label: "Yulduz" },
+  18: { animation: magicPremiumEmojiAnimation, label: "Sehr" },
+  19: { animation: mbsiLogoEmojiAnimation, label: "MBSI" },
+  20: { animation: premiumStarEmojiAnimation, label: "Premium yulduz" },
 };
 
 export const getEmojiAnimation = (emojiId) => {
