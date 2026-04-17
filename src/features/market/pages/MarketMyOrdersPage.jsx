@@ -59,9 +59,13 @@ const MarketMyOrdersPage = () => {
   const orders = data?.data || [];
   const pagination = data?.pagination;
   const orderItems = orders.map((order) => {
-    const canCancel = !["approved", "rejected", "cancelled"].includes(
+    const canCancel = !["delivering", "approved", "rejected", "cancelled"].includes(
       order.status,
     );
+
+    const deliveryImageUrl =
+      order.deliveryImage?.variants?.md?.url ||
+      order.deliveryImage?.variants?.original?.url;
 
     return {
       key: order._id,
@@ -70,7 +74,7 @@ const MarketMyOrdersPage = () => {
       trailing: (
         <span
           className={cn(
-            "text-xs rounded-full px-2 py-1",
+            "text-xs rounded-full px-2 py-1 whitespace-nowrap",
             marketOrderStatusClasses[order.status],
           )}
         >
@@ -82,6 +86,15 @@ const MarketMyOrdersPage = () => {
           {/* Rejected reason */}
           {order.status === "rejected" && order.rejectReason && (
             <p className="text-xs text-red-600">{order.rejectReason}</p>
+          )}
+
+          {/* Delivery image */}
+          {deliveryImageUrl && (
+            <img
+              src={deliveryImageUrl}
+              alt="Yetkazib berish rasmi"
+              className="w-20 h-20 object-cover rounded-md border border-gray-200"
+            />
           )}
 
           {/* Cancel button */}
