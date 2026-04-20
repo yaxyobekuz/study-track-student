@@ -7,9 +7,6 @@ import {
   NAME_COLOR_CLASS_MAP,
 } from "@/shared/data/nameColors.data";
 
-// Router
-import { useNavigate } from "react-router-dom";
-
 // React
 import { useEffect, useRef, useState } from "react";
 
@@ -19,7 +16,6 @@ import useMe from "@/features/auth/hooks/useMe";
 import usePremium from "@/features/premium/hooks/usePremium";
 
 // API
-import { usersAPI } from "@/features/profile/api/users.api";
 import { premiumAPI } from "@/features/premium/api/premium.api";
 
 // Tanstack Query
@@ -35,11 +31,9 @@ import PremiumBuyModal from "@/features/premium/components/PremiumBuyModal";
 import EmojiSelectorModal from "@/features/premium/components/EmojiSelectorModal";
 
 const ProfileEditPage = () => {
-  const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const queryClient = useQueryClient();
   const [displayName, setDisplayName] = useState("");
-  const [form, setForm] = useState({ firstName: "", lastName: "" });
 
   const { openModal } = useModal("emojiSelector");
   const { me, mySmProfilePictureUrl, myIsPremium } = useMe();
@@ -50,21 +44,8 @@ const ProfileEditPage = () => {
   useEffect(() => {
     if (!me) return;
 
-    setForm({
-      firstName: me?.firstName || "",
-      lastName: me?.lastName || "",
-    });
-
     setDisplayName(me?.displayName || "");
   }, [me]);
-
-  const updateMutation = useMutation({
-    mutationFn: (payload) => usersAPI.updateProfile(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      navigate("/profile");
-    },
-  });
 
   const uploadPicMutation = useMutation({
     mutationFn: (formData) => premiumAPI.uploadProfilePicture(formData),
@@ -110,19 +91,6 @@ const ProfileEditPage = () => {
     },
   });
 
-  const handleChange = (field) => (event) => {
-    const { value } = event.target;
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    updateMutation.mutate({
-      firstName: form.firstName.trim(),
-      lastName: form.lastName.trim(),
-    });
-  };
-
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -137,35 +105,6 @@ const ProfileEditPage = () => {
       <BackHeader href="/profile" title="Profilni tahrirlash" />
 
       <div className="container space-y-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Card title="Umumiy ma'lumotlar" className="space-y-4">
-            <InputField
-              label="Ism"
-              placeholder="Ism"
-              value={form.firstName}
-              onChange={handleChange("firstName")}
-              inputClassName={premiumNameColorClass}
-            />
-
-            <InputField
-              label="Familiya"
-              value={form.lastName}
-              placeholder="Familiya"
-              onChange={handleChange("lastName")}
-              inputClassName={premiumNameColorClass}
-            />
-          </Card>
-
-          {/* Submit button */}
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={updateMutation.isPending}
-          >
-            Saqlash
-          </Button>
-        </form>
-
         {/* Premium section */}
         {myIsPremium ? (
           <div className="space-y-4">
