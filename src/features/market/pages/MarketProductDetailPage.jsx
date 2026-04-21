@@ -3,28 +3,24 @@ import { useParams } from "react-router-dom";
 
 // Hooks
 import useModal from "@/shared/hooks/useModal";
+import useMe from "@/features/auth/hooks/useMe";
 
 // Tanstack Query
 import { useQuery } from "@tanstack/react-query";
 
 // API
 import { marketAPI } from "@/features/market/api/market.api";
-import { authAPI } from "@/features/auth/api/auth.api";
 
 // Components
 import Card from "@/shared/components/ui/Card";
-import { Button } from "@/shared/components/shadcn/button";
+import Button from "@/shared/components/ui/button/Button";
 import BackHeader from "@/shared/components/layout/BackHeader";
 import MarketOrderModal from "@/features/market/components/MarketOrderModal";
 
 const MarketProductDetailPage = () => {
+  const { me } = useMe();
   const { openModal } = useModal();
   const { productId } = useParams();
-
-  const { data: me } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => authAPI.getMe().then((res) => res.data.data),
-  });
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["market", "product", productId],
@@ -67,9 +63,11 @@ const MarketProductDetailPage = () => {
                 {product.name}
               </h1>
 
-              <p className="text-sm text-gray-500 xs:text-base">
-                {product.description || "Tavsif kiritilmagan"}
-              </p>
+              {product?.description && (
+                <p className="text-sm text-gray-500 xs:text-base">
+                  {product.description}
+                </p>
+              )}
             </div>
 
             {/* Product Details */}
@@ -78,24 +76,20 @@ const MarketProductDetailPage = () => {
             </p>
 
             {/* Create Order Button */}
-            {me?.penaltyPoints > 3 ? (
-              <div className="space-y-2">
-                <p className="text-sm text-red-600 text-center">
-                  Jarima balingiz 3 dan yuqori bo'lgani uchun buyurtma bera
-                  olmaysiz.
-                </p>
-                <Button className="w-full" disabled>
-                  Buyurtma berish
-                </Button>
-              </div>
-            ) : (
-              <Button
-                className="w-full"
-                disabled={product.quantity < 1}
-                onClick={() => openModal("marketOrder", { product })}
-              >
-                Buyurtma berish
-              </Button>
+            <Button
+              className="w-full"
+              onClick={() => openModal("marketOrder", { product })}
+              disabled={product.quantity < 1 || me?.penaltyPoints > 3}
+            >
+              Buyurtma berish
+            </Button>
+
+            {/* Penalty Warning */}
+            {me?.penaltyPoints > 3 && (
+              <p className="text-sm text-red-600">
+                Jarima balingiz 3 dan yuqori bo'lgani uchun buyurtma bera
+                olmaysiz.
+              </p>
             )}
           </div>
         )}
