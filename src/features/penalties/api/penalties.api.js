@@ -6,4 +6,9 @@ export const penaltiesAPI = {
 
   // O'z jarimalari
   getMyPenalties: (params) => http.get("/api/penalties/my", { params }),
+
+  // Kamaytirish paketlari
+  getReductionPackages: () => http.get("/api/penalties/reduction-packages"),
+  purchaseReductionPackage: (packageId) =>
+    http.post("/api/penalties/reduction-packages/purchase", { packageId }),
 };
