@@ -9,4 +9,7 @@ export const statisticsAPI = {
 
   getSchoolRankings: (params) =>
     http.get("/api/statistics/weekly/school/rankings", { params }),
+
+  getCoinLeaderboard: (params) =>
+    http.get("/api/coins/leaderboard", { params }),
 };
