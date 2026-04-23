@@ -83,6 +83,23 @@ const ProfilePage = () => {
           </div>
         </Card>
 
+        <Card title="Sinflar" className="space-y-3">
+          {me?.classes?.length ? (
+            <div className="flex flex-wrap gap-2">
+              {me?.classes.map((classItem) => (
+                <span
+                  key={classItem._id}
+                  className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700"
+                >
+                  {classItem.name}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">Sinf biriktirilmagan</p>
+          )}
+        </Card>
+
         {/* Premium status */}
         {myIsPremium ? (
           <Card title="MBSI Premium" className="space-y-3">
@@ -129,23 +146,6 @@ const ProfilePage = () => {
             </Button>
           </Card>
         )}
-
-        <Card title="Sinflar" className="space-y-3">
-          {me?.classes?.length ? (
-            <div className="flex flex-wrap gap-2">
-              {me?.classes.map((classItem) => (
-                <span
-                  key={classItem._id}
-                  className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700"
-                >
-                  {classItem.name}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">Sinf biriktirilmagan</p>
-          )}
-        </Card>
 
         <div className="flex gap-3.5">
           <Button className="w-full" asChild>
