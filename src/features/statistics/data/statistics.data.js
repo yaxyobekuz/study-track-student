@@ -4,8 +4,9 @@ export const statisticsTabs = [
   { value: "scoreboard", label: "Reyting", path: "/statistics/scoreboard" },
 ];
 
-// --- Oylik/Yillik ko'rish rejimi ---
+// --- Haftalik/Oylik/Yillik ko'rish rejimi ---
 export const statisticsViewModes = [
+  { value: "weekly", label: "Haftalik" },
   { value: "monthly", label: "Oylik" },
   { value: "yearly", label: "Yillik" },
 ];

@@ -27,6 +27,21 @@ import {
   UZ_MONTHS,
 } from "@/features/statistics/data/statistics.data";
 
+const groupByWeek = (allStats) => {
+  return allStats.map((stat) => {
+    const start = new Date(stat.weekStart);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6);
+    const fmt = (d) =>
+      `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}`;
+    return {
+      label: `${fmt(start)}–${fmt(end)}`,
+      totalSum: stat.simpleStats?.totalSum ?? 0,
+      totalGrades: stat.simpleStats?.totalGrades ?? 0,
+    };
+  });
+};
+
 const groupByMonth = (allStats) => {
   const map = new Map();
   allStats.forEach((stat) => {
@@ -130,12 +145,12 @@ const PieTooltip = ({ active, payload }) => {
 };
 
 const StatsCharts = ({ allStats = [] }) => {
-  const [viewMode, setViewMode] = useState("monthly");
+  const [viewMode, setViewMode] = useState("weekly");
 
   const periodData = useMemo(() => {
-    return viewMode === "monthly"
-      ? groupByMonth(allStats)
-      : groupByYear(allStats);
+    if (viewMode === "weekly") return groupByWeek(allStats);
+    if (viewMode === "monthly") return groupByMonth(allStats);
+    return groupByYear(allStats);
   }, [allStats, viewMode]);
 
   const trendData = useMemo(() => {
