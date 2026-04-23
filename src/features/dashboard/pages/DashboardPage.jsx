@@ -22,11 +22,7 @@ import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 
 const DashboardPage = () => {
   const { setHeaderColor } = useTelegram();
-  const {
-    isPremium,
-    PremiumEmojiIcon,
-    premiumNameColorClass,
-  } = usePremium();
+  const { isPremium, PremiumEmojiIcon, premiumNameColorClass } = usePremium();
 
   setHeaderColor("#3b82f6");
 
@@ -71,6 +67,7 @@ const DashboardPage = () => {
             className="rounded-2xl"
             gradientTo="to-yellow-700"
             gradientFrom="from-yellow-700"
+            description="Jarimangizni kamaytirish uchun chegirma"
             trailing={<ChevronRight className="size-5" strokeWidth={1.5} />}
           />
         )}
