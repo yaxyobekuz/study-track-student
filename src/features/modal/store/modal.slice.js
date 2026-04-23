@@ -15,6 +15,9 @@ const initialState = {
   // Premium
   premiumBuy: initialModalData,
   emojiSelector: initialModalData,
+
+  fineReductionPackages: initialModalData,
+  purchaseReductionPackage: initialModalData,
 };
 
 export const modalSlice = createSlice({
