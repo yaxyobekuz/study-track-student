@@ -28,6 +28,7 @@ const useMe = () => {
     mySmProfilePictureUrl,
     myMdProfilePictureUrl,
     myLgProfilePictureUrl,
+    isMePremium: isPremium,
     myIsPremium: isPremium,
   };
 };
