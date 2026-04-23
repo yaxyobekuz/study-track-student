@@ -51,6 +51,7 @@ import GamesPage from "@/features/games/pages/GamesPage";
 // Statistics pages
 import StatisticsStatsPage from "@/features/statistics/pages/StatisticsStatsPage";
 import StatisticsScoreboardPage from "@/features/statistics/pages/StatisticsScoreboardPage";
+import StatisticsCoinsPage from "@/features/statistics/pages/StatisticsCoinsPage";
 import MarketLayout from "@/features/market/layouts/MarketLayout";
 import StatisticsLayout from "@/features/statistics/layouts/StatisticsLayout";
 
@@ -82,6 +83,7 @@ const Routes = () => {
             />
             <Route path="stats" element={<StatisticsStatsPage />} />
             <Route path="scoreboard" element={<StatisticsScoreboardPage />} />
+            <Route path="coins" element={<StatisticsCoinsPage />} />
           </Route>
 
           {/* Penalties */}
