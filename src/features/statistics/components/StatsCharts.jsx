@@ -26,6 +26,7 @@ import {
   statisticsViewModes,
   UZ_MONTHS,
 } from "@/features/statistics/data/statistics.data";
+import Tabs from "@/shared/components/ui/Tabs";
 
 const groupByWeek = (allStats) => {
   return allStats.map((stat) => {
@@ -164,22 +165,24 @@ const StatsCharts = ({ allStats = [] }) => {
 
   return (
     <div className="space-y-4">
-      {/* Ko'rish rejimi toggle */}
-      <div className="flex gap-2">
-        {statisticsViewModes.map((mode) => (
-          <button
-            key={mode.value}
-            onClick={() => setViewMode(mode.value)}
-            className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors ${
-              viewMode === mode.value
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-600"
-            }`}
-          >
-            {mode.label}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        listClassName="w-full"
+        onValueChange={(value) => setViewMode(value)}
+        items={[
+          {
+            value: "weekly",
+            label: "Haftalik",
+          },
+          {
+            value: "monthly",
+            label: "Oylik",
+          },
+          {
+            value: "yearly",
+            label: "Yillik",
+          },
+        ]}
+      />
 
       {/* Chart 1: Davr bo'yicha umumiy ballar */}
       <Card className="space-y-4" title="Umumiy ballar">
