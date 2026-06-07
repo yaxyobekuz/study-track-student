@@ -56,19 +56,19 @@ import MarketLayout from "@/features/market/layouts/MarketLayout";
 import StatisticsLayout from "@/features/statistics/layouts/StatisticsLayout";
 
 // Tests hub (tabs)
-import TestsPage from "@/features/dashboard/pages/TestsPage";
-import AvailableTestsList from "@/features/take-test/components/AvailableTestsList";
-import MyResultsList from "@/features/my-results/components/MyResultsList";
-import SeasonsList from "@/features/season-rewards/components/SeasonsList";
+import TestsLayout from "@/features/tests/layouts/TestsLayout";
+import AvailableTestsList from "@/features/tests/components/AvailableTestsList";
+import MyResultsList from "@/features/tests/components/MyResultsList";
+import SeasonsList from "@/features/tests/components/SeasonsList";
 
 // Take test pages
-import TakeTestPage from "@/features/take-test/pages/TakeTestPage";
+import TakeTestPage from "@/features/tests/pages/TakeTestPage";
 
 // My results pages
-import ResultDetailPage from "@/features/my-results/pages/ResultDetailPage";
+import ResultDetailPage from "@/features/tests/pages/ResultDetailPage";
 
 // Season rewards pages
-import SeasonRewardsPage from "@/features/season-rewards/pages/SeasonRewardsPage";
+import SeasonRewardsPage from "@/features/tests/pages/SeasonRewardsPage";
 
 const Routes = () => {
   return (
@@ -126,7 +126,7 @@ const Routes = () => {
           </Route>
 
           {/* Tests hub (tabs: Testlar / Natijalar / Reyting) */}
-          <Route path="/tests" element={<TestsPage />}>
+          <Route path="/tests" element={<TestsLayout />}>
             <Route index element={<Navigate to="/tests/available" replace />} />
             <Route path="available" element={<AvailableTestsList />} />
             <Route path="results" element={<MyResultsList />} />

@@ -29,11 +29,4 @@ const topNavItems = [
   },
 ];
 
-// "Testlar" markazi sahifasidagi tablar (URL bo'yicha)
-const testTabs = [
-  { value: "available", label: "Testlar", path: "/tests/available" },
-  { value: "results", label: "Natijalar", path: "/tests/results" },
-  { value: "rating", label: "Reyting", path: "/tests/rating" },
-];
-
-export { topNavItems, testTabs };
+export { topNavItems };

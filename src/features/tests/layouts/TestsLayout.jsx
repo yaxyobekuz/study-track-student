@@ -7,18 +7,15 @@ import { Outlet } from "react-router-dom";
 // Hooks
 import useTelegram from "@/shared/hooks/useTelegram";
 
-// Data
-import { testTabs } from "../data/nav.data";
-
 // Components
-import Tabs from "@/shared/components/ui/Tabs";
+import TestsTabs from "../components/TestsTabs";
 import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 
 /**
- * "Testlar" bo'limi - pastki navbar destination.
- * URL bo'yicha tablar (Testlar / Natijalar / Reyting), har tab kontenti <Outlet /> da.
+ * "Testlar" bo'limi layouti - pastki navbar destination.
+ * Title + tablar (Testlar / Natijalar / Reyting), har tab kontenti <Outlet /> da.
  */
-const TestsPage = () => {
+const TestsLayout = () => {
   const { setHeaderColor } = useTelegram();
 
   setHeaderColor("#3b82f6");
@@ -30,12 +27,7 @@ const TestsPage = () => {
         <h1 className={cn("text-primary font-bold text-xl")}>Testlar</h1>
 
         {/* Tabs */}
-        <Tabs
-          activePathIndex={1}
-          listClassName="w-full"
-          items={testTabs}
-          getItemHref={(item) => item.path}
-        />
+        <TestsTabs />
 
         {/* Content */}
         <Outlet />
@@ -47,4 +39,4 @@ const TestsPage = () => {
   );
 };
 
-export default TestsPage;
+export default TestsLayout;
