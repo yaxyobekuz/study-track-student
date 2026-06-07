@@ -33,14 +33,9 @@ const QuestionRenderer = ({
     <div className="space-y-4">
       {/* Savol */}
       <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-gray-500">
-            {index + 1}-savol
-          </span>
-          <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
-            {question.points} ball
-          </span>
-        </div>
+        <span className="text-sm font-semibold text-gray-500">
+          {index + 1}-savol
+        </span>
 
         {question.image?.url && (
           <img
