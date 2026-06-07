@@ -55,6 +55,18 @@ import StatisticsCoinsPage from "@/features/statistics/pages/StatisticsCoinsPage
 import MarketLayout from "@/features/market/layouts/MarketLayout";
 import StatisticsLayout from "@/features/statistics/layouts/StatisticsLayout";
 
+// Take test pages
+import AvailableTestsPage from "@/features/take-test/pages/AvailableTestsPage";
+import TakeTestPage from "@/features/take-test/pages/TakeTestPage";
+
+// My results pages
+import MyResultsPage from "@/features/my-results/pages/MyResultsPage";
+import ResultDetailPage from "@/features/my-results/pages/ResultDetailPage";
+
+// Season rewards pages
+import SeasonsListPage from "@/features/season-rewards/pages/SeasonsListPage";
+import SeasonRewardsPage from "@/features/season-rewards/pages/SeasonRewardsPage";
+
 const Routes = () => {
   return (
     <RoutesWrapper>
@@ -109,6 +121,18 @@ const Routes = () => {
             <Route index element={<GamesPage />} />
             <Route path=":gameId" element={<GamePage />} />
           </Route>
+
+          {/* Tests */}
+          <Route path="/available-tests" element={<AvailableTestsPage />} />
+          <Route path="/take-test/:bindingId" element={<TakeTestPage />} />
+
+          {/* My results */}
+          <Route path="/my-results" element={<MyResultsPage />} />
+          <Route path="/my-results/:id" element={<ResultDetailPage />} />
+
+          {/* Seasons & rewards */}
+          <Route path="/seasons" element={<SeasonsListPage />} />
+          <Route path="/seasons/:id/rewards" element={<SeasonRewardsPage />} />
         </Route>
       </Route>
 
