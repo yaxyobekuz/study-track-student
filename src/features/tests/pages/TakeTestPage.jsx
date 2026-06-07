@@ -26,9 +26,6 @@ import Button from "@/shared/components/ui/button/Button";
 import TestTimer from "../components/TestTimer";
 import QuestionRenderer from "../components/QuestionRenderer";
 
-// Utils
-import { cn } from "@/shared/utils/cn";
-
 const TakeTestPage = () => {
   // V3: bindingId orqali sessiya boshlash
   const { bindingId } = useParams();
@@ -122,9 +119,6 @@ const TakeTestPage = () => {
     },
   });
 
-  /**
-   * Sessiyani topshiradi (auto yoki qo'lda).
-   */
   const submitSession = useCallback(() => {
     if (submittingRef.current) return;
     submittingRef.current = true;
@@ -132,15 +126,10 @@ const TakeTestPage = () => {
     submitMutation.mutate();
   }, [submitMutation]);
 
-  /**
-   * Server sessiyani yopgan bo'lsa, natijalarga yo'naltirish.
-   */
   const finalizeAndGo = useCallback(() => {
     if (submittingRef.current) return;
     submittingRef.current = true;
     setSubmitting(true);
-    // submit chaqirish - server allaqachon expired qilgan bo'lsa,
-    // qaytarayotgan xato ham bo'lishi mumkin, lekin natijalar ro'yxatiga yuborish kifoya
     studentTestSessionsAPI
       .submit(session._id)
       .then((res) => {
@@ -151,9 +140,6 @@ const TakeTestPage = () => {
       .catch(() => navigate("/my-results", { replace: true }));
   }, [session, navigate]);
 
-  /**
-   * Foydalanuvchi javobini saqlash + serverga yuborish.
-   */
   const handleAnswerChange = useCallback(
     (questionId, payload) => {
       setAnswers((prev) => ({
@@ -163,19 +149,16 @@ const TakeTestPage = () => {
           ...payload,
         },
       }));
-      // Serverga darhol saqlash
       saveAnswerMutation.mutate({ questionId, payload });
     },
     [saveAnswerMutation],
   );
 
-  // Vaqt tugaganda - auto-submit
   const handleTimerExpire = useCallback(() => {
     toast.warning("Test vaqti tugadi. Avtomatik topshirilmoqda...");
     submitSession();
   }, [submitSession]);
 
-  // ───── Render ─────
   if (loadingStart) {
     return (
       <div className="container pt-4">
@@ -194,11 +177,14 @@ const TakeTestPage = () => {
       <div className="container pt-4">
         <Card>
           <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
-          <AlertCircle size={40} className="text-red-400" />
-          <p className="text-gray-900 font-medium">{error}</p>
-          <Button variant="outline" onClick={() => navigate("/available-tests")}>
-            Orqaga
-          </Button>
+            <AlertCircle size={40} className="text-red-400" />
+            <p className="text-gray-900 font-medium">{error}</p>
+            <Button
+              variant="outline"
+              onClick={() => navigate("/available-tests")}
+            >
+              Orqaga
+            </Button>
           </div>
         </Card>
       </div>
@@ -214,34 +200,36 @@ const TakeTestPage = () => {
   ).length;
 
   return (
-    <div className="container space-y-5">
+    <div className="space-y-4">
       {/* Sarlavha va taymer */}
-      <div className="flex items-start justify-between gap-3 flex-wrap sticky top-0 z-10 bg-gray-50 pt-1 pb-2">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">
-            {session.test?.title || "Test"}
-          </h1>
-          <p className="text-sm text-gray-600 mt-0.5">
-            Javob berilgan: {answeredCount} / {session.questions.length}
-            {saveAnswerMutation.isPending && (
-              <span className="ml-2 text-xs text-blue-600 inline-flex items-center gap-1">
-                <Loader2 size={12} className="animate-spin" />
-                saqlanmoqda...
-              </span>
-            )}
-          </p>
-        </div>
+      <div className="sticky top-0 inset-x-0 z-10 bg-white pt-1 pb-2 shadow-[0_2px_10px_rgba(0,0,0,0.08)]">
+        <div className="flex items-center justify-between gap-3 container">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">
+              {session.test?.title || "Test"}
+            </h1>
+            <p className="text-sm text-gray-600 mt-0.5">
+              Javob berilgan: {answeredCount} / {session.questions.length}
+              {saveAnswerMutation.isPending && (
+                <span className="ml-2 text-xs text-blue-600 inline-flex items-center gap-1">
+                  <Loader2 size={12} className="animate-spin" />
+                  saqlanmoqda...
+                </span>
+              )}
+            </p>
+          </div>
 
-        {session.expiresAt && !isClosed && (
-          <TestTimer
-            expiresAt={session.expiresAt}
-            onExpire={handleTimerExpire}
-          />
-        )}
+          {session.expiresAt && !isClosed && (
+            <TestTimer
+              expiresAt={session.expiresAt}
+              onExpire={handleTimerExpire}
+            />
+          )}
+        </div>
       </div>
 
       {/* Savollar */}
-      <div className="space-y-4">
+      <div className="container space-y-4 pb-24">
         {session.questions.map((q, index) => (
           <Card key={index} className="space-y-3">
             <QuestionRenderer
@@ -256,31 +244,28 @@ const TakeTestPage = () => {
       </div>
 
       {/* Topshirish */}
-      <div
-        className={cn(
-          "flex items-center justify-between gap-3 sticky bottom-0 z-10 bg-gray-50 py-3",
-          "border-t border-gray-200",
-        )}
-      >
-        <p className="text-sm text-gray-600">
-          {answeredCount === session.questions.length
-            ? "Barcha savollarga javob berildi"
-            : `${session.questions.length - answeredCount} ta savol qoldi`}
-        </p>
-        <Button
-          onClick={() => {
-            if (window.confirm(SUBMIT_CONFIRM_MESSAGE)) submitSession();
-          }}
-          disabled={submitting || isClosed}
-          className="gap-2"
-        >
-          {submitting ? (
-            <Loader2 size={16} className="animate-spin" />
-          ) : (
-            <CheckCircle2 size={16} />
-          )}
-          {submitting ? "Topshirilmoqda..." : "Testni topshirish"}
-        </Button>
+      <div className="sticky bottom-0 z-10 bg-white py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.08)]">
+        <div className="flex items-center justify-between gap-3 container">
+          <p className="text-sm text-gray-600">
+            {answeredCount === session.questions.length
+              ? "Barcha savollarga javob berildi"
+              : `${session.questions.length - answeredCount} ta savol qoldi`}
+          </p>
+
+          <Button
+            onClick={() => {
+              if (window.confirm(SUBMIT_CONFIRM_MESSAGE)) submitSession();
+            }}
+            disabled={submitting || isClosed}
+          >
+            {submitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <CheckCircle2 />
+            )}
+            Testni yakunlash{submitting && "..."}
+          </Button>
+        </div>
       </div>
     </div>
   );
