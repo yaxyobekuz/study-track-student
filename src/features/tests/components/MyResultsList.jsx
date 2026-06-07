@@ -36,10 +36,6 @@ const MyResultsList = () => {
 
   return (
     <div className="space-y-4">
-      <p className="text-gray-600">
-        Topshirgan testlaringiz va olingan ballaringiz.
-      </p>
-
       {isLoading ? (
         <Card>
           <p className="text-center text-gray-500 py-10">Yuklanmoqda...</p>
@@ -60,7 +56,7 @@ const MyResultsList = () => {
         <div className="space-y-3">
           {results.map((r) => (
             <Link key={r._id} to={`/my-results/${r._id}`}>
-              <Card className="space-y-2 transition-shadow hover:shadow-md active:scale-[0.99]">
+              <Card className="space-y-2 active:scale-[0.99]">
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -76,17 +72,16 @@ const MyResultsList = () => {
                         {RESULT_STATUS_LABELS[r.status]}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">
-                      {r.subject?.name} · {r.class?.name} · {r.season?.name}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {formatDateUZ(r.createdAt)}
-                    </p>
-                  </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500">Ball</p>
+                    <p className="text-sm text-gray-600">
+                      {r.subject?.name} · {r.season?.name}
+                    </p>
+
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-gray-500">
+                        {formatDateUZ(r.createdAt)}
+                      </p>
+
                       <p className="text-xl font-bold text-blue-700">
                         {r.finalScore}
                         <span className="text-sm font-normal text-gray-500">
@@ -95,11 +90,6 @@ const MyResultsList = () => {
                         </span>
                       </p>
                     </div>
-
-                    <ChevronRight
-                      size={20}
-                      className="text-gray-400 shrink-0"
-                    />
                   </div>
                 </div>
               </Card>
