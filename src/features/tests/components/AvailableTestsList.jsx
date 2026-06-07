@@ -47,7 +47,7 @@ const AvailableTestsList = () => {
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="space-y-4">
           {bindings.map((b) => (
             <Card key={b._id} className="space-y-3">
               <div className="space-y-1">

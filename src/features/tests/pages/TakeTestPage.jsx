@@ -29,19 +29,6 @@ import QuestionRenderer from "../components/QuestionRenderer";
 // Utils
 import { cn } from "@/shared/utils/cn";
 
-/**
- * O'quvchi test ishlash sahifasi.
- *
- * Asosiy oqim:
- *  - Mount: startSession(testId) - yangi yoki davom etayotgan sessiyani oladi
- *  - Har javob: PUT /test-sessions/:id/answers (avtomatik saqlash)
- *  - Vaqt tugaganda: auto-submit
- *  - Qo'lda submit: tasdiqlash so'raydi → POST /:id/submit → /my-results/:id
- *
- * Taymer yaxlitligi: TestTimer server `expiresAt` ni manba qiladi.
- * Klient soatiga ishonmaydi. Har saveAnswer/submit serverdan rad olishi mumkin
- * (vaqt tugagan bo'lsa - toast bilan yo'naltirish).
- */
 const TakeTestPage = () => {
   // V3: bindingId orqali sessiya boshlash
   const { bindingId } = useParams();
