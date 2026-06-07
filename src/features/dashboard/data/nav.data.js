@@ -1,37 +1,20 @@
 // Icons
 import {
   Coins,
-  Award,
-  Trophy,
   Gamepad2,
-  ListChecks,
+  ClipboardList,
   TriangleAlert,
 } from "lucide-react";
 
+// Bosh sahifadagi asosiy kartalar
 const topNavItems = [
   {
-    to: "/available-tests",
-    label: "Mavjud testlar",
-    description: "Sizga tayyorlangan testlarni topshiring",
-    icon: ListChecks,
+    to: "/tests",
+    label: "Testlar",
+    description: "Mavjud testlar, natijalar va mavsumlar",
+    icon: ClipboardList,
     gradientFrom: "from-blue-400",
     gradientTo: "to-blue-700",
-  },
-  {
-    to: "/my-results",
-    label: "Natijalarim",
-    description: "Test natijalaringizni kuzating",
-    icon: Award,
-    gradientFrom: "from-emerald-400",
-    gradientTo: "to-emerald-700",
-  },
-  {
-    to: "/seasons",
-    label: "Mavsumlar",
-    description: "Reyting va mukofotlar",
-    icon: Trophy,
-    gradientFrom: "from-purple-400",
-    gradientTo: "to-purple-700",
   },
   {
     to: "/penalties",
@@ -59,4 +42,11 @@ const topNavItems = [
   },
 ];
 
-export { topNavItems };
+// "Testlar" markazi sahifasidagi tablar (URL bo'yicha)
+const testTabs = [
+  { value: "available", label: "Testlar", path: "/tests/available" },
+  { value: "results", label: "Natijalar", path: "/tests/results" },
+  { value: "rating", label: "Reyting", path: "/tests/rating" },
+];
+
+export { topNavItems, testTabs };
