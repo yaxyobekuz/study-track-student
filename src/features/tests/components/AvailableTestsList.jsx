@@ -17,10 +17,6 @@ import Button from "@/shared/components/ui/button/Button";
 // Utils
 import { formatDateUZ } from "@/shared/utils/date.utils";
 
-/**
- * O'quvchi uchun mavjud biriktiruvlar ro'yxati (V3).
- * "Testlar" markazidagi "Testlar" tabining kontenti.
- */
 const AvailableTestsList = () => {
   const { data: bindings = [], isLoading } = useQuery({
     queryKey: ["bindings", "available"],
@@ -29,10 +25,6 @@ const AvailableTestsList = () => {
 
   return (
     <div className="space-y-4">
-      <p className="text-gray-600">
-        Quyidagi testlarni topshirishingiz mumkin.
-      </p>
-
       {isLoading ? (
         <Card>
           <p className="text-center text-gray-500 py-10">Yuklanmoqda...</p>
@@ -51,16 +43,17 @@ const AvailableTestsList = () => {
           {bindings.map((b) => (
             <Card key={b._id} className="space-y-3">
               <div className="space-y-1">
-                <h3 className="font-semibold text-gray-900">{b.test?.title}</h3>
-                <p className="text-sm text-gray-600">
-                  {b.subject?.name}
-                  {b.classes && b.classes.length > 0 && (
-                    <> · {b.classes.map((c) => c.name).join(", ")}</>
-                  )}
-                </p>
+                <div className="flex items-center gap-1.5 justify-between">
+                  <h3 className="font-semibold text-gray-900">
+                    {b.test?.title}
+                  </h3>
+                  <p className="text-sm text-gray-600">{b.subject?.name}</p>
+                </div>
+
                 <p className="text-xs text-gray-500">{b.season?.name}</p>
               </div>
 
+              {/* time & question count */}
               <div className="flex items-center gap-3 text-sm text-gray-600 flex-wrap">
                 <span className="flex items-center gap-1.5">
                   <Clock size={14} />
@@ -88,12 +81,12 @@ const AvailableTestsList = () => {
                 </div>
               )}
 
-              <Link to={`/take-test/${b._id}`}>
-                <Button className="w-full gap-2">
+              <Button className="w-full gap-2" asChild>
+                <Link to={`/take-test/${b._id}`}>
                   <Play size={16} />
                   {b.hasInProgress ? "Davom etish" : "Boshlash"}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </Card>
           ))}
         </div>
