@@ -13,29 +13,25 @@ import { testBindingsAPI } from "@/features/tests/api/tests.api";
 // Components
 import Card from "@/shared/components/ui/Card";
 import Button from "@/shared/components/ui/button/Button";
-import BackHeader from "@/shared/components/layout/BackHeader";
 
 // Utils
 import { formatDateUZ } from "@/shared/utils/date.utils";
 
 /**
  * O'quvchi uchun mavjud biriktiruvlar ro'yxati (V3).
+ * "Testlar" markazidagi "Testlar" tabining kontenti.
  */
-const AvailableTestsPage = () => {
+const AvailableTestsList = () => {
   const { data: bindings = [], isLoading } = useQuery({
     queryKey: ["bindings", "available"],
-    queryFn: () =>
-      testBindingsAPI.getAvailable().then((res) => res.data.data),
+    queryFn: () => testBindingsAPI.getAvailable().then((res) => res.data.data),
   });
 
   return (
-    <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
-      <BackHeader href="/dashboard" title="Mavjud testlar" />
-
-      <div className="container pt-4 space-y-4">
-        <p className="text-gray-600">
-          Quyidagi testlarni topshirishingiz mumkin.
-        </p>
+    <div className="space-y-4">
+      <p className="text-gray-600">
+        Quyidagi testlarni topshirishingiz mumkin.
+      </p>
 
       {isLoading ? (
         <Card>
@@ -55,9 +51,7 @@ const AvailableTestsPage = () => {
           {bindings.map((b) => (
             <Card key={b._id} className="space-y-3">
               <div className="space-y-1">
-                <h3 className="font-semibold text-gray-900">
-                  {b.test?.title}
-                </h3>
+                <h3 className="font-semibold text-gray-900">{b.test?.title}</h3>
                 <p className="text-sm text-gray-600">
                   {b.subject?.name}
                   {b.classes && b.classes.length > 0 && (
@@ -104,9 +98,8 @@ const AvailableTestsPage = () => {
           ))}
         </div>
       )}
-      </div>
     </div>
   );
 };
 
-export default AvailableTestsPage;
+export default AvailableTestsList;

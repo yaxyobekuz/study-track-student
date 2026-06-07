@@ -12,29 +12,25 @@ import { testSeasonsAPI } from "@/features/test-seasons/api/testSeasons.api";
 
 // Components
 import Card from "@/shared/components/ui/Card";
-import BackHeader from "@/shared/components/layout/BackHeader";
 
 // Utils
 import { formatDateUZ } from "@/shared/utils/date.utils";
 
 /**
- * Mavsumlar ro'yxati (o'qituvchi va o'quvchi uchun).
- * Faol mavsumlarni ko'rsatadi, qatorga bosib stats sahifasiga o'tadi.
+ * Faol mavsumlar ro'yxati (reyting va mukofotlar).
+ * "Testlar" markazidagi "Reyting" tabining kontenti.
  */
-const SeasonsListPage = () => {
+const SeasonsList = () => {
   const { data: seasons = [], isLoading } = useQuery({
     queryKey: ["test-seasons", "active"],
     queryFn: () => testSeasonsAPI.getActive().then((res) => res.data.data),
   });
 
   return (
-    <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
-      <BackHeader href="/dashboard" title="Mavsumlar va reyting" />
-
-      <div className="container pt-4 space-y-4">
-        <p className="text-gray-600">
-          Faol mavsumlar bo'yicha statistika va mukofotlar.
-        </p>
+    <div className="space-y-4">
+      <p className="text-gray-600">
+        Faol mavsumlar bo'yicha statistika va mukofotlar.
+      </p>
 
       {isLoading ? (
         <Card>
@@ -74,9 +70,8 @@ const SeasonsListPage = () => {
           ))}
         </div>
       )}
-      </div>
     </div>
   );
 };
 
-export default SeasonsListPage;
+export default SeasonsList;

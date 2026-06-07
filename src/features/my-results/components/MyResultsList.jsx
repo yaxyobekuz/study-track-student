@@ -19,7 +19,6 @@ import {
 // Components
 import Card from "@/shared/components/ui/Card";
 import Button from "@/shared/components/ui/button/Button";
-import BackHeader from "@/shared/components/layout/BackHeader";
 
 // Utils
 import { cn } from "@/shared/utils/cn";
@@ -27,21 +26,19 @@ import { formatDateUZ } from "@/shared/utils/date.utils";
 
 /**
  * O'quvchining barcha test natijalari ro'yxati.
+ * "Testlar" markazidagi "Natijalar" tabining kontenti.
  */
-const MyResultsPage = () => {
+const MyResultsList = () => {
   const { data: results = [], isLoading } = useQuery({
     queryKey: ["my-results"],
     queryFn: () => testResultsAPI.getMy().then((res) => res.data.data),
   });
 
   return (
-    <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
-      <BackHeader href="/dashboard" title="Natijalarim" />
-
-      <div className="container pt-4 space-y-4">
-        <p className="text-gray-600">
-          Topshirgan testlaringiz va olingan ballaringiz.
-        </p>
+    <div className="space-y-4">
+      <p className="text-gray-600">
+        Topshirgan testlaringiz va olingan ballaringiz.
+      </p>
 
       {isLoading ? (
         <Card>
@@ -54,7 +51,7 @@ const MyResultsPage = () => {
             <p className="mt-3 text-gray-500">
               Hali natijalar yo'q. Mavjud testlardan birini topshiring.
             </p>
-            <Link to="/available-tests" className="mt-3">
+            <Link to="/tests/available" className="mt-3">
               <Button>Mavjud testlar</Button>
             </Link>
           </div>
@@ -79,8 +76,7 @@ const MyResultsPage = () => {
                     </span>
                   </div>
                   <p className="text-sm text-gray-600">
-                    {r.subject?.name} · {r.class?.name} ·{" "}
-                    {r.season?.name}
+                    {r.subject?.name} · {r.class?.name} · {r.season?.name}
                   </p>
                   <p className="text-xs text-gray-500">
                     {formatDateUZ(r.createdAt)}
@@ -111,9 +107,8 @@ const MyResultsPage = () => {
           ))}
         </div>
       )}
-      </div>
     </div>
   );
 };
 
-export default MyResultsPage;
+export default MyResultsList;

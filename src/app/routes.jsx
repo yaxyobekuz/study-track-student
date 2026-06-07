@@ -55,16 +55,19 @@ import StatisticsCoinsPage from "@/features/statistics/pages/StatisticsCoinsPage
 import MarketLayout from "@/features/market/layouts/MarketLayout";
 import StatisticsLayout from "@/features/statistics/layouts/StatisticsLayout";
 
+// Tests hub (tabs)
+import TestsPage from "@/features/dashboard/pages/TestsPage";
+import AvailableTestsList from "@/features/take-test/components/AvailableTestsList";
+import MyResultsList from "@/features/my-results/components/MyResultsList";
+import SeasonsList from "@/features/season-rewards/components/SeasonsList";
+
 // Take test pages
-import AvailableTestsPage from "@/features/take-test/pages/AvailableTestsPage";
 import TakeTestPage from "@/features/take-test/pages/TakeTestPage";
 
 // My results pages
-import MyResultsPage from "@/features/my-results/pages/MyResultsPage";
 import ResultDetailPage from "@/features/my-results/pages/ResultDetailPage";
 
 // Season rewards pages
-import SeasonsListPage from "@/features/season-rewards/pages/SeasonsListPage";
 import SeasonRewardsPage from "@/features/season-rewards/pages/SeasonRewardsPage";
 
 const Routes = () => {
@@ -122,17 +125,32 @@ const Routes = () => {
             <Route path=":gameId" element={<GamePage />} />
           </Route>
 
-          {/* Tests */}
-          <Route path="/available-tests" element={<AvailableTestsPage />} />
+          {/* Tests hub (tabs: Testlar / Natijalar / Reyting) */}
+          <Route path="/tests" element={<TestsPage />}>
+            <Route index element={<Navigate to="/tests/available" replace />} />
+            <Route path="available" element={<AvailableTestsList />} />
+            <Route path="results" element={<MyResultsList />} />
+            <Route path="rating" element={<SeasonsList />} />
+          </Route>
+
+          {/* Take test + detail pages */}
           <Route path="/take-test/:bindingId" element={<TakeTestPage />} />
-
-          {/* My results */}
-          <Route path="/my-results" element={<MyResultsPage />} />
           <Route path="/my-results/:id" element={<ResultDetailPage />} />
-
-          {/* Seasons & rewards */}
-          <Route path="/seasons" element={<SeasonsListPage />} />
           <Route path="/seasons/:id/rewards" element={<SeasonRewardsPage />} />
+
+          {/* Eski yo'llar -> markaz tablariga yo'naltirish */}
+          <Route
+            path="/available-tests"
+            element={<Navigate to="/tests/available" replace />}
+          />
+          <Route
+            path="/my-results"
+            element={<Navigate to="/tests/results" replace />}
+          />
+          <Route
+            path="/seasons"
+            element={<Navigate to="/tests/rating" replace />}
+          />
         </Route>
       </Route>
 
