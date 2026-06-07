@@ -5,11 +5,12 @@ import { cn } from "../../utils/cn";
 import { NavLink } from "react-router-dom";
 
 // Icons
-import { Home, User, Store, ChartNoAxesColumn } from "lucide-react";
+import { Home, User, Store, ClipboardList, ChartNoAxesColumn } from "lucide-react";
 
 const BottomNavbar = () => {
   const navItems = [
     { path: "/dashboard", label: "Asosiy", icon: Home },
+    { path: "/tests", label: "Testlar", icon: ClipboardList },
     { path: "/market", label: "Do'kon", icon: Store },
     { path: "/statistics", label: "Statistika", icon: ChartNoAxesColumn },
     { path: "/profile", label: "Profil", icon: User },

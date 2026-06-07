@@ -1,21 +1,8 @@
 // Icons
-import {
-  Coins,
-  Gamepad2,
-  ClipboardList,
-  TriangleAlert,
-} from "lucide-react";
+import { Coins, Gamepad2, TriangleAlert } from "lucide-react";
 
 // Bosh sahifadagi asosiy kartalar
 const topNavItems = [
-  {
-    to: "/tests",
-    label: "Testlar",
-    description: "Mavjud testlar, natijalar va mavsumlar",
-    icon: ClipboardList,
-    gradientFrom: "from-blue-400",
-    gradientTo: "to-blue-700",
-  },
   {
     to: "/penalties",
     label: "Jarimalar",

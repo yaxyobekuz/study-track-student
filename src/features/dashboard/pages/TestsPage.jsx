@@ -1,23 +1,35 @@
+// Utils
+import { cn } from "@/shared/utils/cn";
+
 // Router
 import { Outlet } from "react-router-dom";
+
+// Hooks
+import useTelegram from "@/shared/hooks/useTelegram";
 
 // Data
 import { testTabs } from "../data/nav.data";
 
 // Components
 import Tabs from "@/shared/components/ui/Tabs";
-import BackHeader from "@/shared/components/layout/BackHeader";
+import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 
 /**
- * "Testlar" markazi - URL bo'yicha tablar (Testlar / Natijalar / Reyting).
- * Har tab kontenti ichki route orqali <Outlet /> da render bo'ladi.
+ * "Testlar" bo'limi - pastki navbar destination.
+ * URL bo'yicha tablar (Testlar / Natijalar / Reyting), har tab kontenti <Outlet /> da.
  */
 const TestsPage = () => {
-  return (
-    <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
-      <BackHeader href="/dashboard" title="Testlar" />
+  const { setHeaderColor } = useTelegram();
 
-      <div className="container pt-4 space-y-4">
+  setHeaderColor("#3b82f6");
+
+  return (
+    <div className="min-h-screen pb-40 animate__animated animate__fadeIn">
+      <div className="container pt-5 space-y-4">
+        {/* Title */}
+        <h1 className={cn("text-primary font-bold text-xl")}>Testlar</h1>
+
+        {/* Tabs */}
         <Tabs
           activePathIndex={1}
           listClassName="w-full"
@@ -25,8 +37,12 @@ const TestsPage = () => {
           getItemHref={(item) => item.path}
         />
 
+        {/* Content */}
         <Outlet />
       </div>
+
+      {/* Navbar */}
+      <BottomNavbar />
     </div>
   );
 };
