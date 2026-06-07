@@ -90,7 +90,7 @@ const AvailableTestsPage = () => {
               {b.hasInProgress && (
                 <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 text-amber-800 text-xs">
                   <AlertCircle size={14} />
-                  Davom etayotgan sessiyangiz bor — bosish davom ettiradi
+                  Davom etayotgan sessiyangiz bor - bosish davom ettiradi
                 </div>
               )}
 

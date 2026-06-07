@@ -158,7 +158,7 @@ const createStub = () => ({
 /**
  * Hook wrapping the full Telegram Mini App WebApp API.
  *
- * Safe to use outside Telegram — returns stubs and `isDev: true`.
+ * Safe to use outside Telegram - returns stubs and `isDev: true`.
  *
  * Usage:
  * ```jsx
@@ -191,7 +191,7 @@ const useTelegram = () => {
   );
   const [isExpanded, setIsExpanded] = useState(tg.isExpanded ?? false);
 
-  // ── Stable data — read once, not reactive ───────────────────────────────────
+  // ── Stable data - read once, not reactive ───────────────────────────────────
   const initData = tg.initData;
   const initDataUnsafe = tg.initDataUnsafe ?? {};
   const user = initDataUnsafe.user ?? null;
@@ -201,10 +201,10 @@ const useTelegram = () => {
   const version = tg.version;
   const platform = tg.platform;
 
-  // ── initData structural validation — computed once ──────────────────────────
+  // ── initData structural validation - computed once ──────────────────────────
   /**
    * True if initData passes structural checks.
-   * Does NOT guarantee authenticity — use backend HMAC check for that.
+   * Does NOT guarantee authenticity - use backend HMAC check for that.
    * @type {boolean}
    */
   const isDataValid = useMemo(() => validateInitDataStructure(initData), [initData]);
@@ -599,7 +599,7 @@ const useTelegram = () => {
      * Send this to your backend for real HMAC-SHA256 verification with your bot token.
      */
     initData,
-    /** Parsed initData object (use cautiously — not cryptographically verified on frontend) */
+    /** Parsed initData object (use cautiously - not cryptographically verified on frontend) */
     initDataUnsafe,
     /**
      * Structural pre-validation result (hash format, auth_date age, user.id presence).
@@ -614,13 +614,13 @@ const useTelegram = () => {
     platform,
 
     // ── Reactive state ────────────────────────────────────────────────────────
-    /** Current color scheme — updates reactively on theme change */
+    /** Current color scheme - updates reactively on theme change */
     colorScheme,
-    /** Current Telegram theme color tokens — updates reactively */
+    /** Current Telegram theme color tokens - updates reactively */
     themeParams,
-    /** Current viewport height in px — updates reactively */
+    /** Current viewport height in px - updates reactively */
     viewportHeight,
-    /** Stable viewport height in px (excludes on-screen keyboard) — updates reactively */
+    /** Stable viewport height in px (excludes on-screen keyboard) - updates reactively */
     viewportStableHeight,
     /** Whether the Mini App is expanded to full height */
     isExpanded,

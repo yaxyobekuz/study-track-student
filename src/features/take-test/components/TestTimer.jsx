@@ -24,7 +24,7 @@ const formatTime = (totalSeconds) => {
 };
 
 /**
- * Test taymeri — qolgan vaqtni server `expiresAt` dan hisoblaydi.
+ * Test taymeri - qolgan vaqtni server `expiresAt` dan hisoblaydi.
  * Klient soatiga ishonmaydi: doim shu paytdagi `new Date()` va `expiresAt` farqini oladi.
  * Vaqt tugaganda `onExpire` chaqiriladi (faqat bir marta).
  *

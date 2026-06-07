@@ -25,7 +25,7 @@ import { cn } from "@/shared/utils/cn";
 import { formatDateUZ } from "@/shared/utils/date.utils";
 
 /**
- * O'quvchining bitta natijasi — javoblar va baholash yonma-yon.
+ * O'quvchining bitta natijasi - javoblar va baholash yonma-yon.
  *
  * Variantli savollar uchun: tanlangan variant va to'g'ri ekanligi
  * (perQuestion.awardedPoints === maxPoints orqali) ko'rsatiladi.
@@ -192,7 +192,7 @@ const StatBox = ({ label, value, highlight = false }) => (
  * Variantli savol uchun: o'quvchi tanlovi to'g'rimi/noto'g'rimi
  * `perQuestion.awardedPoints === maxPoints` orqali aniqlanadi.
  * Server `correctOptionId` ni qaytarmaydi, shuning uchun "to'g'ri javob qaysi"
- * ko'rsatilmaydi — bu maxsus qaror: o'quvchi to'g'ri javobni keyingi qaytadan
+ * ko'rsatilmaydi - bu maxsus qaror: o'quvchi to'g'ri javobni keyingi qaytadan
  * topshirishida ko'rmaslik uchun.
  */
 const QAReviewCard = ({ index, question, answer, perQuestion }) => {
@@ -248,7 +248,7 @@ const QAReviewCard = ({ index, question, answer, perQuestion }) => {
         </div>
       </div>
 
-      {/* Variantli — tanlangan variant ko'rsatiladi */}
+      {/* Variantli - tanlangan variant ko'rsatiladi */}
       {isStandard && (
         <div className="space-y-2">
           {question.options.map((opt, i) => {
@@ -311,7 +311,7 @@ const QAReviewCard = ({ index, question, answer, perQuestion }) => {
         </div>
       )}
 
-      {/* Ochiq — javob matni va o'qituvchi izohi */}
+      {/* Ochiq - javob matni va o'qituvchi izohi */}
       {!isStandard && (
         <div className="space-y-2">
           <div className="p-3 rounded-lg bg-gray-50">

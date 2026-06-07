@@ -1,6 +1,6 @@
 import http from "@/shared/api/http";
 
-// O'quvchi test sessiyasi (V3 — binding asosida).
+// O'quvchi test sessiyasi (V3 - binding asosida).
 export const studentTestSessionsAPI = {
   start: (bindingId) => http.post("/api/test-sessions", { bindingId }),
   getMy: (params = {}) => http.get("/api/test-sessions/my", { params }),

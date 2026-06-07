@@ -33,14 +33,14 @@ import { cn } from "@/shared/utils/cn";
  * O'quvchi test ishlash sahifasi.
  *
  * Asosiy oqim:
- *  - Mount: startSession(testId) — yangi yoki davom etayotgan sessiyani oladi
+ *  - Mount: startSession(testId) - yangi yoki davom etayotgan sessiyani oladi
  *  - Har javob: PUT /test-sessions/:id/answers (avtomatik saqlash)
  *  - Vaqt tugaganda: auto-submit
  *  - Qo'lda submit: tasdiqlash so'raydi → POST /:id/submit → /my-results/:id
  *
  * Taymer yaxlitligi: TestTimer server `expiresAt` ni manba qiladi.
  * Klient soatiga ishonmaydi. Har saveAnswer/submit serverdan rad olishi mumkin
- * (vaqt tugagan bo'lsa — toast bilan yo'naltirish).
+ * (vaqt tugagan bo'lsa - toast bilan yo'naltirish).
  */
 const TakeTestPage = () => {
   // V3: bindingId orqali sessiya boshlash
@@ -51,7 +51,7 @@ const TakeTestPage = () => {
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
   const [loadingStart, setLoadingStart] = useState(true);
-  // Mahalliy javoblar — { questionId: { selectedOptionId?, textAnswer? } }
+  // Mahalliy javoblar - { questionId: { selectedOptionId?, textAnswer? } }
   const [answers, setAnswers] = useState({});
   // Submit jarayoni boshlanganligi (auto-submit double-fire ni oldini olish uchun)
   const submittingRef = useRef(false);
@@ -152,7 +152,7 @@ const TakeTestPage = () => {
     if (submittingRef.current) return;
     submittingRef.current = true;
     setSubmitting(true);
-    // submit chaqirish — server allaqachon expired qilgan bo'lsa,
+    // submit chaqirish - server allaqachon expired qilgan bo'lsa,
     // qaytarayotgan xato ham bo'lishi mumkin, lekin natijalar ro'yxatiga yuborish kifoya
     studentTestSessionsAPI
       .submit(session._id)
@@ -182,7 +182,7 @@ const TakeTestPage = () => {
     [saveAnswerMutation],
   );
 
-  // Vaqt tugaganda — auto-submit
+  // Vaqt tugaganda - auto-submit
   const handleTimerExpire = useCallback(() => {
     toast.warning("Test vaqti tugadi. Avtomatik topshirilmoqda...");
     submitSession();

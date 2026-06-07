@@ -94,7 +94,7 @@ const MyResultsPage = () => {
                       {r.finalScore}
                       <span className="text-sm font-normal text-gray-500">
                         {" "}
-                        / {r.test?.maxScore || "—"}
+                        / {r.test?.maxScore || "-"}
                       </span>
                     </p>
                   </div>

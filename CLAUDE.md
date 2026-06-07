@@ -1,4 +1,4 @@
-# Claude Code — Student Module Rules
+# Claude Code - Student Module Rules
 
 > Global rules in root CLAUDE.md also apply.
 
