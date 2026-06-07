@@ -44,9 +44,13 @@ const SeasonsList = () => {
           </div>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {seasons.map((season) => (
-            <Link key={season._id} to={`/seasons/${season._id}/rewards`}>
+            <Link
+              className="block"
+              key={season._id}
+              to={`/seasons/${season._id}/rewards`}
+            >
               <Card className="transition-shadow hover:shadow-md">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
