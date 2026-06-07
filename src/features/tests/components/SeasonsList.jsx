@@ -16,10 +16,6 @@ import Card from "@/shared/components/ui/Card";
 // Utils
 import { formatDateUZ } from "@/shared/utils/date.utils";
 
-/**
- * Faol mavsumlar ro'yxati (reyting va mukofotlar).
- * "Testlar" markazidagi "Reyting" tabining kontenti.
- */
 const SeasonsList = () => {
   const { data: seasons = [], isLoading } = useQuery({
     queryKey: ["test-seasons", "active"],
@@ -28,10 +24,6 @@ const SeasonsList = () => {
 
   return (
     <div className="space-y-4">
-      <p className="text-gray-600">
-        Faol mavsumlar bo'yicha statistika va mukofotlar.
-      </p>
-
       {isLoading ? (
         <Card>
           <p className="text-center text-gray-500 py-10">Yuklanmoqda...</p>
@@ -51,23 +43,17 @@ const SeasonsList = () => {
               key={season._id}
               to={`/seasons/${season._id}/rewards`}
             >
-              <Card className="transition-shadow hover:shadow-md">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-start gap-3 flex-1 min-w-0">
-                    <div className="flex items-center justify-center size-10 rounded-lg bg-amber-50 text-amber-600 shrink-0">
-                      <Award size={20} />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
-                        {season.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 mt-0.5">
-                        {formatDateUZ(season.startDate)} →{" "}
-                        {formatDateUZ(season.endDate)}
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight size={20} className="text-gray-400 shrink-0" />
+              <Card className="flex items-start gap-3 flex-1 min-w-0">
+                <div className="flex items-center justify-center size-10 rounded-lg bg-amber-50 text-amber-600 shrink-0">
+                  <Award size={20} />
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900">{season.name}</h3>
+                  <p className="text-sm text-gray-600 mt-0.5">
+                    {formatDateUZ(season.startDate)} →{" "}
+                    {formatDateUZ(season.endDate)}
+                  </p>
                 </div>
               </Card>
             </Link>
