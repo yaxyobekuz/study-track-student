@@ -191,26 +191,30 @@ const TakeTestPage = () => {
   // ───── Render ─────
   if (loadingStart) {
     return (
-      <Card>
-        <div className="flex items-center justify-center gap-2 py-10 text-gray-500">
-          <Loader2 size={20} className="animate-spin" />
-          <span>Test yuklanmoqda...</span>
-        </div>
-      </Card>
+      <div className="container pt-4">
+        <Card>
+          <div className="flex items-center justify-center gap-2 py-10 text-gray-500">
+            <Loader2 size={20} className="animate-spin" />
+            <span>Test yuklanmoqda...</span>
+          </div>
+        </Card>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Card>
-        <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+      <div className="container pt-4">
+        <Card>
+          <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
           <AlertCircle size={40} className="text-red-400" />
           <p className="text-gray-900 font-medium">{error}</p>
           <Button variant="outline" onClick={() => navigate("/available-tests")}>
             Orqaga
           </Button>
-        </div>
-      </Card>
+          </div>
+        </Card>
+      </div>
     );
   }
 
@@ -223,7 +227,7 @@ const TakeTestPage = () => {
   ).length;
 
   return (
-    <div className="space-y-5">
+    <div className="container space-y-5">
       {/* Sarlavha va taymer */}
       <div className="flex items-start justify-between gap-3 flex-wrap sticky top-0 z-10 bg-gray-50 pt-1 pb-2">
         <div>
