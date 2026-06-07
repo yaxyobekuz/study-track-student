@@ -104,12 +104,18 @@ const ResultDetailPage = () => {
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <StatBox
             label="Yakuniy ball"
-            value={`${result.finalScore} / ${test.maxScore}`}
+            value={`${result.finalScore} / ${result.maxScore ?? "-"}`}
             highlight
           />
-          <StatBox label="Avtomatik" value={result.autoGradedScore} />
-          <StatBox label="Qo'lda baholangan" value={result.manualGradedScore} />
-          <StatBox label="Qo'shimcha" value={extraSum} />
+          <StatBox
+            label="Avtomatik baholangan javoblar"
+            value={result.autoGradedScore}
+          />
+          <StatBox
+            label="Qo'lda baholangan javoblar"
+            value={result.manualGradedScore}
+          />
+          <StatBox label="Qo'shimcha baholangan" value={extraSum} />
         </div>
         {result.status === "pending" && (
           <div className="mt-4 flex items-center gap-2 text-sm text-amber-700">
