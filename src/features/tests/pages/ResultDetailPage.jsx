@@ -23,6 +23,7 @@ import BackHeader from "@/shared/components/layout/BackHeader";
 // Utils
 import { cn } from "@/shared/utils/cn";
 import { formatDateUZ } from "@/shared/utils/date.utils";
+import { formatScore } from "@/shared/utils/formatScore";
 
 /**
  * O'quvchining bitta natijasi - javoblar va baholash yonma-yon.
@@ -104,24 +105,41 @@ const ResultDetailPage = () => {
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <StatBox
             label="Yakuniy ball"
-            value={`${result.finalScore} / ${result.maxScore ?? "-"}`}
+            value={`${formatScore(result.finalScore)} / ${
+              result.maxScore != null ? formatScore(result.maxScore) : "-"
+            }`}
             highlight
           />
           <StatBox
             label="Avtomatik baholangan javoblar"
-            value={result.autoGradedScore}
+            value={formatScore(result.autoGradedScore)}
           />
           <StatBox
             label="Qo'lda baholangan javoblar"
-            value={result.manualGradedScore}
+            value={formatScore(result.manualGradedScore)}
           />
-          <StatBox label="Qo'shimcha baholangan" value={extraSum} />
+          <StatBox label="Qo'shimcha baholangan" value={formatScore(extraSum)} />
         </div>
         {result.status === "pending" && (
           <div className="mt-4 flex items-center gap-2 text-sm text-amber-700">
             <Clock size={16} />
             Ochiq savollar o'qituvchi tomonidan baholanmoqda. Yakuniy ball
             o'zgarishi mumkin.
+          </div>
+        )}
+        {result.status !== "pending" && result.gradingMin != null && (
+          <div className="mt-4">
+            <span
+              className={cn(
+                "inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium",
+                result.passed
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700",
+              )}
+            >
+              {result.passed ? "O'tdi" : "O'tmadi"} (o'tish bali:{" "}
+              {formatScore(result.gradingMin)})
+            </span>
           </div>
         )}
       </Card>
@@ -233,7 +251,7 @@ const QAReviewCard = ({ index, question, answer, perQuestion }) => {
             >
               {isPending
                 ? "Baholanmoqda"
-                : `${awarded} / ${maxPoints} ball`}
+                : `${formatScore(awarded)} / ${formatScore(maxPoints)} ball`}
             </span>
           </div>
 

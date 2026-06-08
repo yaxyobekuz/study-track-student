@@ -23,6 +23,7 @@ import Button from "@/shared/components/ui/button/Button";
 // Utils
 import { cn } from "@/shared/utils/cn";
 import { formatDateUZ } from "@/shared/utils/date.utils";
+import { formatScore } from "@/shared/utils/formatScore";
 
 /**
  * O'quvchining barcha test natijalari ro'yxati.
@@ -83,10 +84,10 @@ const MyResultsList = () => {
                       </p>
 
                       <p className="text-xl font-bold text-blue-700">
-                        {r.finalScore}
+                        {formatScore(r.finalScore)}
                         <span className="text-sm font-normal text-gray-500">
                           {" "}
-                          / {r.maxScore ?? "-"}
+                          / {r.maxScore != null ? formatScore(r.maxScore) : "-"}
                         </span>
                       </p>
                     </div>

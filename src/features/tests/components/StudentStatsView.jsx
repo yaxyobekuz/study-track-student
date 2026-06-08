@@ -1,8 +1,11 @@
+// React
+import { useState } from "react";
+
 // Tanstack Query
 import { useQuery } from "@tanstack/react-query";
 
 // Icons
-import { Trophy, Award, Coins, ListChecks } from "lucide-react";
+import { Trophy, Award, Coins, ListChecks, BarChart3 } from "lucide-react";
 
 // API
 import { testSeasonsAPI } from "@/features/tests/api/testSeasons.api";
@@ -12,9 +15,11 @@ import Card from "@/shared/components/ui/Card";
 
 // Utils
 import { cn } from "@/shared/utils/cn";
+import { formatScore } from "@/shared/utils/formatScore";
 
 /**
- * O'quvchining mavsum statistikasi: ball, o'rin, sinf o'rni, va mukofotlar.
+ * O'quvchining mavsum statistikasi: o'rtacha ball, o'rin, sinf o'rni, mukofotlar
+ * va sinf/maktab darajasidagi reytinglar.
  */
 const StudentStatsView = ({ season }) => {
   const { data: stats, isLoading } = useQuery({
@@ -31,22 +36,29 @@ const StudentStatsView = ({ season }) => {
     );
   }
 
-  const totalScore = stats?.totalScore || 0;
+  const averageScore = stats?.averageScore || 0;
+  const myId = stats?.student?._id;
+  const myClassId = stats?.student?.classes?.[0]?._id;
 
-  // Mavjud darajalar bo'yicha qaysisiga to'g'ri kelishi
+  // Darajalar o'rtacha ballga nisbatan tekshiriladi
   const absTiers = [...(season.absoluteTiers || [])].sort(
     (a, b) => b.minScore - a.minScore,
   );
-  const matchedAbsoluteTier = absTiers.find((t) => totalScore >= t.minScore);
+  const matchedAbsoluteTier = absTiers.find((t) => averageScore >= t.minScore);
   const nextAbsoluteTier = [...absTiers]
     .reverse()
-    .find((t) => totalScore < t.minScore);
+    .find((t) => averageScore < t.minScore);
 
   return (
     <div className="space-y-5">
       {/* Asosiy ko'rsatkichlar */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Stat icon={ListChecks} label="Umumiy ball" value={totalScore} highlight />
+        <Stat
+          icon={ListChecks}
+          label="O'rtacha ball"
+          value={formatScore(averageScore)}
+          highlight
+        />
         <Stat
           icon={Trophy}
           label="Umumiy o'rin"
@@ -57,7 +69,11 @@ const StudentStatsView = ({ season }) => {
           label="Sinfdagi o'rin"
           value={stats?.classRank ? `#${stats.classRank}` : "-"}
         />
-        <Stat icon={ListChecks} label="Testlar" value={stats?.resultCount || 0} />
+        <Stat
+          icon={ListChecks}
+          label="Topshirgan / Biriktirilgan"
+          value={`${stats?.resultCount || 0} / ${stats?.assignedCount || 0}`}
+        />
       </div>
 
       {/* Joriy daraja */}
@@ -99,12 +115,23 @@ const StudentStatsView = ({ season }) => {
                 {nextAbsoluteTier.name} - {nextAbsoluteTier.coinReward} coin
               </p>
               <p className="text-xs text-gray-600 mt-0.5">
-                Yana <strong>{nextAbsoluteTier.minScore - totalScore}</strong> ball kerak
+                Yana{" "}
+                <strong>
+                  {formatScore(nextAbsoluteTier.minScore - averageScore)}
+                </strong>{" "}
+                ball kerak
               </p>
             </div>
           </div>
         </Card>
       )}
+
+      {/* Sinf / maktab reytingi */}
+      <StandingsSection
+        seasonId={season._id}
+        myId={myId}
+        myClassId={myClassId}
+      />
 
       {/* Barcha darajalar ro'yxati */}
       {(season.absoluteTiers || []).length > 0 && (
@@ -113,7 +140,7 @@ const StudentStatsView = ({ season }) => {
             {[...(season.absoluteTiers || [])]
               .sort((a, b) => b.minScore - a.minScore)
               .map((tier, idx) => {
-                const reached = totalScore >= tier.minScore;
+                const reached = averageScore >= tier.minScore;
                 return (
                   <div
                     key={idx}
@@ -132,7 +159,7 @@ const StudentStatsView = ({ season }) => {
                         {tier.name}
                       </p>
                       <p className="text-xs text-gray-600">
-                        {tier.minScore} ball'dan boshlab
+                        {formatScore(tier.minScore)} ball'dan boshlab
                       </p>
                     </div>
                     <span className="font-semibold text-amber-600">
@@ -145,6 +172,101 @@ const StudentStatsView = ({ season }) => {
         </Card>
       )}
     </div>
+  );
+};
+
+/**
+ * Sinf va maktab darajasidagi reyting jadvali (o'quvchi o'zini ko'radi).
+ */
+const StandingsSection = ({ seasonId, myId, myClassId }) => {
+  const [level, setLevel] = useState("school");
+  const isClass = level === "class";
+
+  const { data: rows = [], isLoading } = useQuery({
+    queryKey: ["season-standings", seasonId, level, myClassId || "-"],
+    queryFn: () =>
+      (isClass && myClassId
+        ? testSeasonsAPI.getClassStats(seasonId, myClassId)
+        : testSeasonsAPI.getStats(seasonId)
+      ).then((res) => res.data.data),
+    enabled: !isClass || Boolean(myClassId),
+  });
+
+  return (
+    <Card title="Reyting">
+      <div className="mt-3 mb-3 inline-flex rounded-lg bg-gray-100 p-1">
+        <button
+          type="button"
+          onClick={() => setLevel("school")}
+          className={cn(
+            "px-3 py-1.5 text-sm rounded-md",
+            !isClass ? "bg-white shadow font-medium" : "text-gray-600",
+          )}
+        >
+          Maktab
+        </button>
+        <button
+          type="button"
+          onClick={() => setLevel("class")}
+          disabled={!myClassId}
+          className={cn(
+            "px-3 py-1.5 text-sm rounded-md",
+            isClass ? "bg-white shadow font-medium" : "text-gray-600",
+            !myClassId && "opacity-40 cursor-not-allowed",
+          )}
+        >
+          Sinf
+        </button>
+      </div>
+
+      {isLoading ? (
+        <p className="text-center text-gray-500 py-8">Yuklanmoqda...</p>
+      ) : rows.length === 0 ? (
+        <div className="flex flex-col items-center py-8 text-center">
+          <BarChart3 size={36} className="text-gray-300" />
+          <p className="mt-2 text-gray-600">Hozircha natijalar yo'q</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b text-left text-gray-600">
+                <th className="py-2 px-3 font-medium w-12">#</th>
+                <th className="py-2 px-3 font-medium">O'quvchi</th>
+                <th className="py-2 px-3 font-medium">O'rtacha ball</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => {
+                const isMe = myId && r.student._id === myId;
+                return (
+                  <tr
+                    key={r.student._id}
+                    className={cn(
+                      "border-b",
+                      isMe ? "bg-blue-50 font-medium" : "hover:bg-gray-50",
+                    )}
+                  >
+                    <td className="py-2.5 px-3 text-gray-500">
+                      {isClass ? r.classRank : r.rank}
+                    </td>
+                    <td className="py-2.5 px-3 text-gray-900">
+                      {r.student.firstName} {r.student.lastName}
+                      {isMe && (
+                        <span className="ml-1 text-xs text-blue-600">(siz)</span>
+                      )}
+                    </td>
+                    <td className="py-2.5 px-3 font-semibold text-blue-700">
+                      {formatScore(r.averageScore)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Card>
   );
 };
 
