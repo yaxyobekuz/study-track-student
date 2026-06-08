@@ -1,5 +1,5 @@
 // React
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 // Tanstack Query
 import { useQuery } from "@tanstack/react-query";
@@ -12,16 +12,28 @@ import { testSeasonsAPI } from "@/features/tests/api/testSeasons.api";
 
 // Components
 import Card from "@/shared/components/ui/Card";
+import Tabs from "@/shared/components/ui/Tabs";
+import SelectField from "@/shared/components/ui/select/SelectField";
+
+// Data
+import {
+  SEASON_STATS_TABS,
+  seasonStatsTabs,
+} from "@/features/tests/data/seasonStatsTabs.data";
 
 // Utils
 import { cn } from "@/shared/utils/cn";
 import { formatScore } from "@/shared/utils/formatScore";
 
 /**
- * O'quvchining mavsum statistikasi: o'rtacha ball, o'rin, sinf o'rni,
- * maktab/sinf mukofotlari va sinf/maktab darajasidagi reytinglar.
+ * O'quvchining mavsum statistikasi 3 ta tabda:
+ *  - Siz: o'quvchining shu mavsumdagi shaxsiy natijalari va mukofotlari
+ *  - Sinf: tanlangan sinf bo'yicha reyting
+ *  - Maktab: butun maktab bo'yicha reyting
  */
 const StudentStatsView = ({ season }) => {
+  const [tab, setTab] = useState(SEASON_STATS_TABS.YOU);
+
   const { data: stats, isLoading } = useQuery({
     queryKey: ["season-my-stats", season._id],
     queryFn: () =>
@@ -36,16 +48,49 @@ const StudentStatsView = ({ season }) => {
     );
   }
 
-  const averageScore = stats?.averageScore || 0;
   const myId = stats?.student?._id;
-  const myClassId = stats?.student?.classes?.[0]?._id;
+  const myClasses = stats?.student?.classes || [];
+
+  return (
+    <div className="space-y-4">
+      <Tabs
+        items={seasonStatsTabs}
+        value={tab}
+        onValueChange={setTab}
+        listClassName="w-full"
+        triggerClassName="flex-1"
+      />
+
+      {tab === SEASON_STATS_TABS.YOU && (
+        <YouTab season={season} stats={stats} />
+      )}
+      {tab === SEASON_STATS_TABS.CLASS && (
+        <ClassStandingsTab
+          seasonId={season._id}
+          myId={myId}
+          classes={myClasses}
+        />
+      )}
+      {tab === SEASON_STATS_TABS.SCHOOL && (
+        <SchoolStandingsTab seasonId={season._id} myId={myId} />
+      )}
+    </div>
+  );
+};
+
+/**
+ * "Siz" tab: o'quvchining shaxsiy ko'rsatkichlari va o'rin mukofotlari.
+ */
+const YouTab = ({ season, stats }) => {
+  const averageScore = stats?.averageScore || 0;
 
   const schoolTiers = [...(season.schoolTiers || [])].sort(
     (a, b) => a.position - b.position,
   );
-  const myClassTiers = (season.classTiers || [])
-    .filter((ct) => myClassId && ct.class?.toString() === myClassId.toString())
-    .sort((a, b) => a.position - b.position);
+  // Sinf darajalari umumiy - har sinfga (shu jumladan o'quvchining sinfiga) qo'llanadi
+  const classTiers = [...(season.classTiers || [])].sort(
+    (a, b) => a.position - b.position,
+  );
 
   return (
     <div className="space-y-5">
@@ -82,16 +127,142 @@ const StudentStatsView = ({ season }) => {
       />
       <RewardsCard
         title="Sinf bo'yicha mukofotlar"
-        tiers={myClassTiers}
+        tiers={classTiers}
         myPosition={stats?.classRank}
       />
+    </div>
+  );
+};
 
-      {/* Sinf / maktab reytingi */}
-      <StandingsSection
-        seasonId={season._id}
-        myId={myId}
-        myClassId={myClassId}
-      />
+/**
+ * "Sinf" tab: o'quvchi o'ziga biriktirilgan sinflardan birini tanlab,
+ * shu sinf bo'yicha reytingni ko'radi.
+ */
+const ClassStandingsTab = ({ seasonId, myId, classes }) => {
+  const classOptions = useMemo(
+    () => classes.map((c) => ({ value: c._id, label: c.name })),
+    [classes],
+  );
+
+  const [selectedClassId, setSelectedClassId] = useState(
+    classes[0]?._id || "",
+  );
+
+  const { data: rows = [], isLoading } = useQuery({
+    queryKey: ["season-standings", seasonId, "class", selectedClassId],
+    queryFn: () =>
+      testSeasonsAPI
+        .getClassStats(seasonId, selectedClassId)
+        .then((res) => res.data.data),
+    enabled: Boolean(selectedClassId),
+  });
+
+  if (classes.length === 0) {
+    return (
+      <Card>
+        <div className="flex flex-col items-center py-10 text-center">
+          <BarChart3 size={36} className="text-gray-300" />
+          <p className="mt-2 text-gray-600">
+            Sizga biriktirilgan sinflar yo'q.
+          </p>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <div className="mb-4 max-w-xs">
+        <SelectField
+          label="Sinf"
+          value={selectedClassId}
+          onChange={setSelectedClassId}
+          options={classOptions}
+          searchable={classOptions.length > 6}
+          placeholder="Sinfni tanlang"
+          searchPlaceholder="Sinfni qidirish..."
+          emptyText="Sinf topilmadi"
+          triggerClassName="w-full"
+        />
+      </div>
+
+      <StandingsTable rows={rows} myId={myId} isLoading={isLoading} isClass />
+    </Card>
+  );
+};
+
+/**
+ * "Maktab" tab: butun maktab bo'yicha reyting.
+ */
+const SchoolStandingsTab = ({ seasonId, myId }) => {
+  const { data: rows = [], isLoading } = useQuery({
+    queryKey: ["season-standings", seasonId, "school"],
+    queryFn: () =>
+      testSeasonsAPI.getStats(seasonId).then((res) => res.data.data),
+  });
+
+  return (
+    <Card>
+      <StandingsTable rows={rows} myId={myId} isLoading={isLoading} />
+    </Card>
+  );
+};
+
+/**
+ * Reyting jadvali. O'quvchi o'z qatorini ajratilgan holda ko'radi.
+ */
+const StandingsTable = ({ rows, myId, isLoading, isClass = false }) => {
+  if (isLoading) {
+    return <p className="text-center text-gray-500 py-8">Yuklanmoqda...</p>;
+  }
+
+  if (rows.length === 0) {
+    return (
+      <div className="flex flex-col items-center py-8 text-center">
+        <BarChart3 size={36} className="text-gray-300" />
+        <p className="mt-2 text-gray-600">Hozircha natijalar yo'q</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="min-w-full text-sm">
+        <thead>
+          <tr className="border-b text-left text-gray-600">
+            <th className="py-2 px-3 font-medium w-12">#</th>
+            <th className="py-2 px-3 font-medium">O'quvchi</th>
+            <th className="py-2 px-3 font-medium">O'rtacha ball</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => {
+            const isMe = myId && r.student._id === myId;
+            return (
+              <tr
+                key={r.student._id}
+                className={cn(
+                  "border-b",
+                  isMe ? "bg-blue-50 font-medium" : "hover:bg-gray-50",
+                )}
+              >
+                <td className="py-2.5 px-3 text-gray-500">
+                  {isClass ? r.classRank : r.rank}
+                </td>
+                <td className="py-2.5 px-3 text-gray-900">
+                  {r.student.firstName} {r.student.lastName}
+                  {isMe && (
+                    <span className="ml-1 text-xs text-blue-600">(siz)</span>
+                  )}
+                </td>
+                <td className="py-2.5 px-3 font-semibold text-blue-700">
+                  {formatScore(r.averageScore)}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };
@@ -141,121 +312,32 @@ const RewardsCard = ({ title, tiers, myPosition }) => {
   );
 };
 
-/**
- * Sinf va maktab darajasidagi reyting jadvali (o'quvchi o'zini ko'radi).
- */
-const StandingsSection = ({ seasonId, myId, myClassId }) => {
-  const [level, setLevel] = useState("school");
-  const isClass = level === "class";
-
-  const { data: rows = [], isLoading } = useQuery({
-    queryKey: ["season-standings", seasonId, level, myClassId || "-"],
-    queryFn: () =>
-      (isClass && myClassId
-        ? testSeasonsAPI.getClassStats(seasonId, myClassId)
-        : testSeasonsAPI.getStats(seasonId)
-      ).then((res) => res.data.data),
-    enabled: !isClass || Boolean(myClassId),
-  });
-
+const Stat = ({ icon, label, value, highlight = false }) => {
+  const Icon = icon;
   return (
-    <Card title="Reyting">
-      <div className="mt-3 mb-3 inline-flex rounded-lg bg-gray-100 p-1">
-        <button
-          type="button"
-          onClick={() => setLevel("school")}
-          className={cn(
-            "px-3 py-1.5 text-sm rounded-md",
-            !isClass ? "bg-white shadow font-medium" : "text-gray-600",
-          )}
-        >
-          Maktab
-        </button>
-        <button
-          type="button"
-          onClick={() => setLevel("class")}
-          disabled={!myClassId}
-          className={cn(
-            "px-3 py-1.5 text-sm rounded-md",
-            isClass ? "bg-white shadow font-medium" : "text-gray-600",
-            !myClassId && "opacity-40 cursor-not-allowed",
-          )}
-        >
-          Sinf
-        </button>
-      </div>
-
-      {isLoading ? (
-        <p className="text-center text-gray-500 py-8">Yuklanmoqda...</p>
-      ) : rows.length === 0 ? (
-        <div className="flex flex-col items-center py-8 text-center">
-          <BarChart3 size={36} className="text-gray-300" />
-          <p className="mt-2 text-gray-600">Hozircha natijalar yo'q</p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="border-b text-left text-gray-600">
-                <th className="py-2 px-3 font-medium w-12">#</th>
-                <th className="py-2 px-3 font-medium">O'quvchi</th>
-                <th className="py-2 px-3 font-medium">O'rtacha ball</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => {
-                const isMe = myId && r.student._id === myId;
-                return (
-                  <tr
-                    key={r.student._id}
-                    className={cn(
-                      "border-b",
-                      isMe ? "bg-blue-50 font-medium" : "hover:bg-gray-50",
-                    )}
-                  >
-                    <td className="py-2.5 px-3 text-gray-500">
-                      {isClass ? r.classRank : r.rank}
-                    </td>
-                    <td className="py-2.5 px-3 text-gray-900">
-                      {r.student.firstName} {r.student.lastName}
-                      {isMe && (
-                        <span className="ml-1 text-xs text-blue-600">(siz)</span>
-                      )}
-                    </td>
-                    <td className="py-2.5 px-3 font-semibold text-blue-700">
-                      {formatScore(r.averageScore)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+    <div
+      className={cn(
+        "p-3 rounded-xl flex items-center gap-3",
+        highlight ? "bg-blue-50" : "bg-gray-50",
       )}
-    </Card>
+    >
+      <Icon
+        size={20}
+        className={highlight ? "text-blue-600" : "text-gray-500"}
+      />
+      <div className="flex-1 min-w-0">
+        <p className="text-xs text-gray-600 truncate">{label}</p>
+        <p
+          className={cn(
+            "font-bold",
+            highlight ? "text-blue-900" : "text-gray-900",
+          )}
+        >
+          {value}
+        </p>
+      </div>
+    </div>
   );
 };
-
-const Stat = ({ icon: Icon, label, value, highlight = false }) => (
-  <div
-    className={cn(
-      "p-3 rounded-xl flex items-center gap-3",
-      highlight ? "bg-blue-50" : "bg-gray-50",
-    )}
-  >
-    <Icon size={20} className={highlight ? "text-blue-600" : "text-gray-500"} />
-    <div className="flex-1 min-w-0">
-      <p className="text-xs text-gray-600 truncate">{label}</p>
-      <p
-        className={cn(
-          "font-bold",
-          highlight ? "text-blue-900" : "text-gray-900",
-        )}
-      >
-        {value}
-      </p>
-    </div>
-  </div>
-);
 
 export default StudentStatsView;
