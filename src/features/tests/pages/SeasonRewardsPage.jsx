@@ -12,9 +12,6 @@ import Card from "@/shared/components/ui/Card";
 import BackHeader from "@/shared/components/layout/BackHeader";
 import StudentStatsView from "../components/StudentStatsView";
 
-// Utils
-import { formatDateUZ } from "@/shared/utils/date.utils";
-
 /**
  * Mavsum mukofotlari sahifasi (o'quvchi).
  * O'quvchining o'z reytingi va mukofotlarini ko'rsatadi.
@@ -59,12 +56,9 @@ const SeasonRewardsPage = () => {
       <BackHeader href="/seasons" title={season.name} />
 
       <div className="container pt-4 space-y-4">
-        <p className="text-sm text-gray-600">
-          {formatDateUZ(season.startDate)} → {formatDateUZ(season.endDate)}
-          {season.distributedAt && (
-            <span className="ml-2 text-green-700">· Mukofotlar tarqatildi</span>
-          )}
-        </p>
+        {season.distributedAt && (
+          <p className="text-sm text-green-700">Mukofotlar tarqatildi</p>
+        )}
 
         <StudentStatsView season={season} />
       </div>

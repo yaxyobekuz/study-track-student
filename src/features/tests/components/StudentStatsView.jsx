@@ -94,8 +94,8 @@ const YouTab = ({ season, stats }) => {
 
   return (
     <div className="space-y-5">
-      {/* Asosiy ko'rsatkichlar */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      {/* Asosiy ko'rsatkichlar - 2x2 */}
+      <div className="grid grid-cols-2 gap-3">
         <Stat
           icon={ListChecks}
           label="O'rtacha ball"
