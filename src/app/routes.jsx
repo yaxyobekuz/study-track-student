@@ -32,6 +32,9 @@ import GetStartedPage from "@/features/get-started/pages/GetStartedPage";
 // Transactions page
 import TransactionsPage from "@/features/transactions/pages/TransactionsPage";
 
+// Finance page (MBSI Molia bazasi bilan sinxron)
+import MyFinancePage from "@/features/finance/pages/MyFinancePage";
+
 // Market pages
 import MarketProductsPage from "@/features/market/pages/MarketProductsPage";
 import MarketMyOrdersPage from "@/features/market/pages/MarketMyOrdersPage";
@@ -89,6 +92,7 @@ const Routes = () => {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/edit" element={<ProfileEditPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
+          <Route path="/finance" element={<MyFinancePage />} />
 
           {/* Statistics */}
           <Route path="/statistics" element={<StatisticsLayout />}>

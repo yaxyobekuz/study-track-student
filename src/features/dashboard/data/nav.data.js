@@ -1,8 +1,16 @@
 // Icons
-import { Coins, Gamepad2, TriangleAlert } from "lucide-react";
+import { Coins, Gamepad2, TriangleAlert, Wallet } from "lucide-react";
 
 // Bosh sahifadagi asosiy kartalar
 const topNavItems = [
+  {
+    to: "/finance",
+    label: "Mening moliyam",
+    description: "Qolgan qarz va to'lovlar",
+    icon: Wallet,
+    gradientFrom: "from-blue-400",
+    gradientTo: "to-blue-700",
+  },
   {
     to: "/penalties",
     label: "Jarimalar",
