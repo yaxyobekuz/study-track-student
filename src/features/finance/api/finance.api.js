@@ -14,4 +14,9 @@ export const financeAPI = {
   // O'quvchining moliyaviy holatini ism bo'yicha oladi (qoldiq, to'lovlar).
   getMyFinance: (name) =>
     moliaHttp.get("/api/student-finance", { params: { name } }),
+
+  // Online to'lov so'rovini yuboradi (chek rasmi bilan).
+  // payload: { name, studentId?, amount, card, receipt (dataURL), note? }
+  createPaymentRequest: (payload) =>
+    moliaHttp.post("/api/student-finance/request", payload),
 };

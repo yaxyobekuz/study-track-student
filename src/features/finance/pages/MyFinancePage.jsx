@@ -6,6 +6,7 @@ import {
   Banknote,
   CreditCard,
   TrendingUp,
+  Clock,
 } from "lucide-react";
 
 // TanStack Query
@@ -13,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 
 // Hooks
 import useMe from "@/features/auth/hooks/useMe";
+import useModal from "@/shared/hooks/useModal";
 
 // Utils
 import { cn } from "@/shared/utils/cn";
@@ -20,8 +22,10 @@ import { formatUzDate } from "@/shared/utils/formatDate";
 
 // Components
 import Card from "@/shared/components/ui/Card";
+import Button from "@/shared/components/ui/button/Button";
 import LoaderCard from "@/shared/components/ui/LoaderCard";
 import BackHeader from "@/shared/components/layout/BackHeader";
+import PayDebtModal from "@/features/finance/components/PayDebtModal";
 
 // API
 import { financeAPI } from "@/features/finance/api/finance.api";
@@ -32,6 +36,7 @@ const fmtSom = (n) =>
 
 const MyFinancePage = () => {
   const { me } = useMe();
+  const { openModal } = useModal("payDebt");
   const fullName = me?.fullName || "";
 
   const { data, isLoading, isError } = useQuery({
@@ -43,6 +48,8 @@ const MyFinancePage = () => {
   const found = data?.found;
   const s = data?.student;
   const payments = data?.payments ?? [];
+  const requests = data?.requests ?? [];
+  const pendingRequests = requests.filter((r) => r.status === "pending");
 
   const qoldiq = s?.qoldiq ?? 0;
   const isDebtor = qoldiq > 0;
@@ -108,7 +115,39 @@ const MyFinancePage = () => {
                 {s?.group ? `${s.group} · ` : ""}
                 {s?.name}
               </div>
+
+              {isDebtor && (
+                <Button
+                  onClick={() =>
+                    openModal("payDebt", { qoldiq, studentName: s?.name, studentId: s?.id })
+                  }
+                  className="mt-4 w-full bg-white text-red-600 hover:bg-white/90 font-semibold"
+                >
+                  To'lash
+                </Button>
+              )}
             </Card>
+
+            {/* Kutilayotgan so'rovlar */}
+            {pendingRequests.length > 0 && (
+              <Card className="border border-amber-200 bg-amber-50 space-y-2">
+                <div className="flex items-center gap-2 text-amber-700">
+                  <Clock className="size-4" />
+                  <span className="text-sm font-semibold">Tasdiqlanishi kutilmoqda</span>
+                </div>
+                {pendingRequests.map((r) => (
+                  <div key={r.id} className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">
+                      {formatUzDate(r.createdAt)} · {r.card}
+                    </span>
+                    <span className="font-semibold text-amber-700">{fmtSom(r.amount)} so'm</span>
+                  </div>
+                ))}
+                <p className="text-xs text-amber-600">
+                  Admin chekni tekshirmoqda. Tasdiqlangach qarzingizdan ayriladi.
+                </p>
+              </Card>
+            )}
 
             {/* Progress */}
             <Card title="To'lov holati" className="space-y-3">
@@ -195,6 +234,9 @@ const MyFinancePage = () => {
           </>
         )}
       </div>
+
+      {/* To'lash modali */}
+      <PayDebtModal />
     </div>
   );
 };
