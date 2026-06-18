@@ -1,6 +1,7 @@
 import http from "@/shared/api/http";
 
 export const premiumAPI = {
+  getConfig:            ()              => http.get("/api/premium/config"),
   getStatus:            ()              => http.get("/api/premium/status"),
   buyPremium:           ()              => http.post("/api/premium/buy"),
   getAvailableEmojis:   ()              => http.get("/api/premium/emojis"),

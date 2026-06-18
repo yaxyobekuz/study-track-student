@@ -1,12 +1,6 @@
 // Toaster
 import { toast } from "sonner";
 
-// Data
-import {
-  NAME_COLOR_OPTIONS,
-  NAME_COLOR_CLASS_MAP,
-} from "@/shared/data/nameColors.data";
-
 // React
 import { useEffect, useRef, useState } from "react";
 
@@ -14,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import useModal from "@/shared/hooks/useModal";
 import useMe from "@/features/auth/hooks/useMe";
 import usePremium from "@/features/premium/hooks/usePremium";
+import usePremiumConfig from "@/features/premium/hooks/usePremiumConfig";
 
 // API
 import { premiumAPI } from "@/features/premium/api/premium.api";
@@ -38,7 +33,9 @@ const ProfileEditPage = () => {
   const { openModal } = useModal("emojiSelector");
   const { me, mySmProfilePictureUrl, myIsPremium } = useMe();
   const { PremiumEmojiIcon, premiumNameColorClass } = usePremium(me);
+  const { config } = usePremiumConfig();
 
+  const nameColorOptions = config.allowedNameColors || [];
   const currentColor = me?.nameColor || null;
 
   useEffect(() => {
@@ -198,7 +195,7 @@ const ProfileEditPage = () => {
             {/* Name color */}
             <Card title="Ism rangi" className="space-y-3">
               <div className="grid grid-cols-3 gap-4">
-                {NAME_COLOR_OPTIONS.map((option) => (
+                {nameColorOptions.map((option) => (
                   <button
                     type="button"
                     key={option.key}
@@ -214,9 +211,7 @@ const ProfileEditPage = () => {
                       className="size-6 rounded-full border border-gray-200"
                       style={{ backgroundColor: option.hex }}
                     />
-                    <span className={NAME_COLOR_CLASS_MAP[option.key]}>
-                      {option.label}
-                    </span>
+                    <span style={{ color: option.hex }}>{option.label}</span>
                   </button>
                 ))}
                 {currentColor && (
@@ -249,7 +244,7 @@ const ProfileEditPage = () => {
               className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
               onClick={() => openModal("premiumBuy")}
             >
-              Premium olish - 100 tanga
+              Premium olish - {config.coinCost} tanga
             </Button>
           </div>
         )}

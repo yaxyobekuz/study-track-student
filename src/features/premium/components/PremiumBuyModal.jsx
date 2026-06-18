@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { premiumAPI } from "@/features/premium/api/premium.api";
 import { authAPI } from "@/features/auth/api/auth.api";
+import usePremiumConfig from "@/features/premium/hooks/usePremiumConfig";
 import ModalWrapper from "@/shared/components/ui/ModalWrapper";
 import { Button } from "@/shared/components/shadcn/button";
 
@@ -15,17 +16,16 @@ const PREMIUM_BENEFITS = [
 ];
 
 const PremiumBuyModal = () => (
-  <ModalWrapper
-    name="premiumBuy"
-    title="MBSI Premium"
-    description="30 kunlik premium obuna"
-  >
+  <ModalWrapper name="premiumBuy" title="MBSI Premium" description="Premium obuna">
     <Content />
   </ModalWrapper>
 );
 
 const Content = ({ close }) => {
   const queryClient = useQueryClient();
+  const { config } = usePremiumConfig();
+
+  const { coinCost, durationDays, isEnabled } = config;
 
   const { data: profile } = useQuery({
     queryKey: ["auth", "me"],
@@ -33,7 +33,7 @@ const Content = ({ close }) => {
   });
 
   const coinBalance = profile?.coinBalance ?? 0;
-  const canAfford = coinBalance >= 100;
+  const canAfford = coinBalance >= coinCost;
 
   const buyMutation = useMutation({
     mutationFn: () => premiumAPI.buyPremium(),
@@ -62,8 +62,10 @@ const Content = ({ close }) => {
 
       {/* Price */}
       <div className="flex items-center justify-between rounded-lg bg-yellow-50 px-4 py-3">
-        <span className="text-sm font-medium text-gray-700">Narxi (30 kun)</span>
-        <span className="text-lg font-bold text-yellow-600">100 tanga</span>
+        <span className="text-sm font-medium text-gray-700">
+          Narxi ({durationDays} kun)
+        </span>
+        <span className="text-lg font-bold text-yellow-600">{coinCost} tanga</span>
       </div>
 
       {/* Balance */}
@@ -74,9 +76,15 @@ const Content = ({ close }) => {
         </span>
       </div>
 
-      {!canAfford && (
+      {!isEnabled && (
         <p className="text-sm text-red-500">
-          Tangalar yetarli emas. Premium uchun kamida 100 tanga kerak.
+          MBSI Premium hozircha mavjud emas.
+        </p>
+      )}
+
+      {isEnabled && !canAfford && (
+        <p className="text-sm text-red-500">
+          Tangalar yetarli emas. Premium uchun kamida {coinCost} tanga kerak.
         </p>
       )}
 
@@ -87,7 +95,7 @@ const Content = ({ close }) => {
         </Button>
         <Button
           onClick={() => buyMutation.mutate()}
-          disabled={!canAfford || buyMutation.isPending}
+          disabled={!canAfford || !isEnabled || buyMutation.isPending}
         >
           Sotib olish
         </Button>
