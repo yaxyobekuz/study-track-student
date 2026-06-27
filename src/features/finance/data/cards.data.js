@@ -1,4 +1,4 @@
-// To'lov kartalari — o'quvchilar shu kartalarga to'lov qiladi.
+// To'lov kartalari - o'quvchilar shu kartalarga to'lov qiladi.
 export const paymentCards = [
   {
     id: "UZCARD",
