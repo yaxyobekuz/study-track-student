@@ -28,23 +28,15 @@ import List from "@/shared/components/ui/List";
 import LoaderCard from "@/shared/components/ui/LoaderCard";
 import BackHeader from "@/shared/components/layout/BackHeader";
 
-// API
-import { coinsAPI } from "@/features/transactions/api/coins.api";
+// Queries
+import { coinsQueries } from "@/features/transactions/queries/transactions.queries";
 
 const TransactionsPage = () => {
   const [page, setPage] = useState(1);
 
-  const { data: balanceData } = useQuery({
-    queryKey: ["coins", "balance"],
-    queryFn: () => coinsAPI.getBalance().then((res) => res.data.data),
-  });
+  const { data: balanceData } = useQuery(coinsQueries.balance());
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["coins", "transactions", page],
-    queryFn: () =>
-      coinsAPI.getTransactions({ page, limit: 20 }).then((res) => res.data),
-    keepPreviousData: true,
-  });
+  const { data, isLoading } = useQuery(coinsQueries.transactions(page));
 
   const transactions = data?.data ?? [];
 

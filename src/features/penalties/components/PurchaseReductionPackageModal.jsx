@@ -17,12 +17,12 @@ import { getPackageEmoji } from "../utils/fineReduce.utils";
 import Button from "@/shared/components/ui/button/Button";
 import ModalWrapper from "@/shared/components/ui/ModalWrapper";
 
-// API
-import { authAPI } from "@/features/auth/api/auth.api";
-import { penaltiesAPI } from "@/features/penalties/api/penalties.api";
-
 // Tanstack Query
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+
+// Queries
+import { authQueries } from "@/features/auth/queries/auth.queries";
+import { usePurchaseReductionPackage } from "../queries/penalties.mutations";
 
 const PurchaseReductionPackageModal = () => {
   const { data = {} } = useModal("purchaseReductionPackage");
@@ -48,12 +48,7 @@ const Content = ({
   discountPercent,
   order,
 }) => {
-  const queryClient = useQueryClient();
-
-  const { data: profile } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => authAPI.getMe().then((res) => res.data.data),
-  });
+  const { data: profile } = useQuery(authQueries.me());
 
   const isPremium = profile?.premium?.isActive ?? false;
   const coinBalance = profile?.coinBalance ?? 0;
@@ -68,19 +63,7 @@ const Content = ({
   const canAfford = coinBalance >= finalCoinCost;
   const hasPoints = penaltyPoints > 0;
 
-  const mutation = useMutation({
-    mutationFn: () => penaltiesAPI.purchaseReductionPackage(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      queryClient.invalidateQueries({ queryKey: ["penalties", "my"] });
-      queryClient.invalidateQueries({ queryKey: ["coins", "transactions"] });
-      queryClient.invalidateQueries({ queryKey: ["coins", "balance"] });
-      toast.success(`Jarima balingiz ${pointsReduced} ballga kamaytirildi!`);
-      close();
-    },
-    onError: (err) =>
-      toast.error(err.response?.data?.message || "Xatolik yuz berdi"),
-  });
+  const mutation = usePurchaseReductionPackage();
 
   const emoji = getPackageEmoji(order);
 
@@ -156,7 +139,18 @@ const Content = ({
           Bekor qilish
         </Button>
         <Button
-          onClick={() => mutation.mutate()}
+          onClick={() =>
+            mutation.mutate(id, {
+              onSuccess: () => {
+                toast.success(
+                  `Jarima balingiz ${pointsReduced} ballga kamaytirildi!`,
+                );
+                close();
+              },
+              onError: (err) =>
+                toast.error(err.response?.data?.message || "Xatolik yuz berdi"),
+            })
+          }
           disabled={!canAfford || !hasPoints || mutation.isPending}
         >
           {mutation.isPending ? "Yuklanmoqda..." : "Sotib olish"}

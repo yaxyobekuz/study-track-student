@@ -4,9 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // Toast
 import { toast } from "sonner";
 
-// Tanstack Query
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 // Router
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -15,6 +12,9 @@ import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 
 // API
 import { studentTestSessionsAPI } from "../api/testSessions.api";
+
+// Queries
+import { useSaveAnswer, useSubmitSession } from "../queries/tests.mutations";
 
 // Data
 import { SUBMIT_CONFIRM_MESSAGE } from "../data/takeTest.data";
@@ -30,7 +30,6 @@ const TakeTestPage = () => {
   // V3: bindingId orqali sessiya boshlash
   const { bindingId } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
@@ -77,54 +76,32 @@ const TakeTestPage = () => {
   }, [bindingId]);
 
   // Javob saqlash mutation
-  const saveAnswerMutation = useMutation({
-    mutationFn: ({ questionId, payload }) =>
-      studentTestSessionsAPI.saveAnswer(session.id, {
-        questionId,
-        ...payload,
-      }),
-    onError: (err) => {
-      const msg = err.response?.data?.message || "Javob saqlanmadi";
-      // Vaqt tugagan bo'lsa, natijalarga o'tish
-      if (
-        msg.toLowerCase().includes("vaqt") ||
-        msg.toLowerCase().includes("yakunlangan")
-      ) {
-        toast.warning(msg);
-        finalizeAndGo();
-      } else {
-        toast.error(msg);
-      }
-    },
-  });
+  const saveAnswerMutation = useSaveAnswer();
 
   // Submit mutation
-  const submitMutation = useMutation({
-    mutationFn: () => studentTestSessionsAPI.submit(session.id),
-    onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["tests", "available"] });
-      queryClient.invalidateQueries({ queryKey: ["my-results"] });
-      const resultId = res.data?.data?.result?.id;
-      toast.success("Test topshirildi");
-      if (resultId) {
-        navigate(`/my-results/${resultId}`, { replace: true });
-      } else {
-        navigate("/my-results", { replace: true });
-      }
-    },
-    onError: (err) => {
-      toast.error(err.response?.data?.message || "Topshirishda xatolik");
-      submittingRef.current = false;
-      setSubmitting(false);
-    },
-  });
+  const submitMutation = useSubmitSession();
 
   const submitSession = useCallback(() => {
     if (submittingRef.current) return;
     submittingRef.current = true;
     setSubmitting(true);
-    submitMutation.mutate();
-  }, [submitMutation]);
+    submitMutation.mutate(session.id, {
+      onSuccess: (res) => {
+        const resultId = res.data?.data?.result?.id;
+        toast.success("Test topshirildi");
+        if (resultId) {
+          navigate(`/my-results/${resultId}`, { replace: true });
+        } else {
+          navigate("/my-results", { replace: true });
+        }
+      },
+      onError: (err) => {
+        toast.error(err.response?.data?.message || "Topshirishda xatolik");
+        submittingRef.current = false;
+        setSubmitting(false);
+      },
+    });
+  }, [submitMutation, session, navigate]);
 
   const finalizeAndGo = useCallback(() => {
     if (submittingRef.current) return;
@@ -149,9 +126,26 @@ const TakeTestPage = () => {
           ...payload,
         },
       }));
-      saveAnswerMutation.mutate({ questionId, payload });
+      saveAnswerMutation.mutate(
+        { sessionId: session.id, questionId, payload },
+        {
+          onError: (err) => {
+            const msg = err.response?.data?.message || "Javob saqlanmadi";
+            // Vaqt tugagan bo'lsa, natijalarga o'tish
+            if (
+              msg.toLowerCase().includes("vaqt") ||
+              msg.toLowerCase().includes("yakunlangan")
+            ) {
+              toast.warning(msg);
+              finalizeAndGo();
+            } else {
+              toast.error(msg);
+            }
+          },
+        },
+      );
     },
-    [saveAnswerMutation],
+    [saveAnswerMutation, session, finalizeAndGo],
   );
 
   const handleTimerExpire = useCallback(() => {

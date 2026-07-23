@@ -1,8 +1,8 @@
 // TanStack Query
 import { useQuery } from "@tanstack/react-query";
 
-// API
-import { premiumAPI } from "@/features/premium/api/premium.api";
+// Queries
+import { premiumQueries } from "@/features/premium/queries/premium.queries";
 
 /**
  * Shared hook for premium emojis.
@@ -14,11 +14,7 @@ import { premiumAPI } from "@/features/premium/api/premium.api";
  * @returns {{ emojis: object[], byId: Record<string, object>, isLoading: boolean }}
  */
 export const usePremiumEmojis = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["premium", "emojis"],
-    staleTime: 5 * 60 * 1000,
-    queryFn: () => premiumAPI.getAvailableEmojis().then((res) => res.data.data),
-  });
+  const { data, isLoading } = useQuery(premiumQueries.emojis());
 
   const emojis = data || [];
   const byId = emojis.reduce((acc, emoji) => {
@@ -35,12 +31,7 @@ export const usePremiumEmojis = () => {
  * @returns {object|null} lottie-react `animationData`
  */
 export const useEmojiAnimation = (url) => {
-  const { data } = useQuery({
-    enabled: !!url,
-    queryKey: ["lottie", url],
-    staleTime: Infinity,
-    queryFn: () => fetch(url).then((res) => res.json()),
-  });
+  const { data } = useQuery(premiumQueries.lottie(url));
 
   return data || null;
 };

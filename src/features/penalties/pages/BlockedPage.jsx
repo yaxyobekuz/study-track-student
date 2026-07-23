@@ -1,9 +1,9 @@
 // Tanstack Query
 import { useQuery } from "@tanstack/react-query";
 
-// API
-import { penaltiesAPI } from "@/features/penalties/api/penalties.api";
-import { authAPI } from "@/features/auth/api/auth.api";
+// Queries
+import { authQueries } from "@/features/auth/queries/auth.queries";
+import { penaltiesQueries } from "../queries/penalties.queries";
 
 /**
  * BlockedPage - O'quvchi platformadan bloklanganda ko'rsatiladigan sahifa.
@@ -12,15 +12,11 @@ import { authAPI } from "@/features/auth/api/auth.api";
  */
 const BlockedPage = () => {
   const { data: user } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => authAPI.getMe().then((res) => res.data.data),
+    ...authQueries.me(),
     staleTime: 5 * 60 * 1000,
   });
 
-  const { data: settings } = useQuery({
-    queryKey: ["penalties", "settings"],
-    queryFn: () => penaltiesAPI.getSettings().then((res) => res.data.data),
-  });
+  const { data: settings } = useQuery(penaltiesQueries.settings());
 
   const fineAmount = settings?.studentFineAmount;
 

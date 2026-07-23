@@ -1,18 +1,11 @@
-// API
-import { authAPI } from "../api/auth.api";
-
 // Tanstak Query
 import { useQuery } from "@tanstack/react-query";
 
+// Queries
+import { authQueries } from "../queries/auth.queries";
+
 const useMe = () => {
-  const {
-    isError,
-    data: me,
-    isLoading,
-  } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => authAPI.getMe().then((res) => res.data.data),
-  });
+  const { isError, data: me, isLoading } = useQuery(authQueries.me());
 
   const isPremium = me?.premium?.isActive;
   const mySmProfilePictureUrl = me?.profilePicture?.variants?.sm?.url || null;

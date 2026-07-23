@@ -17,8 +17,8 @@ import useMe from "@/features/auth/hooks/useMe";
 // Utils
 import { formatUzDate } from "@/shared/utils/formatDate";
 
-// API
-import { penaltiesAPI } from "@/features/penalties/api/penalties.api";
+// Queries
+import { penaltiesQueries } from "../queries/penalties.queries";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -32,16 +32,9 @@ const MyPenaltiesPage = () => {
   const { openModal } = useModal();
   const [page, setPage] = useState(1);
 
-  const { data: settings } = useQuery({
-    queryKey: ["penalties", "settings"],
-    queryFn: () => penaltiesAPI.getSettings().then((res) => res.data.data),
-  });
+  const { data: settings } = useQuery(penaltiesQueries.settings());
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["penalties", "my", page],
-    queryFn: () =>
-      penaltiesAPI.getMyPenalties({ page, limit: 20 }).then((res) => res.data),
-  });
+  const { data, isLoading } = useQuery(penaltiesQueries.my(page));
 
   const penalties = data?.data || [];
   const pagination = data?.pagination;

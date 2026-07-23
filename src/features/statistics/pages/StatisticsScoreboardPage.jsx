@@ -16,8 +16,8 @@ import { useQuery } from "@tanstack/react-query";
 // Static data
 import { NAME_COLOR_CLASS_MAP } from "@/shared/data/nameColors.data";
 
-// API
-import { statisticsAPI } from "@/features/statistics/api/statistics.api";
+// Queries
+import { statisticsQueries } from "@/features/statistics/queries/statistics.queries";
 
 // Components
 import Counter from "@/shared/components/ui/Counter";
@@ -30,22 +30,11 @@ const StatisticsScoreboardPage = () => {
   const [page, setPage] = useState(1);
   const { me, myId, myIsPremium, mySmProfilePictureUrl } = useMe();
 
-  const { data: myStats } = useQuery({
-    queryKey: ["statistics", "student-weekly", myId],
-    queryFn: () =>
-      statisticsAPI
-        .getStudentWeekly(myId)
-        .then((res) => res.data?.data || null),
-  });
+  const { data: myStats } = useQuery(statisticsQueries.studentWeekly(myId));
 
-  const { data: rankingsData, isLoading } = useQuery({
-    queryKey: ["statistics", "school-rankings", page],
-    queryFn: () =>
-      statisticsAPI
-        .getSchoolRankings({ page, limit: 50 })
-        .then((res) => res.data),
-    keepPreviousData: true,
-  });
+  const { data: rankingsData, isLoading } = useQuery(
+    statisticsQueries.schoolRankings(page),
+  );
 
   const rankings = rankingsData?.data?.rankings || [];
   const pagination = rankingsData?.pagination;

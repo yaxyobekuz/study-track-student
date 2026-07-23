@@ -9,17 +9,15 @@ import Card from "@/shared/components/ui/Card";
 import LoaderCard from "@/shared/components/ui/LoaderCard";
 import StatsCharts from "@/features/statistics/components/StatsCharts";
 
-// API
-import { statisticsAPI } from "@/features/statistics/api/statistics.api";
+// Queries
+import { statisticsQueries } from "@/features/statistics/queries/statistics.queries";
 
 const StatisticsStatsPage = () => {
   const { me, myId } = useMe();
 
-  const { data: allStats = [], isLoading } = useQuery({
-    queryKey: ["statistics", "all-weekly", myId],
-    queryFn: () =>
-      statisticsAPI.getAllWeeklyStats(myId).then((res) => res.data?.data ?? []),
-  });
+  const { data: allStats = [], isLoading } = useQuery(
+    statisticsQueries.allWeekly(myId),
+  );
 
   if (isLoading) {
     return <LoaderCard className="h-64" />;

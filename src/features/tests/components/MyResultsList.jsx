@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 // Icons
 import { Award, ChevronRight } from "lucide-react";
 
-// API
-import { testResultsAPI } from "@/features/grading/api/testResults.api";
+// Queries
+import { testsQueries } from "@/features/tests/queries/tests.queries";
 
 // Data
 import {
@@ -30,10 +30,7 @@ import { formatScore } from "@/shared/utils/formatScore";
  * "Testlar" markazidagi "Natijalar" tabining kontenti.
  */
 const MyResultsList = () => {
-  const { data: results = [], isLoading } = useQuery({
-    queryKey: ["my-results"],
-    queryFn: () => testResultsAPI.getMy().then((res) => res.data.data),
-  });
+  const { data: results = [], isLoading } = useQuery(testsQueries.myResults());
 
   return (
     <div className="space-y-4">

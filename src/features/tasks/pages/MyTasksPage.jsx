@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 // Tanstack Query
 import { useQuery } from "@tanstack/react-query";
 
-// API
-import { tasksAPI } from "@/features/tasks/api/tasks.api";
+// Queries
+import { tasksQueries } from "@/features/tasks/queries/tasks.queries";
 
 // Data
 import {
@@ -28,14 +28,7 @@ const MyTasksPage = () => {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["tasks", "my", page, statusFilter],
-    queryFn: () => {
-      const params = { page, limit: 20 };
-      if (statusFilter && statusFilter !== "all") params.status = statusFilter;
-      return tasksAPI.getMy(params).then((res) => res.data);
-    },
-  });
+  const { data, isLoading } = useQuery(tasksQueries.my(page, statusFilter));
 
   const tasks = data?.data || [];
   const pagination = data?.pagination;

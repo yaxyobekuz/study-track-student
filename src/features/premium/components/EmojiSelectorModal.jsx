@@ -4,19 +4,19 @@ import { toast } from "sonner";
 // Utils
 import { cn } from "@/shared/utils/cn";
 
-// API
-import { authAPI } from "@/features/auth/api/auth.api";
-import { premiumAPI } from "@/features/premium/api/premium.api";
-
 // Hooks
 import { usePremiumEmojis } from "@/features/premium/hooks/usePremiumEmojis";
+
+// Queries
+import { authQueries } from "@/features/auth/queries/auth.queries";
+import { useSetEmojiBadge } from "@/features/premium/queries/premium.mutations";
 
 // Components
 import ModalWrapper from "@/shared/components/ui/ModalWrapper";
 import PremiumEmojiDisplay from "@/shared/components/ui/PremiumEmojiDisplay";
 
 // Tanstack Query
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const EmojiSelectorModal = () => (
   <ModalWrapper name="emojiSelector" title="Emoji tanlash">
@@ -25,28 +25,24 @@ const EmojiSelectorModal = () => (
 );
 
 const Content = ({ close }) => {
-  const queryClient = useQueryClient();
-
-  const { data: profile } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => authAPI.getMe().then((res) => res.data.data),
-  });
+  const { data: profile } = useQuery(authQueries.me());
 
   const { emojis, isLoading } = usePremiumEmojis();
 
   const currentEmojiId = profile?.emojiBadgeId;
 
-  const setEmojiBadgeMutation = useMutation({
-    mutationFn: (emojiId) => premiumAPI.setEmojiBadge(emojiId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      toast.success("Emoji o'rnatildi");
-      close();
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Xatolik yuz berdi");
-    },
-  });
+  const setEmojiBadgeMutation = useSetEmojiBadge();
+
+  const handleSelect = (emojiId) =>
+    setEmojiBadgeMutation.mutate(emojiId, {
+      onSuccess: () => {
+        toast.success("Emoji o'rnatildi");
+        close();
+      },
+      onError: (error) => {
+        toast.error(error.response?.data?.message || "Xatolik yuz berdi");
+      },
+    });
 
   if (isLoading) return <SkeletonLoader />;
 
@@ -58,7 +54,7 @@ const Content = ({ close }) => {
           <button
             key={emoji.id}
             disabled={setEmojiBadgeMutation.isPending}
-            onClick={() => setEmojiBadgeMutation.mutate(emoji.id)}
+            onClick={() => handleSelect(emoji.id)}
             className={cn(
               "flex items-center justify-center rounded-lg border-2 w-full h-16 transition-colors duration-200",
               isSelected

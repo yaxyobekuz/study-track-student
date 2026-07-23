@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 // Router
 import { useParams } from "react-router-dom";
 
-// API
-import { testSeasonsAPI } from "@/features/tests/api/testSeasons.api";
+// Queries
+import { testsQueries } from "@/features/tests/queries/tests.queries";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -19,11 +19,7 @@ import StudentStatsView from "../components/StudentStatsView";
 const SeasonRewardsPage = () => {
   const { id: seasonId } = useParams();
 
-  const { data: season, isLoading } = useQuery({
-    queryKey: ["test-season", seasonId],
-    queryFn: () =>
-      testSeasonsAPI.getOne(seasonId).then((res) => res?.data?.data),
-  });
+  const { data: season, isLoading } = useQuery(testsQueries.season(seasonId));
 
   if (isLoading) {
     return (

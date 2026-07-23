@@ -7,8 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 // Icons
 import { Trophy, Award, ListChecks, BarChart3, Coins } from "lucide-react";
 
-// API
-import { testSeasonsAPI } from "@/features/tests/api/testSeasons.api";
+// Queries
+import { testsQueries } from "@/features/tests/queries/tests.queries";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -34,11 +34,9 @@ import { formatScore } from "@/shared/utils/formatScore";
 const StudentStatsView = ({ season }) => {
   const [tab, setTab] = useState(SEASON_STATS_TABS.YOU);
 
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ["season-my-stats", season.id],
-    queryFn: () =>
-      testSeasonsAPI.getMyStats(season.id).then((res) => res.data.data),
-  });
+  const { data: stats, isLoading } = useQuery(
+    testsQueries.seasonMyStats(season.id),
+  );
 
   if (isLoading) {
     return (
@@ -148,14 +146,9 @@ const ClassStandingsTab = ({ seasonId, myId, classes }) => {
     classes[0]?.id || "",
   );
 
-  const { data: rows = [], isLoading } = useQuery({
-    queryKey: ["season-standings", seasonId, "class", selectedClassId],
-    queryFn: () =>
-      testSeasonsAPI
-        .getClassStats(seasonId, selectedClassId)
-        .then((res) => res.data.data),
-    enabled: Boolean(selectedClassId),
-  });
+  const { data: rows = [], isLoading } = useQuery(
+    testsQueries.seasonClassStandings(seasonId, selectedClassId),
+  );
 
   if (classes.length === 0) {
     return (
@@ -195,11 +188,9 @@ const ClassStandingsTab = ({ seasonId, myId, classes }) => {
  * "Maktab" tab: butun maktab bo'yicha reyting.
  */
 const SchoolStandingsTab = ({ seasonId, myId }) => {
-  const { data: rows = [], isLoading } = useQuery({
-    queryKey: ["season-standings", seasonId, "school"],
-    queryFn: () =>
-      testSeasonsAPI.getStats(seasonId).then((res) => res.data.data),
-  });
+  const { data: rows = [], isLoading } = useQuery(
+    testsQueries.seasonSchoolStandings(seasonId),
+  );
 
   return (
     <Card>

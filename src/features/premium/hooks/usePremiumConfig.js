@@ -1,8 +1,8 @@
 // TanStack Query
 import { useQuery } from "@tanstack/react-query";
 
-// API
-import { premiumAPI } from "@/features/premium/api/premium.api";
+// Queries
+import { premiumQueries } from "@/features/premium/queries/premium.queries";
 
 // Default config (admin sozlamalari yuklanmaguncha)
 const DEFAULT_CONFIG = {
@@ -18,11 +18,7 @@ const DEFAULT_CONFIG = {
  * @returns {{ config: object, isLoading: boolean }}
  */
 const usePremiumConfig = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["premium", "config"],
-    staleTime: 5 * 60 * 1000,
-    queryFn: () => premiumAPI.getConfig().then((res) => res.data.data),
-  });
+  const { data, isLoading } = useQuery(premiumQueries.config());
 
   return { config: data || DEFAULT_CONFIG, isLoading };
 };

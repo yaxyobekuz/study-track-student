@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 // Icons
 import { Award, ChevronRight, Calendar } from "lucide-react";
 
-// API
-import { testSeasonsAPI } from "@/features/tests/api/testSeasons.api";
+// Queries
+import { testsQueries } from "@/features/tests/queries/tests.queries";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -17,10 +17,9 @@ import Card from "@/shared/components/ui/Card";
 import { formatDateUZ } from "@/shared/utils/date.utils";
 
 const SeasonsList = () => {
-  const { data: seasons = [], isLoading } = useQuery({
-    queryKey: ["test-seasons", "active"],
-    queryFn: () => testSeasonsAPI.getActive().then((res) => res.data.data),
-  });
+  const { data: seasons = [], isLoading } = useQuery(
+    testsQueries.activeSeasons(),
+  );
 
   return (
     <div className="space-y-4">

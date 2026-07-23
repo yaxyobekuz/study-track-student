@@ -16,8 +16,8 @@ import { useQuery } from "@tanstack/react-query";
 // Static data
 import { NAME_COLOR_CLASS_MAP } from "@/shared/data/nameColors.data";
 
-// API
-import { statisticsAPI } from "@/features/statistics/api/statistics.api";
+// Queries
+import { statisticsQueries } from "@/features/statistics/queries/statistics.queries";
 
 // Components
 import LoaderCard from "@/shared/components/ui/LoaderCard";
@@ -60,14 +60,9 @@ const StatisticsCoinsPage = () => {
   const [page, setPage] = useState(1);
   const { me, myId, myIsPremium, mySmProfilePictureUrl } = useMe();
 
-  const { data: leaderboardData, isLoading } = useQuery({
-    queryKey: ["statistics", "coin-leaderboard", page],
-    queryFn: () =>
-      statisticsAPI
-        .getCoinLeaderboard({ page, limit: 50 })
-        .then((res) => res.data),
-    keepPreviousData: true,
-  });
+  const { data: leaderboardData, isLoading } = useQuery(
+    statisticsQueries.coinLeaderboard(page),
+  );
 
   const rankings = leaderboardData?.data || [];
   const pagination = leaderboardData?.pagination;

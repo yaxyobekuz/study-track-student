@@ -4,15 +4,14 @@ import { toast } from "sonner";
 // React
 import { useState } from "react";
 
-// API
-import { marketAPI } from "@/features/market/api/market.api";
+// Mutations
+import { useCreateOrder } from "@/features/market/queries/market.mutations";
 
 // Components
 import ModalWrapper from "@/shared/components/ui/ModalWrapper";
 
 // Tanstack Query
 import { Button } from "@/shared/components/shadcn/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 /**
  * Market order modal component.
@@ -29,30 +28,9 @@ const MarketOrderModal = () => (
 );
 
 const Content = ({ product, close }) => {
-  const queryClient = useQueryClient();
   const [quantity, setQuantity] = useState(1);
 
-  const createOrderMutation = useMutation({
-    mutationFn: () =>
-      marketAPI.createOrder({
-        productId: product?.id,
-        quantity,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["market", "products"] });
-      queryClient.invalidateQueries({
-        queryKey: ["market", "product", product?.id],
-      });
-      queryClient.invalidateQueries({ queryKey: ["market", "my-orders"] });
-      queryClient.invalidateQueries({ queryKey: ["coins", "balance"] });
-      queryClient.invalidateQueries({ queryKey: ["coins", "transactions"] });
-      toast.success("Buyurtma qabul qilindi");
-      close();
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Xatolik yuz berdi");
-    },
-  });
+  const createOrderMutation = useCreateOrder();
 
   const maxQuantity = Number(product?.quantity || 0);
 
@@ -74,7 +52,18 @@ const Content = ({ product, close }) => {
   const handleCreateOrder = (e) => {
     e.preventDefault();
     if (quantity < 1 || quantity > maxQuantity) return;
-    createOrderMutation.mutate();
+    createOrderMutation.mutate(
+      { productId: product?.id, quantity },
+      {
+        onSuccess: () => {
+          toast.success("Buyurtma qabul qilindi");
+          close();
+        },
+        onError: (error) => {
+          toast.error(error.response?.data?.message || "Xatolik yuz berdi");
+        },
+      },
+    );
   };
 
   return (

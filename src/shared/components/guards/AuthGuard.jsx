@@ -7,15 +7,14 @@ import { Navigate, Outlet } from "react-router-dom";
 // Icons
 import logoIcon from "@/shared/assets/icons/logo.svg";
 
-// API
-import { authAPI } from "@/features/auth/api/auth.api";
+// Queries
+import { authQueries } from "@/features/auth/queries/auth.queries";
 
 const AuthGuard = () => {
   const token = localStorage.getItem("authToken");
 
   const { isLoading, isError } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => authAPI.getMe().then((res) => res.data.data),
+    ...authQueries.me(),
     enabled: Boolean(token),
     staleTime: 5 * 60 * 1000,
     retry: false,

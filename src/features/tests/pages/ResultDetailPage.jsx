@@ -7,8 +7,8 @@ import { useParams } from "react-router-dom";
 // Icons
 import { Check, X, Clock } from "lucide-react";
 
-// API
-import { testResultsAPI } from "@/features/grading/api/testResults.api";
+// Queries
+import { testsQueries } from "@/features/tests/queries/tests.queries";
 
 // Data
 import {
@@ -35,10 +35,7 @@ import { formatScore } from "@/shared/utils/formatScore";
 const ResultDetailPage = () => {
   const { id } = useParams();
 
-  const { data: result, isLoading } = useQuery({
-    queryKey: ["my-result", id],
-    queryFn: () => testResultsAPI.getOne(id).then((res) => res.data.data),
-  });
+  const { data: result, isLoading } = useQuery(testsQueries.myResult(id));
 
   if (isLoading) {
     return (

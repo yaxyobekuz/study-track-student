@@ -4,9 +4,6 @@ import { useRef, useState } from "react";
 // Toast
 import { toast } from "sonner";
 
-// TanStack Query
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 // Icons
 import { Copy, Upload, CheckCircle2, CreditCard, Loader2 } from "lucide-react";
 
@@ -20,8 +17,8 @@ import { paymentCards } from "@/features/finance/data/cards.data";
 import ModalWrapper from "@/shared/components/ui/ModalWrapper";
 import Button from "@/shared/components/ui/button/Button";
 
-// API
-import { financeAPI } from "@/features/finance/api/finance.api";
+// Mutations
+import { useCreatePaymentRequest } from "@/features/finance/queries/finance.mutations";
 
 const fmtSom = (n) => new Intl.NumberFormat("ru-RU").format(Math.round(Number(n) || 0));
 
@@ -56,7 +53,6 @@ const PayDebtModal = () => (
 );
 
 const Content = ({ close, qoldiq = 0, studentName = "", studentId = null }) => {
-  const queryClient = useQueryClient();
   const fileRef = useRef(null);
 
   const [mode, setMode] = useState("full"); // full | partial
@@ -92,24 +88,21 @@ const Content = ({ close, qoldiq = 0, studentName = "", studentId = null }) => {
     }
   };
 
-  const mutation = useMutation({
-    mutationFn: () =>
-      financeAPI.createPaymentRequest({
-        name: studentName,
-        studentId,
-        amount,
-        card,
-        receipt,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["molia", "finance", studentName] });
-      toast.success("So'rovingiz yuborildi! Admin tasdiqlashini kuting.");
-      close();
-    },
-    onError: (err) => {
-      toast.error(err.response?.data?.error || "Xatolik yuz berdi");
-    },
-  });
+  const mutation = useCreatePaymentRequest();
+
+  const submit = () =>
+    mutation.mutate(
+      { name: studentName, studentId, amount, card, receipt },
+      {
+        onSuccess: () => {
+          toast.success("So'rovingiz yuborildi! Admin tasdiqlashini kuting.");
+          close();
+        },
+        onError: (err) => {
+          toast.error(err.response?.data?.error || "Xatolik yuz berdi");
+        },
+      },
+    );
 
   const canSubmit = amountValid && receipt && !mutation.isPending && !processing;
 
@@ -230,7 +223,7 @@ const Content = ({ close, qoldiq = 0, studentName = "", studentId = null }) => {
 
       {/* Submit */}
       <Button
-        onClick={() => mutation.mutate()}
+        onClick={submit}
         disabled={!canSubmit}
         className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
       >

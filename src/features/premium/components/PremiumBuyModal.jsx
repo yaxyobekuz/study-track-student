@@ -1,8 +1,8 @@
 import { toast } from "sonner";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-import { premiumAPI } from "@/features/premium/api/premium.api";
-import { authAPI } from "@/features/auth/api/auth.api";
+import { authQueries } from "@/features/auth/queries/auth.queries";
+import { useBuyPremium } from "@/features/premium/queries/premium.mutations";
 import usePremiumConfig from "@/features/premium/hooks/usePremiumConfig";
 import ModalWrapper from "@/shared/components/ui/ModalWrapper";
 import { Button } from "@/shared/components/shadcn/button";
@@ -22,31 +22,27 @@ const PremiumBuyModal = () => (
 );
 
 const Content = ({ close }) => {
-  const queryClient = useQueryClient();
   const { config } = usePremiumConfig();
 
   const { coinCost, durationDays, isEnabled } = config;
 
-  const { data: profile } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => authAPI.getMe().then((res) => res.data.data),
-  });
+  const { data: profile } = useQuery(authQueries.me());
 
   const coinBalance = profile?.coinBalance ?? 0;
   const canAfford = coinBalance >= coinCost;
 
-  const buyMutation = useMutation({
-    mutationFn: () => premiumAPI.buyPremium(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      queryClient.invalidateQueries({ queryKey: ["premium", "status"] });
-      toast.success("MBSI Premium muvaffaqiyatli faollashtirildi!");
-      close();
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Xatolik yuz berdi");
-    },
-  });
+  const buyMutation = useBuyPremium();
+
+  const handleBuy = () =>
+    buyMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("MBSI Premium muvaffaqiyatli faollashtirildi!");
+        close();
+      },
+      onError: (error) => {
+        toast.error(error.response?.data?.message || "Xatolik yuz berdi");
+      },
+    });
 
   return (
     <div className="space-y-4">
@@ -94,7 +90,7 @@ const Content = ({ close }) => {
           Bekor qilish
         </Button>
         <Button
-          onClick={() => buyMutation.mutate()}
+          onClick={handleBuy}
           disabled={!canAfford || !isEnabled || buyMutation.isPending}
         >
           Sotib olish

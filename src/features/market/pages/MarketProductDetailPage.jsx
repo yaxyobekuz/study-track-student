@@ -8,8 +8,8 @@ import useMe from "@/features/auth/hooks/useMe";
 // Tanstack Query
 import { useQuery } from "@tanstack/react-query";
 
-// API
-import { marketAPI } from "@/features/market/api/market.api";
+// Queries
+import { marketQueries } from "@/features/market/queries/market.queries";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -22,13 +22,9 @@ const MarketProductDetailPage = () => {
   const { openModal } = useModal();
   const { productId } = useParams();
 
-  const { data: product, isLoading } = useQuery({
-    queryKey: ["market", "product", productId],
-    queryFn: () =>
-      marketAPI
-        .getProductById(productId)
-        .then((response) => response.data.data),
-  });
+  const { data: product, isLoading } = useQuery(
+    marketQueries.product(productId),
+  );
 
   const imageUrl =
     product?.images?.[0]?.variants?.md?.url ||

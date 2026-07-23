@@ -27,8 +27,8 @@ import LoaderCard from "@/shared/components/ui/LoaderCard";
 import BackHeader from "@/shared/components/layout/BackHeader";
 import PayDebtModal from "@/features/finance/components/PayDebtModal";
 
-// API
-import { financeAPI } from "@/features/finance/api/finance.api";
+// Queries
+import { financeQueries } from "@/features/finance/queries/finance.queries";
 
 // So'm formatlash: 1000000 -> "1 000 000"
 const fmtSom = (n) =>
@@ -39,11 +39,9 @@ const MyFinancePage = () => {
   const { openModal } = useModal("payDebt");
   const fullName = me?.fullName || "";
 
-  const { data, isLoading, isError } = useQuery({
-    enabled: !!fullName,
-    queryKey: ["molia", "finance", fullName],
-    queryFn: () => financeAPI.getMyFinance(fullName).then((res) => res.data),
-  });
+  const { data, isLoading, isError } = useQuery(
+    financeQueries.myFinance(fullName),
+  );
 
   const found = data?.found;
   const s = data?.student;

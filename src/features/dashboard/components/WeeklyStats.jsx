@@ -10,25 +10,18 @@ import List from "@/shared/components/ui/List";
 import Counter from "@/shared/components/ui/Counter";
 import LoaderCard from "@/shared/components/ui/LoaderCard";
 
-// API
-import { authAPI } from "@/features/auth/api/auth.api";
-import { statisticsAPI } from "@/features/dashboard/api/statistics.api";
+// Hooks
+import useMe from "@/features/auth/hooks/useMe";
+
+// Queries
+import { dashboardQueries } from "@/features/dashboard/queries/dashboard.queries";
 
 const WeeklyStats = () => {
-  const { data: me } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => authAPI.getMe().then((res) => res.data.data),
-  });
+  const { myId: studentId } = useMe();
 
-  const studentId = me?.id;
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["statistics", "student-weekly", studentId],
-    queryFn: () =>
-      statisticsAPI
-        .getStudentWeekly(studentId)
-        .then((res) => res.data?.data || null),
-  });
+  const { data, isLoading, isError } = useQuery(
+    dashboardQueries.studentWeekly(studentId),
+  );
 
   // Loading
   if (isLoading) return <LoaderCard className="h-96" />;

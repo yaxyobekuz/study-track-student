@@ -10,8 +10,8 @@ import useTelegram from "@/shared/hooks/useTelegram";
 // Components
 import BugReport from "../components/layout/BugReport";
 
-// API
-import { authAPI } from "@/features/auth/api/auth.api";
+// API + queries
+import { authQueries } from "@/features/auth/queries/auth.queries";
 import { socialNetworksAPI } from "@/features/social-networks/api/social-networks.api";
 
 // Blocked pages
@@ -21,10 +21,7 @@ import ChannelSubscriptionPage from "@/features/social-networks/pages/ChannelSub
 const RootLayout = () => {
   const { isTelegram, user: tgUser } = useTelegram();
 
-  const { data: user } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => authAPI.getMe().then((res) => res.data.data),
-  });
+  const { data: user } = useQuery(authQueries.me());
 
   const { data: subscription, refetch: recheckSubscription } = useQuery({
     queryKey: ["social-networks", "check-subscription", tgUser?.id],

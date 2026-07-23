@@ -19,8 +19,8 @@ import { getPackageEmoji } from "../utils/fineReduce.utils";
 import Button from "@/shared/components/ui/button/Button";
 import ModalWrapper from "@/shared/components/ui/ModalWrapper";
 
-// API
-import { penaltiesAPI } from "@/features/penalties/api/penalties.api";
+// Queries
+import { penaltiesQueries } from "../queries/penalties.queries";
 
 const FineReductionPackagesModal = () => (
   <ModalWrapper
@@ -35,11 +35,9 @@ const Content = ({ close, discountPercent }) => {
   const { openModal } = useModal();
   const { me, isMePremium } = useMe();
 
-  const { data: packages = [], isLoading } = useQuery({
-    queryKey: ["penalties", "reduction-packages"],
-    queryFn: () =>
-      penaltiesAPI.getReductionPackages().then((res) => res.data.data),
-  });
+  const { data: packages = [], isLoading } = useQuery(
+    penaltiesQueries.reductionPackages(),
+  );
 
   const coinBalance = me?.coinBalance ?? 0;
   const penaltyPoints = me?.penaltyPoints ?? 0;

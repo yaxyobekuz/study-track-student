@@ -10,9 +10,9 @@ import { useLocation } from "react-router-dom";
 // Tanstack Query
 import { useQuery } from "@tanstack/react-query";
 
-// API
+// API + queries
 import axios from "axios";
-import { authAPI } from "@/features/auth/api/auth.api";
+import { authQueries } from "@/features/auth/queries/auth.queries";
 
 // Env variables
 const chatId = import.meta.env.VITE_BUG_REPORT_CHAT_ID;
@@ -56,10 +56,7 @@ const BugReport = () => {
 };
 
 const BugReportForm = ({ close, isLoading, setIsLoading }) => {
-  const { data: user } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: () => authAPI.getMe().then((res) => res.data.data),
-  });
+  const { data: user } = useQuery(authQueries.me());
 
   const location = useLocation();
   const { description, username, image, setField, setFields } = useObjectState({

@@ -17,8 +17,9 @@ import useModal from "@/shared/hooks/useModal";
 import { cn } from "@/shared/utils/cn";
 import { formatUzDate } from "@/shared/utils/formatDate";
 
-// API
-import { marketAPI } from "@/features/market/api/market.api";
+// Queries
+import { marketQueries } from "@/features/market/queries/market.queries";
+import { useCancelOrder } from "@/features/market/queries/market.mutations";
 
 // Components
 import List from "@/shared/components/ui/List";
@@ -27,34 +28,15 @@ import Button from "@/shared/components/ui/button/Button";
 import ModalWrapper from "@/shared/components/ui/ModalWrapper";
 
 // Tanstack Query
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const MarketMyOrdersPage = () => {
-  const queryClient = useQueryClient();
   const { openModal } = useModal();
   const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["market", "my-orders", page],
-    queryFn: () =>
-      marketAPI
-        .getMyOrders({ page, limit: 20 })
-        .then((response) => response.data),
-  });
+  const { data, isLoading } = useQuery(marketQueries.myOrders(page));
 
-  const cancelMutation = useMutation({
-    mutationFn: (orderId) => marketAPI.cancelMyOrder(orderId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["market", "my-orders"] });
-      queryClient.invalidateQueries({ queryKey: ["market", "products"] });
-      queryClient.invalidateQueries({ queryKey: ["coins", "balance"] });
-      queryClient.invalidateQueries({ queryKey: ["coins", "transactions"] });
-      toast.success("Buyurtma bekor qilindi");
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Xatolik yuz berdi");
-    },
-  });
+  const cancelMutation = useCancelOrder();
 
   const orders = data?.data || [];
   const pagination = data?.pagination;
@@ -170,7 +152,15 @@ const MarketMyOrdersPage = () => {
 
 const CancelOrderContent = ({ cancelMutation, close, orderId }) => {
   const handleCancelOrder = () => {
-    cancelMutation.mutate(orderId, { onSuccess: close });
+    cancelMutation.mutate(orderId, {
+      onSuccess: () => {
+        toast.success("Buyurtma bekor qilindi");
+        close();
+      },
+      onError: (error) => {
+        toast.error(error.response?.data?.message || "Xatolik yuz berdi");
+      },
+    });
   };
 
   return (

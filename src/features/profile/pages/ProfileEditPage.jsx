@@ -10,11 +10,13 @@ import useMe from "@/features/auth/hooks/useMe";
 import usePremium from "@/features/premium/hooks/usePremium";
 import usePremiumConfig from "@/features/premium/hooks/usePremiumConfig";
 
-// API
-import { premiumAPI } from "@/features/premium/api/premium.api";
-
-// Tanstack Query
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+// Queries
+import {
+  useUploadProfilePicture,
+  useDeleteProfilePicture,
+  useSetDisplayName,
+  useSetNameColor,
+} from "../queries/profile.mutations";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -27,7 +29,6 @@ import EmojiSelectorModal from "@/features/premium/components/EmojiSelectorModal
 
 const ProfileEditPage = () => {
   const fileInputRef = useRef(null);
-  const queryClient = useQueryClient();
   const [displayName, setDisplayName] = useState("");
 
   const { openModal } = useModal("emojiSelector");
@@ -44,57 +45,46 @@ const ProfileEditPage = () => {
     setDisplayName(me?.displayName || "");
   }, [me]);
 
-  const uploadPicMutation = useMutation({
-    mutationFn: (formData) => premiumAPI.uploadProfilePicture(formData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      toast.success("Profil rasm yuklandi");
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Rasm yuklashda xatolik");
-    },
-  });
-
-  const deletePicMutation = useMutation({
-    mutationFn: () => premiumAPI.deleteProfilePicture(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      toast.success("Profil rasm o'chirildi");
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Xatolik yuz berdi");
-    },
-  });
-
-  const setDisplayNameMutation = useMutation({
-    mutationFn: (name) => premiumAPI.setDisplayName(name),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      toast.success("Ko'rsatma ism saqlandi");
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Xatolik yuz berdi");
-    },
-  });
-
-  const setNameColorMutation = useMutation({
-    mutationFn: (color) => premiumAPI.setNameColor(color),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      toast.success("Ism rangi o'rnatildi");
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Xatolik yuz berdi");
-    },
-  });
+  const uploadPicMutation = useUploadProfilePicture();
+  const deletePicMutation = useDeleteProfilePicture();
+  const setDisplayNameMutation = useSetDisplayName();
+  const setNameColorMutation = useSetNameColor();
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
     const formData = new FormData();
     formData.append("image", file);
-    uploadPicMutation.mutate(formData);
+    uploadPicMutation.mutate(formData, {
+      onSuccess: () => toast.success("Profil rasm yuklandi"),
+      onError: (error) =>
+        toast.error(error.response?.data?.message || "Rasm yuklashda xatolik"),
+    });
     event.target.value = "";
+  };
+
+  const handleDeletePicture = () => {
+    deletePicMutation.mutate(undefined, {
+      onSuccess: () => toast.success("Profil rasm o'chirildi"),
+      onError: (error) =>
+        toast.error(error.response?.data?.message || "Xatolik yuz berdi"),
+    });
+  };
+
+  const handleSaveDisplayName = () => {
+    setDisplayNameMutation.mutate(displayName, {
+      onSuccess: () => toast.success("Ko'rsatma ism saqlandi"),
+      onError: (error) =>
+        toast.error(error.response?.data?.message || "Xatolik yuz berdi"),
+    });
+  };
+
+  const handleSetNameColor = (color) => {
+    setNameColorMutation.mutate(color, {
+      onSuccess: () => toast.success("Ism rangi o'rnatildi"),
+      onError: (error) =>
+        toast.error(error.response?.data?.message || "Xatolik yuz berdi"),
+    });
   };
 
   return (
@@ -132,7 +122,7 @@ const ProfileEditPage = () => {
                       type="button"
                       variant="danger"
                       className="text-sm"
-                      onClick={() => deletePicMutation.mutate()}
+                      onClick={handleDeletePicture}
                       disabled={deletePicMutation.isPending}
                     >
                       O'chirish
@@ -186,7 +176,7 @@ const ProfileEditPage = () => {
                 type="button"
                 className="w-full"
                 disabled={setDisplayNameMutation.isPending}
-                onClick={() => setDisplayNameMutation.mutate(displayName)}
+                onClick={handleSaveDisplayName}
               >
                 Saqlash
               </Button>
@@ -199,7 +189,7 @@ const ProfileEditPage = () => {
                   <button
                     type="button"
                     key={option.key}
-                    onClick={() => setNameColorMutation.mutate(option.key)}
+                    onClick={() => handleSetNameColor(option.key)}
                     disabled={setNameColorMutation.isPending}
                     className={`flex flex-1 flex-col items-center gap-1 text-xs rounded-lg p-2 border-2 transition-colors ${
                       currentColor === option.key
@@ -217,7 +207,7 @@ const ProfileEditPage = () => {
                 {currentColor && (
                   <button
                     type="button"
-                    onClick={() => setNameColorMutation.mutate(null)}
+                    onClick={() => handleSetNameColor(null)}
                     disabled={setNameColorMutation.isPending}
                     className="flex flex-col items-center gap-1 text-xs rounded-lg p-2 border-2 border-transparent hover:border-gray-200"
                   >

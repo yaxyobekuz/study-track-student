@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 // Icons
 import { Clock, ListChecks, AlertCircle, Play } from "lucide-react";
 
-// API
-import { testBindingsAPI } from "@/features/tests/api/tests.api";
+// Queries
+import { testsQueries } from "@/features/tests/queries/tests.queries";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -18,10 +18,9 @@ import Button from "@/shared/components/ui/button/Button";
 import { formatDateUZ } from "@/shared/utils/date.utils";
 
 const AvailableTestsList = () => {
-  const { data: bindings = [], isLoading } = useQuery({
-    queryKey: ["bindings", "available"],
-    queryFn: () => testBindingsAPI.getAvailable().then((res) => res.data.data),
-  });
+  const { data: bindings = [], isLoading } = useQuery(
+    testsQueries.availableBindings(),
+  );
 
   return (
     <div className="space-y-4">

@@ -4,8 +4,8 @@ import { useState } from "react";
 // Tanstack Query
 import { useQuery } from "@tanstack/react-query";
 
-// API
-import { marketAPI } from "@/features/market/api/market.api";
+// Queries
+import { marketQueries } from "@/features/market/queries/market.queries";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -14,13 +14,7 @@ import MarketProductCard from "@/features/market/components/MarketProductCard";
 const MarketProductsPage = () => {
   const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["market", "products", page],
-    queryFn: () =>
-      marketAPI
-        .getProducts({ page, limit: 12 })
-        .then((response) => response.data),
-  });
+  const { data, isLoading } = useQuery(marketQueries.products(page));
 
   const products = data?.data || [];
   const pagination = data?.pagination;

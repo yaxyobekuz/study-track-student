@@ -8,10 +8,11 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 // Tanstack Query
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-// API
-import { tasksAPI } from "@/features/tasks/api/tasks.api";
+// Queries
+import { tasksQueries } from "@/features/tasks/queries/tasks.queries";
+import { useSubmitTaskCompletion } from "@/features/tasks/queries/tasks.mutations";
 
 // Data
 import { taskStatusLabels, taskStatusColors, SUBMITTABLE_STATUSES } from "../data/tasks.data";
@@ -25,30 +26,14 @@ import BackHeader from "@/shared/components/layout/BackHeader";
 
 const TaskDetailPage = () => {
   const { taskId } = useParams();
-  const queryClient = useQueryClient();
 
   const [note, setNote] = useState("");
   const [files, setFiles] = useState(null);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
 
-  const { data: task, isLoading } = useQuery({
-    queryKey: ["tasks", "detail", taskId],
-    queryFn: () => tasksAPI.getById(taskId).then((res) => res.data.data),
-  });
+  const { data: task, isLoading } = useQuery(tasksQueries.detail(taskId));
 
-  const submitMutation = useMutation({
-    mutationFn: (formData) => tasksAPI.submitCompletion(taskId, formData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks", "detail", taskId] });
-      queryClient.invalidateQueries({ queryKey: ["tasks", "my"] });
-      setShowSubmitForm(false);
-      setNote("");
-      setFiles(null);
-      toast.success("Topshiriq ko'rib chiqishga yuborildi");
-    },
-    onError: (err) =>
-      toast.error(err.response?.data?.message || "Xatolik yuz berdi"),
-  });
+  const submitMutation = useSubmitTaskCompletion(taskId);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -57,7 +42,16 @@ const TaskDetailPage = () => {
     if (files) {
       for (const file of files) formData.append("files", file);
     }
-    submitMutation.mutate(formData);
+    submitMutation.mutate(formData, {
+      onSuccess: () => {
+        setShowSubmitForm(false);
+        setNote("");
+        setFiles(null);
+        toast.success("Topshiriq ko'rib chiqishga yuborildi");
+      },
+      onError: (err) =>
+        toast.error(err.response?.data?.message || "Xatolik yuz berdi"),
+    });
   };
 
   if (isLoading) {
