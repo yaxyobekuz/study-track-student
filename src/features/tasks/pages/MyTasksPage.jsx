@@ -82,7 +82,7 @@ const MyTasksPage = () => {
         ) : (
           <div className="space-y-3">
             {tasks.map((task) => (
-              <Link key={task._id} to={`/tasks/${task._id}`}>
+              <Link key={task.id} to={`/tasks/${task.id}`}>
                 <Card className="space-y-2 transition-shadow">
                   <div className="flex items-start justify-between gap-2">
                     <p className="font-medium text-gray-900 leading-snug">

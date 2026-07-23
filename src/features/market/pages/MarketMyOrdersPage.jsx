@@ -68,7 +68,7 @@ const MarketMyOrdersPage = () => {
       order.deliveryImage?.variants?.original?.url;
 
     return {
-      key: order._id,
+      key: order.id,
       description: formatUzDate(order.createdAt),
       title: order.productSnapshot?.name || order.product?.name,
       trailing: (
@@ -104,7 +104,7 @@ const MarketMyOrdersPage = () => {
               className="w-full"
               disabled={cancelMutation.isPending}
               onClick={() =>
-                openModal("cancelMarketOrder", { orderId: order._id })
+                openModal("cancelMarketOrder", { orderId: order.id })
               }
             >
               Buyurtmani bekor qilish

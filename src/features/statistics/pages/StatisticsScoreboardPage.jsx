@@ -109,7 +109,7 @@ const StatisticsScoreboardPage = () => {
 
       <List
         items={rankings.map((item) => {
-          const isMe = item.student._id === me?._id;
+          const isMe = item.student.id === me?.id;
           const isPremium = item.student.premium?.isActive;
           const description = item?.classes?.map((c) => c.name).join(", ");
 
@@ -144,7 +144,7 @@ const StatisticsScoreboardPage = () => {
           return {
             description,
             icon: Icon,
-            key: item.student._id,
+            key: item.student.id,
             title: displayTitle,
             titleClassName: titleColor,
             className: cn(

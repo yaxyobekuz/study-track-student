@@ -35,13 +35,13 @@ const Content = ({ product, close }) => {
   const createOrderMutation = useMutation({
     mutationFn: () =>
       marketAPI.createOrder({
-        productId: product?._id,
+        productId: product?.id,
         quantity,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["market", "products"] });
       queryClient.invalidateQueries({
-        queryKey: ["market", "product", product?._id],
+        queryKey: ["market", "product", product?.id],
       });
       queryClient.invalidateQueries({ queryKey: ["market", "my-orders"] });
       queryClient.invalidateQueries({ queryKey: ["coins", "balance"] });

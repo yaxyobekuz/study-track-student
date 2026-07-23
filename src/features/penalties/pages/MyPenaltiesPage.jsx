@@ -84,7 +84,7 @@ const MyPenaltiesPage = () => {
           </Card>
         ) : (
           penalties.map((penalty) => (
-            <Card key={penalty._id} className="space-y-2">
+            <Card key={penalty.id} className="space-y-2">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="font-medium text-gray-900">{penalty.title}</p>

@@ -35,9 +35,9 @@ const StudentStatsView = ({ season }) => {
   const [tab, setTab] = useState(SEASON_STATS_TABS.YOU);
 
   const { data: stats, isLoading } = useQuery({
-    queryKey: ["season-my-stats", season._id],
+    queryKey: ["season-my-stats", season.id],
     queryFn: () =>
-      testSeasonsAPI.getMyStats(season._id).then((res) => res.data.data),
+      testSeasonsAPI.getMyStats(season.id).then((res) => res.data.data),
   });
 
   if (isLoading) {
@@ -48,7 +48,7 @@ const StudentStatsView = ({ season }) => {
     );
   }
 
-  const myId = stats?.student?._id;
+  const myId = stats?.student?.id;
   const myClasses = stats?.student?.classes || [];
 
   return (
@@ -66,13 +66,13 @@ const StudentStatsView = ({ season }) => {
       )}
       {tab === SEASON_STATS_TABS.CLASS && (
         <ClassStandingsTab
-          seasonId={season._id}
+          seasonId={season.id}
           myId={myId}
           classes={myClasses}
         />
       )}
       {tab === SEASON_STATS_TABS.SCHOOL && (
-        <SchoolStandingsTab seasonId={season._id} myId={myId} />
+        <SchoolStandingsTab seasonId={season.id} myId={myId} />
       )}
     </div>
   );
@@ -140,12 +140,12 @@ const YouTab = ({ season, stats }) => {
  */
 const ClassStandingsTab = ({ seasonId, myId, classes }) => {
   const classOptions = useMemo(
-    () => classes.map((c) => ({ value: c._id, label: c.name })),
+    () => classes.map((c) => ({ value: c.id, label: c.name })),
     [classes],
   );
 
   const [selectedClassId, setSelectedClassId] = useState(
-    classes[0]?._id || "",
+    classes[0]?.id || "",
   );
 
   const { data: rows = [], isLoading } = useQuery({
@@ -237,10 +237,10 @@ const StandingsTable = ({ rows, myId, isLoading, isClass = false }) => {
         </thead>
         <tbody>
           {rows.map((r) => {
-            const isMe = myId && r.student._id === myId;
+            const isMe = myId && r.student.id === myId;
             return (
               <tr
-                key={r.student._id}
+                key={r.student.id}
                 className={cn(
                   "border-b",
                   isMe ? "bg-blue-50 font-medium" : "hover:bg-gray-50",

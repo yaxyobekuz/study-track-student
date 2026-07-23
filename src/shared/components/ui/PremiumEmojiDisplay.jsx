@@ -8,10 +8,10 @@ import { cn } from "@/shared/utils/cn";
 import { usePremiumEmojiAnimation } from "@/features/premium/hooks/usePremiumEmojis";
 
 /**
- * Renders a premium emoji badge (lottie animation) by its EmojiConfig _id.
+ * Renders a premium emoji badge (lottie animation) by its EmojiConfig id.
  * Animatsiya S3 dagi .json fayldan onlayn yuklab ko'rsatiladi.
  * @param {object} props
- * @param {string} props.emojiId - EmojiConfig _id.
+ * @param {string} props.emojiId - EmojiConfig id.
  * @param {string} [props.className]
  */
 const PremiumEmojiDisplay = ({ emojiId, className = "size-6" }) => {

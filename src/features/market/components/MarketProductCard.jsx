@@ -15,7 +15,7 @@ const MarketProductCard = ({ product }) => {
   const badge = getMarketProductBadge(product);
 
   return (
-    <Link to={`/market/products/${product._id}`} className="block">
+    <Link to={`/market/products/${product.id}`} className="block">
       {/* Image */}
       <div className="relative">
         <img

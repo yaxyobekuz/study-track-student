@@ -56,7 +56,7 @@ const MyResultsList = () => {
       ) : (
         <div className="space-y-3">
           {results.map((r) => (
-            <Link key={r._id} to={`/my-results/${r._id}`}>
+            <Link key={r.id} to={`/my-results/${r.id}`}>
               <Card className="space-y-2 active:scale-[0.99]">
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="flex-1 min-w-0 space-y-1">

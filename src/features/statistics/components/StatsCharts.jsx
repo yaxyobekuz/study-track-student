@@ -81,7 +81,7 @@ const buildSubjectData = (allStats) => {
   allStats.forEach((stat) => {
     (stat.simpleStats?.subjects ?? []).forEach((s) => {
       if (!s.subject) return;
-      const id = s.subject._id ?? s.subject;
+      const id = s.subject.id ?? s.subject;
       const name = s.subject.name ?? String(id);
       if (!map.has(id)) map.set(id, { name, sum: 0, count: 0 });
       const entry = map.get(id);

@@ -40,8 +40,8 @@ const SeasonsList = () => {
           {seasons.map((season) => (
             <Link
               className="block"
-              key={season._id}
-              to={`/seasons/${season._id}/rewards`}
+              key={season.id}
+              to={`/seasons/${season.id}/rewards`}
             >
               <Card className="flex items-start gap-3 flex-1 min-w-0">
                 <div className="flex items-center justify-center size-10 rounded-lg bg-amber-50 text-amber-600 shrink-0">

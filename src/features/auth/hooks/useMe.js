@@ -24,7 +24,7 @@ const useMe = () => {
     isError,
     isLoading,
     isPremium,
-    myId: me?._id,
+    myId: me?.id,
     mySmProfilePictureUrl,
     myMdProfilePictureUrl,
     myLgProfilePictureUrl,

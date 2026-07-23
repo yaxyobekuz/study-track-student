@@ -20,7 +20,7 @@ const WeeklyStats = () => {
     queryFn: () => authAPI.getMe().then((res) => res.data.data),
   });
 
-  const studentId = me?._id;
+  const studentId = me?.id;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["statistics", "student-weekly", studentId],
@@ -113,7 +113,7 @@ const WeeklyStats = () => {
           <>
             {simpleStats.subjects.map((subject, index) => (
               <div
-                key={subject.subject?._id || index}
+                key={subject.subject?.id || index}
                 className="bg-white p-4 rounded-lg border border-gray-200"
               >
                 <div className="flex items-center justify-between mb-2">

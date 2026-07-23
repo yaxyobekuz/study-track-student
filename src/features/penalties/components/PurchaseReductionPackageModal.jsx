@@ -41,7 +41,7 @@ const PurchaseReductionPackageModal = () => {
 
 const Content = ({
   close,
-  _id,
+  id,
   title,
   points,
   coinCost,
@@ -69,7 +69,7 @@ const Content = ({
   const hasPoints = penaltyPoints > 0;
 
   const mutation = useMutation({
-    mutationFn: () => penaltiesAPI.purchaseReductionPackage(_id),
+    mutationFn: () => penaltiesAPI.purchaseReductionPackage(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
       queryClient.invalidateQueries({ queryKey: ["penalties", "my"] });

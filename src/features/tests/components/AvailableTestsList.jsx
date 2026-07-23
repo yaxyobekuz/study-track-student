@@ -41,7 +41,7 @@ const AvailableTestsList = () => {
       ) : (
         <div className="space-y-4">
           {bindings.map((b) => (
-            <Card key={b._id} className="space-y-3">
+            <Card key={b.id} className="space-y-3">
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 justify-between">
                   <h3 className="font-semibold text-gray-900">
@@ -82,7 +82,7 @@ const AvailableTestsList = () => {
               )}
 
               <Button className="w-full gap-2" asChild>
-                <Link to={`/take-test/${b._id}`}>
+                <Link to={`/take-test/${b.id}`}>
                   <Play size={16} />
                   {b.hasInProgress ? "Davom etish" : "Boshlash"}
                 </Link>

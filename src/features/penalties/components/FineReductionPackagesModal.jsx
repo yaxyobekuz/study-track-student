@@ -50,7 +50,7 @@ const Content = ({ close, discountPercent }) => {
 
   const handleBuy = (pkg) => {
     openModal("purchaseReductionPackage", {
-      _id: pkg._id,
+      id: pkg.id,
       title: pkg.title,
       order: pkg.order,
       points: pkg.points,
@@ -98,7 +98,7 @@ const Content = ({ close, discountPercent }) => {
 
           return (
             <div
-              key={pkg._id}
+              key={pkg.id}
               className={cn(
                 "space-y-2",
                 isDisabled ? "opacity-60" : "opacity-100",

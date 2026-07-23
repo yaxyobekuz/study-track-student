@@ -72,7 +72,7 @@ const StatisticsCoinsPage = () => {
   const rankings = leaderboardData?.data || [];
   const pagination = leaderboardData?.pagination;
 
-  const myEntry = rankings.find((item) => item.student._id === myId);
+  const myEntry = rankings.find((item) => item.student.id === myId);
 
   if (isLoading) {
     return <LoaderCard className="h-64" />;
@@ -129,7 +129,7 @@ const StatisticsCoinsPage = () => {
 
       <List
         items={rankings.map((item) => {
-          const isMe = item.student._id === myId;
+          const isMe = item.student.id === myId;
           const isPremium = item.student.premium?.isActive;
           const description = item.student.classes?.map((c) => c.name).join(", ");
 
@@ -164,7 +164,7 @@ const StatisticsCoinsPage = () => {
           return {
             description,
             icon: Icon,
-            key: item.student._id,
+            key: item.student.id,
             title: displayTitle,
             titleClassName: titleColor,
             className: cn(

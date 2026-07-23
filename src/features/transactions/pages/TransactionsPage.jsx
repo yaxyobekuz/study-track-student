@@ -49,7 +49,7 @@ const TransactionsPage = () => {
   const transactions = data?.data ?? [];
 
   const transactionItems = transactions.map((tx) => ({
-    key: tx._id,
+    key: tx.id,
     icon: debitTransactionTypes.includes(tx.type)
       ? ArrowUpRight
       : ArrowDownLeft,

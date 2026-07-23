@@ -88,7 +88,7 @@ const ProfilePage = () => {
             <div className="flex flex-wrap gap-2">
               {me?.classes.map((classItem) => (
                 <span
-                  key={classItem._id}
+                  key={classItem.id}
                   className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700"
                 >
                   {classItem.name}

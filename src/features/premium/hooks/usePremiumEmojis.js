@@ -9,7 +9,7 @@ import { premiumAPI } from "@/features/premium/api/premium.api";
  *
  * Premium emojilar admin tomonidan lottie (.json) fayl sifatida yuklanadi va
  * S3 da saqlanadi. Bu hook ularning ro'yxatini bir marta yuklab keshlaydi va
- * _id bo'yicha tez qidirish uchun map qaytaradi.
+ * id bo'yicha tez qidirish uchun map qaytaradi.
  *
  * @returns {{ emojis: object[], byId: Record<string, object>, isLoading: boolean }}
  */
@@ -22,7 +22,7 @@ export const usePremiumEmojis = () => {
 
   const emojis = data || [];
   const byId = emojis.reduce((acc, emoji) => {
-    acc[emoji._id] = emoji;
+    acc[emoji.id] = emoji;
     return acc;
   }, {});
 
@@ -46,8 +46,8 @@ export const useEmojiAnimation = (url) => {
 };
 
 /**
- * Resolves an emoji (by its _id) to its lottie `animationData`.
- * @param {string} emojiId - EmojiConfig _id.
+ * Resolves an emoji (by its id) to its lottie `animationData`.
+ * @param {string} emojiId - EmojiConfig id.
  * @returns {object|null}
  */
 export const usePremiumEmojiAnimation = (emojiId) => {

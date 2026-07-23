@@ -79,7 +79,7 @@ const TakeTestPage = () => {
   // Javob saqlash mutation
   const saveAnswerMutation = useMutation({
     mutationFn: ({ questionId, payload }) =>
-      studentTestSessionsAPI.saveAnswer(session._id, {
+      studentTestSessionsAPI.saveAnswer(session.id, {
         questionId,
         ...payload,
       }),
@@ -100,11 +100,11 @@ const TakeTestPage = () => {
 
   // Submit mutation
   const submitMutation = useMutation({
-    mutationFn: () => studentTestSessionsAPI.submit(session._id),
+    mutationFn: () => studentTestSessionsAPI.submit(session.id),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["tests", "available"] });
       queryClient.invalidateQueries({ queryKey: ["my-results"] });
-      const resultId = res.data?.data?.result?._id;
+      const resultId = res.data?.data?.result?.id;
       toast.success("Test topshirildi");
       if (resultId) {
         navigate(`/my-results/${resultId}`, { replace: true });
@@ -131,9 +131,9 @@ const TakeTestPage = () => {
     submittingRef.current = true;
     setSubmitting(true);
     studentTestSessionsAPI
-      .submit(session._id)
+      .submit(session.id)
       .then((res) => {
-        const resultId = res.data?.data?.result?._id;
+        const resultId = res.data?.data?.result?.id;
         if (resultId) navigate(`/my-results/${resultId}`, { replace: true });
         else navigate("/my-results", { replace: true });
       })

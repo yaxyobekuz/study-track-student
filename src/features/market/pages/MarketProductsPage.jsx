@@ -41,7 +41,7 @@ const MarketProductsPage = () => {
     <>
       <div className="grid grid-cols-2 gap-4">
         {products.map((product) => (
-          <MarketProductCard key={product._id} product={product} />
+          <MarketProductCard key={product.id} product={product} />
         ))}
       </div>
 
