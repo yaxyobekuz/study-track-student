@@ -32,7 +32,7 @@ import GetStartedPage from "@/features/get-started/pages/GetStartedPage";
 // Transactions page
 import TransactionsPage from "@/features/transactions/pages/TransactionsPage";
 
-// Finance page (MBSI Molia bazasi bilan sinxron)
+// Finance page (tarif, o'quv yili va oylik to'lov majburiyatlari)
 import MyFinancePage from "@/features/finance/pages/MyFinancePage";
 
 // Market pages

@@ -1,22 +1,15 @@
-// Axios
-import axios from "axios";
+// Shared
+import http from "@/shared/api/http";
 
-// MBSI Molia (CFO panel) API URL - bu o'quvchi paneliga emas, moliya bazasiga ulanadi.
-const MOLIA_API_URL =
-  import.meta.env.VITE_MOLIA_API_URL || "http://localhost:3000";
-
-const moliaHttp = axios.create({
-  baseURL: MOLIA_API_URL,
-  headers: { "Content-Type": "application/json" },
-});
-
+/**
+ * O'quvchining o'z moliyaviy ma'lumoti — loyihaning O'Z serveridan.
+ *
+ * Ilgari bu yerda alohida `moliaHttp` instansi bor edi: u boshqa bazaga
+ * (MBSI Molia) autentifikatsiyasiz ulanib, o'quvchini ISM bo'yicha qidirardi.
+ * Endi ma'lumot shu tizimning o'zidan keladi va o'quvchi tokendan aniqlanadi —
+ * `studentId` so'rovda umuman uzatilmaydi, shuning uchun boshqaning qarzini
+ * ko'rish imkoni yo'q.
+ */
 export const financeAPI = {
-  // O'quvchining moliyaviy holatini ism bo'yicha oladi (qoldiq, to'lovlar).
-  getMyFinance: (name) =>
-    moliaHttp.get("/api/student-finance", { params: { name } }),
-
-  // Online to'lov so'rovini yuboradi (chek rasmi bilan).
-  // payload: { name, studentId?, amount, card, receipt (dataURL), note? }
-  createPaymentRequest: (payload) =>
-    moliaHttp.post("/api/student-finance/request", payload),
+  getMyFinance: (params) => http.get("/api/invoices/my", { params }),
 };

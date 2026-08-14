@@ -8,23 +8,23 @@ import { createQueryKeys } from "@/shared/lib/query";
 import { financeAPI } from "../api/finance.api";
 
 /**
- * Finance keys use the legacy "molia" prefix (the CFO/MBSI finance base), NOT
- * "finance" — so `financeKeys.all` === ["molia"] and every finance query nests
- * under it. Kept byte-identical to the pre-refactor inline keys.
+ * Kalit prefiksi "finance" — ilgari eski MBSI Molia bazasi uchun "molia" edi.
+ * O'sha integratsiya olib tashlangani uchun to'qnashuv yo'q.
  */
-export const financeKeys = createQueryKeys("molia");
+export const financeKeys = createQueryKeys("finance");
 
 export const financeQueries = {
   /**
-   * The current student's finance snapshot, looked up by full name (the MBSI
-   * finance base keys on name). Key: ["molia","finance",fullName]. Returns the
-   * unwrapped `{ found, student, payments, requests }`; disabled until a name
-   * is present.
+   * O'quvchining o'z moliyaviy manzarasi: tarif, o'quv yili, moliyaviy holat,
+   * oylik majburiyatlar va qarz. `enabled` shart emas — server o'quvchini
+   * tokendan aniqlaydi.
    */
-  myFinance: (fullName) =>
+  myFinance: (academicYear) =>
     queryOptions({
-      queryKey: [...financeKeys.all, "finance", fullName],
-      queryFn: () => financeAPI.getMyFinance(fullName).then((res) => res.data),
-      enabled: !!fullName,
+      queryKey: [...financeKeys.all, "my", academicYear ?? null],
+      queryFn: () =>
+        financeAPI
+          .getMyFinance(academicYear ? { academicYear } : undefined)
+          .then((res) => res.data.data),
     }),
 };
