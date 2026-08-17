@@ -15,12 +15,18 @@ export const FINANCE_STATUS_META = {
   expelled: { label: "Chetlatilgan", className: "bg-red-100 text-red-600" },
 };
 
-/** To'lov usullari. */
-export const PAYMENT_METHOD_LABELS = {
-  cash: "Naqd",
-  card: "Plastik",
-  transfer: "O'tkazma",
-  other: "Boshqa",
+/** Depozit harakatining turi. */
+export const MOVEMENT_TYPE_META = {
+  payment: { label: "To'lov qabul qilindi", className: "text-green-600" },
+  allocation: { label: "Oylik to'lovga yechildi", className: "text-gray-500" },
+  refund: { label: "Qaytarildi", className: "text-orange-600" },
+  adjustment: { label: "To'g'rilash", className: "text-amber-600" },
+};
+
+/** To'lov qayerdan kelgani — kassa cheki yoki oldindan to'langan qoldiq. */
+export const ALLOCATION_SOURCE_LABELS = {
+  payment: "To'lovdan",
+  deposit: "Depozitdan",
 };
 
 /** Tarif topilmagan hollar uchun izoh (server `tariffReason` maydoni). */

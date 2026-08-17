@@ -8,8 +8,10 @@ import {
   CalendarDays,
   CheckCircle2,
   ChevronDown,
-  CreditCard,
+  History,
+  PiggyBank,
   Snowflake,
+  Sun,
   Wallet,
 } from "lucide-react";
 
@@ -28,30 +30,50 @@ import BackHeader from "@/shared/components/layout/BackHeader";
 
 // Data & queries
 import {
+  ALLOCATION_SOURCE_LABELS,
   FINANCE_STATUS_META,
   INVOICE_STATUS_META,
-  PAYMENT_METHOD_LABELS,
+  MOVEMENT_TYPE_META,
   TARIFF_REASON_LABELS,
-  formatMonthKey,
 } from "../data/finance.data";
 import { financeQueries } from "../queries/finance.queries";
 
+/**
+ * "Mening moliyam" — o'quvchi to'rt savolga javob topadigan sahifa:
+ * qancha qarzim bor, qaysi oylarni to'laganman, hisobimda pul bormi va
+ * qanday tarif/chegirma bilan o'qiyman.
+ *
+ * Oylar ro'yxati SERVERDAN TAYYOR keladi (`timeline`): ta'til oylari ham
+ * bor, shuning uchun "yanvarda nega to'lov yo'q?" degan savol tug'ilmaydi.
+ */
 const MyFinancePage = () => {
-  // Qaysi majburiyat ochilgan — to'lovlar tarixini ko'rsatish uchun
-  const [openId, setOpenId] = useState(null);
+  // Qaysi oy ochilgan — to'lovlar tarixini ko'rsatish uchun
+  const [openMonth, setOpenMonth] = useState(null);
+  const [academicYear, setAcademicYear] = useState(null);
+  const [showMovements, setShowMovements] = useState(false);
 
-  const { data, isLoading, isError } = useQuery(financeQueries.myFinance());
+  const { data, isLoading, isError } = useQuery(
+    financeQueries.myFinance(academicYear),
+  );
 
-  const invoices = data?.invoices ?? [];
   const totals = data?.totals;
+  const timeline = data?.timeline ?? [];
+  const movements = data?.movements ?? [];
   const statusMeta = FINANCE_STATUS_META[data?.financeStatus?.status ?? "active"];
+
   const hasDebt = Number(totals?.debt ?? 0) > 0;
+  const balance = Number(data?.balance ?? 0);
+
+  const paidMonths = totals?.paidMonths ?? 0;
+  const billableMonths = totals?.billableMonths ?? 0;
+  const progress =
+    billableMonths > 0 ? Math.round((paidMonths / billableMonths) * 100) : 0;
 
   return (
-    <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
+    <div className="animate__animated animate__fadeIn min-h-screen bg-gray-100 pb-28">
       <BackHeader href="/dashboard" title="Mening moliyam" />
 
-      <div className="container pt-5 space-y-5">
+      <div className="container space-y-5 pt-5">
         {isLoading ? (
           <LoaderCard />
         ) : isError ? (
@@ -63,6 +85,30 @@ const MyFinancePage = () => {
           </Card>
         ) : (
           <>
+            {/* O'quv yili tanlagichi — "o'zim o'qigan davrlar" */}
+            {data.academicYears?.length > 1 && (
+              <div className="hidden-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1">
+                {data.academicYears.map((year) => (
+                  <button
+                    key={year.academicYear}
+                    type="button"
+                    onClick={() => {
+                      setAcademicYear(year.academicYear);
+                      setOpenMonth(null);
+                    }}
+                    className={cn(
+                      "shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors",
+                      year.academicYear === data.academicYear
+                        ? "bg-primary text-white"
+                        : "bg-white text-gray-600",
+                    )}
+                  >
+                    {year.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {/* Qarz kartasi */}
             <div
               className={cn(
@@ -84,9 +130,7 @@ const MyFinancePage = () => {
                 </span>
               </div>
 
-              <p className="mt-2 text-3xl font-bold">
-                {formatMoney(totals?.debt)}
-              </p>
+              <p className="mt-2 text-3xl font-bold">{formatMoney(totals?.debt)}</p>
 
               <p className="mt-1 text-xs opacity-90">
                 {data.academicYearLabel} o'quv yili bo'yicha hisoblangan{" "}
@@ -95,21 +139,117 @@ const MyFinancePage = () => {
               </p>
             </div>
 
-            {/* Tarif va o'quv yili */}
-            <Card title="Tarif va o'quv yili" icon={<CalendarDays className="size-5 text-primary" />}>
+            {/* Hisob balansi — oldindan to'langan pul */}
+            {balance > 0 && (
+              <Card
+                title="Hisobingizdagi pul"
+                icon={<PiggyBank className="size-5 text-primary" />}
+              >
+                <p className="mt-2 text-2xl font-bold text-blue-600">
+                  {formatMoney(data.balance)}
+                </p>
+                <p className="mt-1 text-xs text-gray-500">
+                  Oldindan to'langan — keyingi oylik to'lovlaringizdan
+                  avtomatik yechiladi.
+                </p>
+
+                {movements.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowMovements((prev) => !prev)}
+                    className="mt-3 flex items-center gap-1.5 text-sm font-medium text-primary"
+                  >
+                    <History className="size-4" />
+                    Harakatlar tarixi
+                    <ChevronDown
+                      className={cn(
+                        "size-4 transition-transform",
+                        showMovements && "rotate-180",
+                      )}
+                    />
+                  </button>
+                )}
+
+                {showMovements && (
+                  <div className="mt-3 space-y-2 rounded-xl bg-gray-50 p-3">
+                    {movements.slice(0, 15).map((item) => {
+                      const meta = MOVEMENT_TYPE_META[item.type];
+                      return (
+                        <div
+                          key={item.id}
+                          className="flex items-center justify-between gap-3 text-sm"
+                        >
+                          <div className="min-w-0">
+                            <p className={cn("truncate", meta?.className)}>
+                              {meta?.label ?? item.label}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              {formatUzDate(item.occurredAt)}
+                              {item.description ? ` · ${item.description}` : ""}
+                            </p>
+                          </div>
+
+                          <span
+                            className={cn(
+                              "shrink-0 font-medium",
+                              item.direction === "in"
+                                ? "text-green-600"
+                                : "text-gray-500",
+                            )}
+                          >
+                            {item.direction === "in" ? "+" : "−"}
+                            {formatMoney(item.amount)}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </Card>
+            )}
+
+            {/* Tarif, chegirma va o'quv yili */}
+            <Card
+              title="Tarif va o'quv yili"
+              icon={<CalendarDays className="size-5 text-primary" />}
+            >
               <div className="mt-3 space-y-3">
                 {data.tariff ? (
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="font-medium text-gray-900">
-                        {data.tariff.name}
-                      </p>
-                      <p className="text-xs text-gray-500">Oylik to'lov</p>
+                  <>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-medium text-gray-900">
+                          {data.tariff.name}
+                        </p>
+                        <p className="text-xs text-gray-500">Oylik to'lov</p>
+                      </div>
+
+                      <div className="shrink-0 text-right">
+                        <p className="font-semibold text-gray-900">
+                          {formatMoney(data.tariff.effectiveMonthly)}
+                        </p>
+                        {Number(data.tariff.discountAmount) > 0 && (
+                          <p className="text-xs text-gray-400 line-through">
+                            {formatMoney(data.tariff.monthlyAmount)}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <p className="shrink-0 font-semibold text-gray-900">
-                      {formatMoney(data.tariff.monthlyAmount)}
-                    </p>
-                  </div>
+
+                    {/* Chegirmalar — "nega arzonroq?" savoliga javob */}
+                    {data.tariff.discounts?.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {data.tariff.discounts.map((discount) => (
+                          <span
+                            key={discount.id}
+                            className="rounded-lg bg-blue-50 px-2 py-1 text-xs text-blue-700"
+                          >
+                            {discount.name} · {discount.valueLabel}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <p className="text-sm text-gray-500">
                     {TARIFF_REASON_LABELS[data.tariffReason] ??
@@ -117,129 +257,58 @@ const MyFinancePage = () => {
                   </p>
                 )}
 
-                {/* O'quv yilining nechanchi oyi ketayotgani */}
-                {data.isAcademicMonth ? (
+                {/* To'lov progressi — ta'til oylari hisobga olingan */}
+                {billableMonths > 0 && (
                   <div>
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <span>
-                        {data.academicMonthCount} oydan {data.academicIndex}-si
+                        {billableMonths} oydan {paidMonths}-si to'langan
                       </span>
-                      <span>{formatMonthKey(data.currentMonth)}</span>
+                      <span>{progress}%</span>
                     </div>
                     <div className="mt-1.5 h-2 rounded-full bg-gray-100">
                       <div
                         className="h-2 rounded-full bg-primary transition-all"
-                        style={{
-                          width: `${Math.round((data.academicIndex / data.academicMonthCount) * 100)}%`,
-                        }}
+                        style={{ width: `${progress}%` }}
                       />
                     </div>
                   </div>
-                ) : (
-                  <p className="text-xs text-gray-500">
-                    {formatMonthKey(data.currentMonth)} — o'quv yiliga kirmaydi,
-                    bu oy uchun to'lov hisoblanmaydi
+                )}
+
+                {data.vacationMonths?.length > 0 && (
+                  <p className="flex items-start gap-1.5 text-xs text-amber-700">
+                    <Sun className="mt-0.5 size-3.5 shrink-0" />
+                    <span>
+                      Ta'til oylari:{" "}
+                      {data.vacationMonths.map((m) => m.monthLabel).join(", ")} —
+                      bu oylar uchun to'lov yozilmaydi.
+                    </span>
                   </p>
                 )}
               </div>
             </Card>
 
-            {/* Oylik majburiyatlar */}
-            <Card title="Oylik to'lovlar" icon={<Wallet className="size-5 text-primary" />}>
-              {invoices.length === 0 ? (
+            {/* Oylar */}
+            <Card
+              title="Oylik to'lovlar"
+              icon={<Wallet className="size-5 text-primary" />}
+            >
+              {timeline.length === 0 ? (
                 <p className="mt-3 py-4 text-center text-sm text-gray-500">
                   Hali to'lov majburiyati shakllantirilmagan
                 </p>
               ) : (
                 <div className="mt-3 divide-y divide-gray-100">
-                  {invoices.map((invoice) => {
-                    const badge = INVOICE_STATUS_META[invoice.status];
-                    const isOpen = openId === invoice.id;
-                    const payments = invoice.payments ?? [];
-
-                    return (
-                      <div key={invoice.id} className="py-3 first:pt-0 last:pb-0">
-                        <button
-                          type="button"
-                          onClick={() => setOpenId(isOpen ? null : invoice.id)}
-                          className="flex w-full items-center gap-3 text-left"
-                        >
-                          <div
-                            className={cn(
-                              "flex size-9 shrink-0 items-center justify-center rounded-full",
-                              invoice.status === "paid"
-                                ? "bg-green-50 text-green-600"
-                                : "bg-red-50 text-red-500",
-                            )}
-                          >
-                            {invoice.status === "paid" ? (
-                              <CheckCircle2 className="size-4.5" />
-                            ) : (
-                              <Banknote className="size-4.5" />
-                            )}
-                          </div>
-
-                          <div className="min-w-0 flex-1">
-                            <p className="font-medium text-gray-900">
-                              {formatMonthKey(invoice.month)}
-                            </p>
-                            <span
-                              className={cn(
-                                "mt-0.5 inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium",
-                                badge.className,
-                              )}
-                            >
-                              {badge.label}
-                            </span>
-                          </div>
-
-                          <div className="shrink-0 text-right">
-                            <p className="font-semibold text-gray-900">
-                              {formatMoney(invoice.amount)}
-                            </p>
-                            {invoice.status !== "paid" && (
-                              <p className="text-xs text-red-500">
-                                qoldiq {formatMoney(invoice.debt)}
-                              </p>
-                            )}
-                          </div>
-
-                          {payments.length > 0 && (
-                            <ChevronDown
-                              className={cn(
-                                "size-4 shrink-0 text-gray-400 transition-transform",
-                                isOpen && "rotate-180",
-                              )}
-                            />
-                          )}
-                        </button>
-
-                        {/* To'lovlar tarixi */}
-                        {isOpen && payments.length > 0 && (
-                          <div className="mt-2 space-y-1.5 rounded-xl bg-gray-50 p-3">
-                            {payments.map((payment) => (
-                              <div
-                                key={payment.id}
-                                className="flex items-center justify-between gap-3 text-sm"
-                              >
-                                <div className="flex items-center gap-2 min-w-0">
-                                  <CreditCard className="size-3.5 shrink-0 text-gray-400" />
-                                  <span className="truncate text-gray-500">
-                                    {formatUzDate(payment.paidAt)} ·{" "}
-                                    {PAYMENT_METHOD_LABELS[payment.method] ??
-                                      payment.method}
-                                  </span>
-                                </div>
-                                <span className="shrink-0 font-medium text-green-600">
-                                  +{formatMoney(payment.amount)}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                  {timeline.map((row) => (
+                    <MonthRow
+                      key={row.month}
+                      row={row}
+                      isOpen={openMonth === row.month}
+                      onToggle={() =>
+                        setOpenMonth(openMonth === row.month ? null : row.month)
+                      }
+                    />
+                  ))}
                 </div>
               )}
             </Card>
@@ -250,6 +319,138 @@ const MyFinancePage = () => {
           </>
         )}
       </div>
+    </div>
+  );
+};
+
+/**
+ * Bitta oy qatori.
+ *
+ * Uch xil holat bo'lishi mumkin: ta'til (to'lov yo'q), hisob-faktura bor
+ * (to'langan/qarz), yoki hali shakllantirilmagan (kelgusi oy).
+ */
+const MonthRow = ({ row, isOpen, onToggle }) => {
+  const invoice = row.invoice;
+  const badge = invoice ? INVOICE_STATUS_META[invoice.status] : null;
+  const payments = invoice?.payments ?? [];
+  const isPaid = invoice?.status === "paid";
+
+  if (row.isVacation) {
+    return (
+      <div className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+          <Sun className="size-4.5" />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-gray-900">{row.monthLabel}</p>
+          <p className="text-xs text-amber-700">Ta'til — to'lov yo'q</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!invoice) {
+    return (
+      <div className="flex items-center gap-3 py-3 first:pt-0 last:pb-0 opacity-60">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+          <CalendarDays className="size-4.5" />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-gray-900">{row.monthLabel}</p>
+          <p className="text-xs text-gray-500">
+            {row.isFuture ? "Hali kelmagan" : "Hisoblanmagan"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="py-3 first:pt-0 last:pb-0">
+      <button
+        type="button"
+        onClick={onToggle}
+        disabled={payments.length === 0}
+        className="flex w-full items-center gap-3 text-left"
+      >
+        <div
+          className={cn(
+            "flex size-9 shrink-0 items-center justify-center rounded-full",
+            isPaid ? "bg-green-50 text-green-600" : "bg-red-50 text-red-500",
+          )}
+        >
+          {isPaid ? (
+            <CheckCircle2 className="size-4.5" />
+          ) : (
+            <Banknote className="size-4.5" />
+          )}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-gray-900">{row.monthLabel}</p>
+          <span
+            className={cn(
+              "mt-0.5 inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium",
+              badge.className,
+            )}
+          >
+            {badge.label}
+          </span>
+          {invoice.hasDiscount && (
+            <span className="ml-1 text-[11px] text-blue-600">
+              −{formatMoney(invoice.discountAmount)} chegirma
+            </span>
+          )}
+        </div>
+
+        <div className="shrink-0 text-right">
+          <p className="font-semibold text-gray-900">
+            {formatMoney(invoice.amount)}
+          </p>
+          {!isPaid && invoice.status !== "cancelled" && (
+            <p className="text-xs text-red-500">
+              qoldiq {formatMoney(invoice.debt)}
+            </p>
+          )}
+        </div>
+
+        {payments.length > 0 && (
+          <ChevronDown
+            className={cn(
+              "size-4 shrink-0 text-gray-400 transition-transform",
+              isOpen && "rotate-180",
+            )}
+          />
+        )}
+      </button>
+
+      {/* To'lovlar tarixi — chek raqami bilan */}
+      {isOpen && payments.length > 0 && (
+        <div className="mt-2 space-y-1.5 rounded-xl bg-gray-50 p-3">
+          {payments.map((payment) => (
+            <div
+              key={payment.id}
+              className="flex items-center justify-between gap-3 text-sm"
+            >
+              <div className="min-w-0">
+                <p className="truncate text-gray-600">
+                  {formatUzDate(payment.paidAt)} ·{" "}
+                  {ALLOCATION_SOURCE_LABELS[payment.source] ?? ""}
+                </p>
+                <p className="font-mono text-xs text-gray-400">
+                  {payment.receiptLabel}
+                </p>
+              </div>
+
+              <span className="shrink-0 font-medium text-green-600">
+                +{formatMoney(payment.amount)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
