@@ -23,7 +23,7 @@ export const MOVEMENT_TYPE_META = {
   adjustment: { label: "To'g'rilash", className: "text-amber-600" },
 };
 
-/** To'lov qayerdan kelgani — kassa cheki yoki oldindan to'langan qoldiq. */
+/** To'lov qayerdan kelgani — chek yoki oldindan to'langan qoldiq. */
 export const ALLOCATION_SOURCE_LABELS = {
   payment: "To'lovdan",
   deposit: "Depozitdan",
