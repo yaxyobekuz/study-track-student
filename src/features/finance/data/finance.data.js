@@ -12,7 +12,6 @@ export const INVOICE_STATUS_META = {
 export const FINANCE_STATUS_META = {
   active: { label: "Faol", className: "bg-green-100 text-green-700" },
   frozen: { label: "Muzlatilgan", className: "bg-blue-100 text-blue-700" },
-  expelled: { label: "Chetlatilgan", className: "bg-red-100 text-red-600" },
 };
 
 /** Depozit harakatining turi. */
@@ -60,4 +59,11 @@ export const formatMonthKey = (monthKey) => {
   if (monthKey == null) return "—";
   const name = MONTH_NAMES_UZ[(monthKey % 100) - 1];
   return name ? `${name} ${Math.trunc(monthKey / 100)}` : String(monthKey);
+};
+
+/** Oyga hisob-faktura nega yozilmagani (server `skipReason`). */
+export const SKIP_REASON_LABELS = {
+  vacation: "Ta'til — to'lov yo'q",
+  not_enrolled: "Bu oyda o'qimagansiz",
+  before_first_invoice_month: "Tizimga o'tishdan oldingi davr",
 };

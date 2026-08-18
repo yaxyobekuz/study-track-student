@@ -34,6 +34,7 @@ import {
   FINANCE_STATUS_META,
   INVOICE_STATUS_META,
   MOVEMENT_TYPE_META,
+  SKIP_REASON_LABELS,
   TARIFF_REASON_LABELS,
 } from "../data/finance.data";
 import { financeQueries } from "../queries/finance.queries";
@@ -65,7 +66,9 @@ const MyFinancePage = () => {
   const balance = Number(data?.balance ?? 0);
 
   const paidMonths = totals?.paidMonths ?? 0;
-  const billableMonths = totals?.billableMonths ?? 0;
+  // O'quvchi O'ZI o'qigan oylar — yanvardan kelgan bola "8 oydan" emas,
+  // "5 oydan" ko'radi. Maktab bo'yicha son (billableMonths) hisobotlarda qoladi.
+  const billableMonths = totals?.enrolledMonths ?? totals?.billableMonths ?? 0;
   const progress =
     billableMonths > 0 ? Math.round((paidMonths / billableMonths) * 100) : 0;
 
@@ -360,7 +363,8 @@ const MonthRow = ({ row, isOpen, onToggle }) => {
         <div className="min-w-0 flex-1">
           <p className="font-medium text-gray-900">{row.monthLabel}</p>
           <p className="text-xs text-gray-500">
-            {row.isFuture ? "Hali kelmagan" : "Hisoblanmagan"}
+            {SKIP_REASON_LABELS[row.skipReason] ??
+              (row.isFuture ? "Hali kelmagan" : "Hisoblanmagan")}
           </p>
         </div>
       </div>
@@ -401,6 +405,12 @@ const MonthRow = ({ row, isOpen, onToggle }) => {
           {invoice.hasDiscount && (
             <span className="ml-1 text-[11px] text-blue-600">
               −{formatMoney(invoice.discountAmount)} chegirma
+            </span>
+          )}
+          {/* Oy o'rtasida kelgan — o'sha oy ulushga hisoblangan */}
+          {row.isProrated && (
+            <span className="ml-1 text-[11px] text-amber-700">
+              qisman oy · {row.billableDays}/{row.monthDays} kun
             </span>
           )}
         </div>
