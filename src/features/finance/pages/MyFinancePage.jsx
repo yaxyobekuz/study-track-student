@@ -57,6 +57,13 @@ const MyFinancePage = () => {
     financeQueries.myFinance(academicYear),
   );
 
+  // O'quvchiga faqat O'ZI o'qigan yillar ko'rsatiladi — admin'dan farqli
+  // o'laroq unga "men o'qimagan yil" tugmasi kerak emas. Ochilgan yil har
+  // doim ro'yxatda qoladi (aks holda tanlangan tugma g'oyib bo'lardi).
+  const yearTabs = (data?.academicYears ?? []).filter(
+    (year) => year.isEnrolled || year.academicYear === data?.academicYear,
+  );
+
   const totals = data?.totals;
   const timeline = data?.timeline ?? [];
   const movements = data?.movements ?? [];
@@ -66,9 +73,12 @@ const MyFinancePage = () => {
   const balance = Number(data?.balance ?? 0);
 
   const paidMonths = totals?.paidMonths ?? 0;
-  // O'quvchi O'ZI o'qigan oylar — yanvardan kelgan bola "8 oydan" emas,
-  // "5 oydan" ko'radi. Maktab bo'yicha son (billableMonths) hisobotlarda qoladi.
-  const billableMonths = totals?.enrolledMonths ?? totals?.billableMonths ?? 0;
+  // O'quvchi O'ZI o'qigan va HOZIRGA QADAR KELGAN oylar — yanvardan kelgan
+  // bola "8 oydan" emas, "5 oydan" ko'radi; sentabrda boshlanadigan yil esa
+  // avgustda "9 oydan 0-si" bo'lib, u 9 oy qarzdordek ko'rinmaydi.
+  // Maktab bo'yicha son (billableMonths) hisobotlarda qoladi.
+  const billableMonths =
+    totals?.dueMonths ?? totals?.enrolledMonths ?? totals?.billableMonths ?? 0;
   const progress =
     billableMonths > 0 ? Math.round((paidMonths / billableMonths) * 100) : 0;
 
@@ -89,9 +99,9 @@ const MyFinancePage = () => {
         ) : (
           <>
             {/* O'quv yili tanlagichi — "o'zim o'qigan davrlar" */}
-            {data.academicYears?.length > 1 && (
+            {yearTabs.length > 1 && (
               <div className="hidden-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1">
-                {data.academicYears.map((year) => (
+                {yearTabs.map((year) => (
                   <button
                     key={year.academicYear}
                     type="button"
