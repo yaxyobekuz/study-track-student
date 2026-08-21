@@ -65,5 +65,6 @@ export const formatMonthKey = (monthKey) => {
 export const SKIP_REASON_LABELS = {
   vacation: "Ta'til — to'lov yo'q",
   not_enrolled: "Bu oyda o'qimagansiz",
+  no_periods: "O'qish davri kiritilmagan",
   before_first_invoice_month: "Tizimga o'tishdan oldingi davr",
 };
