@@ -73,6 +73,16 @@ const ProfilePage = () => {
             </div>
           </div>
 
+          {/* Filial — o'quvchi bitta filialda o'qiydi. To'lovlar, davomat va
+              baholar shu filialga tegishli, shuning uchun u ko'rinib turishi
+              kerak (ayniqsa ota-ona bir nechta filialga bolasi borsa). */}
+          {me?.branch && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-500">Filial</span>
+              <span className="font-medium">{me.branch.name}</span>
+            </div>
+          )}
+
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">Jarima bali</span>
             <span
