@@ -19,12 +19,12 @@ export const financeQueries = {
    * oylik majburiyatlar va qarz. `enabled` shart emas — server o'quvchini
    * tokendan aniqlaydi.
    */
-  myFinance: (academicYear) =>
+  myFinance: () =>
     queryOptions({
-      queryKey: [...financeKeys.all, "my", academicYear ?? null],
+      queryKey: [...financeKeys.all, "my"],
       queryFn: () =>
         financeAPI
-          .getMyFinance(academicYear ? { academicYear } : undefined)
+          .getMyFinance()
           .then((res) => res.data.data),
     }),
 };

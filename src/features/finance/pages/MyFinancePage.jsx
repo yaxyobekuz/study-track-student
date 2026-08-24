@@ -50,19 +50,10 @@ import { financeQueries } from "../queries/finance.queries";
 const MyFinancePage = () => {
   // Qaysi oy ochilgan — to'lovlar tarixini ko'rsatish uchun
   const [openMonth, setOpenMonth] = useState(null);
-  const [academicYear, setAcademicYear] = useState(null);
+
   const [showMovements, setShowMovements] = useState(false);
 
-  const { data, isLoading, isError } = useQuery(
-    financeQueries.myFinance(academicYear),
-  );
-
-  // O'quvchiga faqat O'ZI o'qigan yillar ko'rsatiladi — admin'dan farqli
-  // o'laroq unga "men o'qimagan yil" tugmasi kerak emas. Ochilgan yil har
-  // doim ro'yxatda qoladi (aks holda tanlangan tugma g'oyib bo'lardi).
-  const yearTabs = (data?.academicYears ?? []).filter(
-    (year) => year.isEnrolled || year.academicYear === data?.academicYear,
-  );
+  const { data, isLoading, isError } = useQuery(financeQueries.myFinance());
 
   const totals = data?.totals;
   const timeline = data?.timeline ?? [];
@@ -73,12 +64,9 @@ const MyFinancePage = () => {
   const balance = Number(data?.balance ?? 0);
 
   const paidMonths = totals?.paidMonths ?? 0;
-  // O'quvchi O'ZI o'qigan va HOZIRGA QADAR KELGAN oylar — yanvardan kelgan
-  // bola "8 oydan" emas, "5 oydan" ko'radi; sentabrda boshlanadigan yil esa
-  // avgustda "9 oydan 0-si" bo'lib, u 9 oy qarzdordek ko'rinmaydi.
-  // Maktab bo'yicha son (billableMonths) hisobotlarda qoladi.
-  const billableMonths =
-    totals?.dueMonths ?? totals?.enrolledMonths ?? totals?.billableMonths ?? 0;
+  // O'quvchi O'ZI o'qigan va HOZIRGA QADAR KELGAN oylar. Ta'til oylari
+  // bu sanoqqa kirmaydi — ular uchun to'lov yozilmaydi.
+  const billableMonths = totals?.dueMonths ?? totals?.enrolledMonths ?? 0;
   const progress =
     billableMonths > 0 ? Math.round((paidMonths / billableMonths) * 100) : 0;
 
@@ -98,29 +86,6 @@ const MyFinancePage = () => {
           </Card>
         ) : (
           <>
-            {/* O'quv yili tanlagichi — "o'zim o'qigan davrlar" */}
-            {yearTabs.length > 1 && (
-              <div className="hidden-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1">
-                {yearTabs.map((year) => (
-                  <button
-                    key={year.academicYear}
-                    type="button"
-                    onClick={() => {
-                      setAcademicYear(year.academicYear);
-                      setOpenMonth(null);
-                    }}
-                    className={cn(
-                      "shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors",
-                      year.academicYear === data.academicYear
-                        ? "bg-primary text-white"
-                        : "bg-white text-gray-600",
-                    )}
-                  >
-                    {year.label}
-                  </button>
-                ))}
-              </div>
-            )}
 
             {/* Qarz kartasi */}
             <div
@@ -146,7 +111,7 @@ const MyFinancePage = () => {
               <p className="mt-2 text-3xl font-bold">{formatMoney(totals?.debt)}</p>
 
               <p className="mt-1 text-xs opacity-90">
-                {data.academicYearLabel} o'quv yili bo'yicha hisoblangan{" "}
+                {data.fromMonthLabel} — {data.toMonthLabel} uchun hisoblangan{" "}
                 {formatMoney(totals?.invoiced)}, to'langan{" "}
                 {formatMoney(totals?.paid)}
               </p>
@@ -221,9 +186,9 @@ const MyFinancePage = () => {
               </Card>
             )}
 
-            {/* Tarif, chegirma va o'quv yili */}
+            {/* Tarif va chegirmalar */}
             <Card
-              title="Tarif va o'quv yili"
+              title="Tarif va chegirmalar"
               icon={<CalendarDays className="size-5 text-primary" />}
             >
               <div className="mt-3 space-y-3">
