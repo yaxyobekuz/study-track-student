@@ -1,6 +1,9 @@
 // React
 import { useState, useMemo } from "react";
 
+// Utils
+import { formatDateUz } from "@/shared/utils/date.utils";
+
 // Recharts
 import {
   ResponsiveContainer,
@@ -33,8 +36,8 @@ const groupByWeek = (allStats) => {
     const start = new Date(stat.weekStart);
     const end = new Date(start);
     end.setDate(end.getDate() + 6);
-    const fmt = (d) =>
-      `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}`;
+    // Diagramma o'qi — yil takrorlanmasligi uchun `hideYear` ("21-may").
+    const fmt = (d) => formatDateUz(d, { hideYear: true });
     return {
       label: `${fmt(start)}–${fmt(end)}`,
       totalSum: stat.simpleStats?.totalSum ?? 0,
