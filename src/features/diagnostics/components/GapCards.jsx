@@ -1,5 +1,6 @@
 // Icons
 import { Clock, TrendingUp } from "lucide-react";
+import EmptyBlock from "./EmptyBlock";
 
 // Data
 import { TONES } from "../data/diagnostics.data";
@@ -17,7 +18,14 @@ import { TONES } from "../data/diagnostics.data";
  * mavzuning o'z foizi yozilib, yoniga yashil o'q qo'yilgan edi.
  */
 const GapCards = ({ gaps = [] }) => {
-  if (!gaps.length) return null;
+  if (!gaps.length) {
+    return (
+      <EmptyBlock
+        title="Yopish kerak bo'lgan mavzular"
+        hint="Hozircha yopilishi shart bo'lgan mavzu yo'q. Zaif mavzu aniqlansa, u shu yerda muddati bilan chiqadi."
+      />
+    );
+  }
 
   return (
     <div className="space-y-3">

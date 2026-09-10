@@ -1,5 +1,6 @@
 // Icons
 import { Route, Flag, Check } from "lucide-react";
+import EmptyBlock from "./EmptyBlock";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -17,7 +18,14 @@ import Sparkline from "./Sparkline";
  */
 const RoadmapTimeline = ({ roadmap, curve = [] }) => {
   const steps = roadmap?.steps ?? [];
-  if (!steps.length) return null;
+  if (!steps.length) {
+    return (
+      <EmptyBlock
+        title="Shaxsiy o'quv yo'li"
+        hint="O'quv yo'li zaif mavzular aniqlangach tuziladi va har test natijasidan keyin yangilanadi."
+      />
+    );
+  }
 
   const from = curve[0];
   const to = curve[curve.length - 1];

@@ -1,5 +1,6 @@
 // Icons
 import { ShieldCheck, Target, TrendingUp, TrendingDown } from "lucide-react";
+import EmptyBlock from "./EmptyBlock";
 
 // Utils
 import { cn } from "@/shared/utils/cn";
@@ -20,7 +21,14 @@ const STYLES = {
 };
 
 const FindingCards = ({ findings = [] }) => {
-  if (!findings.length) return null;
+  if (!findings.length) {
+    return (
+      <EmptyBlock
+        title="Asosiy topilmalar"
+        hint="Topilmalar test yakunlangach hisoblanadi — kuchli tomoningiz, asosiy to'siq va o'tgan testga nisbatan o'zgarish."
+      />
+    );
+  }
 
   return (
     <div className="grid gap-3 xs:grid-cols-3">

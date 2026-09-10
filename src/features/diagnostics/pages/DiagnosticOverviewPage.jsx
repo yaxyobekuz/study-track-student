@@ -19,6 +19,7 @@ import LoaderCard from "@/shared/components/ui/LoaderCard";
 import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 import ScoreRing from "../components/ScoreRing";
 import AiTipBanner from "../components/AiTipBanner";
+import EmptyBlock from "../components/EmptyBlock";
 import DiagnosticTrendChart from "../components/DiagnosticTrendChart";
 
 // Hooks
@@ -329,7 +330,12 @@ const DiagnosticOverviewPage = () => {
         />
 
         {/* ── FANLAR BO'YICHA NATIJALAR ───── */}
-        {subjects.length > 0 && (
+        {subjects.length === 0 ? (
+          <EmptyBlock
+            title="Fanlar bo'yicha natijalar"
+            hint="Birinchi testdan keyin har bir fandan o'zlashtirish darajangiz va mavzular kesimi shu yerda chiqadi."
+          />
+        ) : (
           <Card title="Fanlar bo'yicha natijalar">
             <p className="text-xs text-gray-400">
               Har bir fandan o'zlashtirish darajangiz

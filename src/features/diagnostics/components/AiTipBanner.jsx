@@ -1,5 +1,6 @@
 // Icons
 import { Sparkles, Loader2, Target } from "lucide-react";
+import EmptyBlock from "./EmptyBlock";
 
 /**
  * "AI TAVSIYASI" — bitta jumlalik maslahat va bitta tugma.
@@ -11,7 +12,14 @@ import { Sparkles, Loader2, Target } from "lucide-react";
  * sahifasida alohida bor.
  */
 const AiTipBanner = ({ recommendation, onPractice, busy = false }) => {
-  if (!recommendation?.text) return null;
+  if (!recommendation?.text) {
+    return (
+      <EmptyBlock
+        title="AI tavsiyasi"
+        hint="Tavsiya bir nechta test natijasi to'plangach chiqadi — qaysi mavzuni mustahkamlash kerakligini aytadi."
+      />
+    );
+  }
 
   return (
     <div className="rounded-2xl bg-gray-900 p-4 xs:p-5">

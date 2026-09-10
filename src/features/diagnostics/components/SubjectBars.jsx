@@ -1,5 +1,6 @@
 // Components
 import Card from "@/shared/components/ui/Card";
+import EmptyBlock from "./EmptyBlock";
 
 // Data
 import { scoreColor } from "../data/diagnostics.data";
@@ -15,7 +16,16 @@ import { scoreColor } from "../data/diagnostics.data";
  * hech narsani taqqoslamaydi, umumiy ball esa yuqorida allaqachon bor.
  */
 const SubjectBars = ({ subjects = [] }) => {
-  if (subjects.length < 2) return null;
+  // ⚠️ Bitta fanli testda TAQQOSLASH bo'lmaydi (umumiy ball yuqorida
+  // allaqachon bor), lekin blok baribir ko'rinadi — sababi bilan.
+  if (subjects.length < 2) {
+    return (
+      <EmptyBlock
+        title="Fanlar bo'yicha natija"
+        hint="Bu testda bitta fan bo'lgan. Fanlarni taqqoslash uchun aralash test kerak."
+      />
+    );
+  }
 
   return (
     <Card title="Fanlar bo'yicha natija">

@@ -115,29 +115,29 @@ const DiagnosticsListPage = () => {
   return (
     <div className="space-y-4">
       {/* ── BOSH SAHIFAGA O'TISH ──────────── */}
-      {/* ⚠️ Faqat test ishlagan o'quvchiga: hali natijasi yo'q odamga
-          "umumiy natijalaring" havolasi bo'sh ekranga olib borardi. */}
-      {(dashboard?.summary?.attempts ?? 0) > 0 && (
-        <Link
-          to="/diagnostics"
-          className="flex items-center gap-3 rounded-2xl bg-white p-4 transition-colors active:bg-gray-50 xs:p-5"
-        >
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <LayoutDashboard size={20} strokeWidth={1.5} />
-          </span>
+      {/* ⚠️ HAVOLA HAR DOIM KO'RINADI. Ilgari u faqat testi bor
+          o'quvchiga chiqardi — ya'ni tizimda diagnostika borligini
+          birinchi testni topshirmaguncha bilib bo'lmasdi. Bosh sahifaning
+          o'zi endi bo'sh holatni tushuntiradi. */}
+      <Link
+        to="/diagnostics"
+        className="flex items-center gap-3 rounded-2xl bg-white p-4 transition-colors active:bg-gray-50 xs:p-5"
+      >
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+          <LayoutDashboard size={20} strokeWidth={1.5} />
+        </span>
 
-          <span className="min-w-0 flex-1">
-            <span className="block text-sm font-semibold text-gray-900">
-              Umumiy natijalarim
-            </span>
-            <span className="block text-xs text-gray-400">
-              O'rtacha, dinamika va fanlar kesimi
-            </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-semibold text-gray-900">
+            Umumiy natijalarim
           </span>
+          <span className="block text-xs text-gray-400">
+            O'rtacha, dinamika va fanlar kesimi
+          </span>
+        </span>
 
-          <ChevronRight className="size-4 shrink-0 text-gray-300" strokeWidth={1.5} />
-        </Link>
-      )}
+        <ChevronRight className="size-4 shrink-0 text-gray-300" strokeWidth={1.5} />
+      </Link>
 
       {/* ── AI TAVSIYASI ──────────────────── */}
       <AiTipBanner

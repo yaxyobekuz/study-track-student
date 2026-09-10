@@ -9,6 +9,7 @@ import { ChevronRight } from "lucide-react";
 
 // Components
 import Card from "@/shared/components/ui/Card";
+import EmptyBlock from "./EmptyBlock";
 
 // Queries
 import { diagnosticsQueries } from "../queries/diagnostics.queries";
@@ -142,8 +143,18 @@ const DiagnosticProfileCards = () => {
   const subjects = dashboard.subjects ?? [];
   const trend = dashboard.trend ?? [];
 
-  // Hali test ishlamagan o'quvchiga bo'sh raqamlar ko'rsatilmaydi.
-  if (!summary.attempts) return null;
+  // ⚠️ TESTI YO'Q O'QUVCHIDA HAM BO'LIM KO'RINADI. Ilgari butun
+  // diagnostika qismi yashirinardi va profil "hech narsa qo'shilmagan"
+  // bo'lib turardi. Endi nol raqamlar o'rniga BITTA aniq jumla chiqadi:
+  // nima qilinsa bu yer to'lishi aytiladi.
+  if (!summary.attempts) {
+    return (
+      <EmptyBlock
+        title="Diagnostika"
+        hint="Hali diagnostika topshirmagansiz. Birinchi testdan keyin bu yerda o'rtacha natijangiz, fanlar kesimi va testlar tarixi chiqadi."
+      />
+    );
+  }
 
   const counts = trend.reduce((acc, row) => {
     if (row.grade) acc[row.grade] = (acc[row.grade] || 0) + 1;
