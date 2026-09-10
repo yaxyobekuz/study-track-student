@@ -75,6 +75,7 @@ import SeasonRewardsPage from "@/features/tests/pages/SeasonRewardsPage";
 
 // Diagnostika (Testlar markazidagi tab + to'liq ekranli sahifalar)
 import DiagnosticsListPage from "@/features/diagnostics/pages/DiagnosticsListPage";
+import DiagnosticOverviewPage from "@/features/diagnostics/pages/DiagnosticOverviewPage";
 import TakeDiagnosticPage from "@/features/diagnostics/pages/TakeDiagnosticPage";
 import DiagnosticResultPage from "@/features/diagnostics/pages/DiagnosticResultPage";
 import DiagnosticHistoryPage from "@/features/diagnostics/pages/DiagnosticHistoryPage";
@@ -153,6 +154,9 @@ const Routes = () => {
             path="/diagnostics/take/:attemptId"
             element={<TakeDiagnosticPage />}
           />
+          {/* Diagnostika bosh sahifasi — "men qayerda turibman".
+              Test boshlash "Diagnostika" tabida qoladi. */}
+          <Route path="/diagnostics" element={<DiagnosticOverviewPage />} />
           <Route path="/diagnostics/history" element={<DiagnosticHistoryPage />} />
           <Route
             path="/diagnostics/result/:attemptId"
