@@ -22,6 +22,7 @@ import Button from "@/shared/components/ui/button/Button";
 import BottomNavbar from "@/shared/components/ui/BottomNavbar";
 import StudentAvatar from "@/shared/components/ui/StudentAvatar";
 import PremiumBuyModal from "@/features/premium/components/PremiumBuyModal";
+import DiagnosticProfileCards from "@/features/diagnostics/components/DiagnosticProfileCards";
 
 const ProfilePage = () => {
   const { setHeaderColor } = useTelegram();
@@ -109,6 +110,11 @@ const ProfilePage = () => {
             <p className="text-sm text-gray-500">Sinf biriktirilmagan</p>
           )}
         </Card>
+
+        {/* ⚠️ DIAGNOSTIKA BLOKLARI — o'quvchi hech bo'lmasa bitta test
+            ishlagan bo'lsa chiqadi, aks holda komponent hech narsa
+            qaytarmaydi. Shuning uchun bu yerda shart yozilmagan. */}
+        <DiagnosticProfileCards />
 
         {/* Premium status */}
         {myIsPremium ? (
