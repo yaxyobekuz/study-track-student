@@ -73,6 +73,12 @@ import ResultDetailPage from "@/features/tests/pages/ResultDetailPage";
 // Season rewards pages
 import SeasonRewardsPage from "@/features/tests/pages/SeasonRewardsPage";
 
+// Diagnostika (Testlar markazidagi tab + to'liq ekranli sahifalar)
+import DiagnosticsListPage from "@/features/diagnostics/pages/DiagnosticsListPage";
+import TakeDiagnosticPage from "@/features/diagnostics/pages/TakeDiagnosticPage";
+import DiagnosticResultPage from "@/features/diagnostics/pages/DiagnosticResultPage";
+import DiagnosticHistoryPage from "@/features/diagnostics/pages/DiagnosticHistoryPage";
+
 const Routes = () => {
   return (
     <RoutesWrapper>
@@ -133,9 +139,25 @@ const Routes = () => {
           <Route path="/tests" element={<TestsLayout />}>
             <Route index element={<Navigate to="/tests/available" replace />} />
             <Route path="available" element={<AvailableTestsList />} />
+            <Route path="diagnostics" element={<DiagnosticsListPage />} />
             <Route path="results" element={<MyResultsList />} />
             <Route path="rating" element={<SeasonsList />} />
           </Route>
+
+          {/* Diagnostika — TO'LIQ EKRAN.
+              ⚠️ `TestsLayout` DAN TASHQARIDA: test topshirilayotganda
+              tablar va sarlavha diqqatni bo'ladi, adaptiv rejimda esa
+              "Testlar" tabiga o'tib ketish urinishni yarim yo'lda
+              qoldirardi. */}
+          <Route
+            path="/diagnostics/take/:attemptId"
+            element={<TakeDiagnosticPage />}
+          />
+          <Route path="/diagnostics/history" element={<DiagnosticHistoryPage />} />
+          <Route
+            path="/diagnostics/result/:attemptId"
+            element={<DiagnosticResultPage />}
+          />
 
           {/* Take test + detail pages */}
           <Route path="/take-test/:bindingId" element={<TakeTestPage />} />
