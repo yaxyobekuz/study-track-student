@@ -202,6 +202,32 @@ export const formatDurationShortUz = (totalMinutes, fallback = "—") => {
   return `${minutes}d`;
 };
 
+/**
+ * Soniyalarni soat ko'rinishida: "50:08", bir soatdan oshsa "1:05:08".
+ *
+ * ⚠️ DAVOMIYLIK, kun vaqti EMAS (`formatTimeUz` bilan chalkashmasin):
+ * test qancha davom etgani yoki taymerda qancha qolgani. Test natijasida
+ * `formatDurationShortUz` ning "7d" ko'rinishi o'quvchi uchun
+ * tushunarsiz edi — soniya aniqligidagi soat ko'rinishi bir qarashda
+ * o'qiladi.
+ * @param {number|null} totalSeconds
+ * @param {string} [fallback="—"]
+ * @returns {string}
+ */
+export const formatClockUz = (totalSeconds, fallback = "—") => {
+  if (totalSeconds == null || Number.isNaN(Number(totalSeconds))) return fallback;
+
+  const total = Math.max(0, Math.round(Number(totalSeconds)));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  const pad = (n) => String(n).padStart(2, "0");
+
+  return hours
+    ? `${hours}:${pad(minutes)}:${pad(seconds)}`
+    : `${pad(minutes)}:${pad(seconds)}`;
+};
+
 /** Oy tanlash uchun variantlar (select/form). */
 export const months = MONTHS_UZ_CAP.map((label, value) => ({ label, value }));
 

@@ -9,11 +9,11 @@ import { TIMER_WARNING_SECONDS, TIMER_DANGER_SECONDS } from "../data/diagnostics
 
 // Utils
 import { cn } from "@/shared/utils/cn";
+import { formatClockUz } from "@/shared/utils/date.utils";
 
-const format = (total) => {
-  const s = Math.max(0, total);
-  return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
-};
+// Soat ko'rinishi yagona manbadan (`date.utils.js`) — natija sahifasi
+// ham shuni ishlatadi, ikki nusxa bo'lmasligi uchun.
+const format = (total) => formatClockUz(Math.max(0, total));
 
 /**
  * DIAGNOSTIKA TAYMERI.

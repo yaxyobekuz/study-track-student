@@ -1,6 +1,10 @@
+// Icons
+import { Target } from "lucide-react";
+
 // Components
 import Card from "@/shared/components/ui/Card";
 import EmptyBlock from "./EmptyBlock";
+import SectionHeader from "./SectionHeader";
 
 // Data
 import { scoreColor } from "../data/diagnostics.data";
@@ -12,46 +16,64 @@ import { scoreColor } from "../data/diagnostics.data";
  * test ham fanlarga bo'linadi va "Aralash" degan ma'nosiz qator
  * chiqmaydi.
  *
- * ⚠️ FAN BITTA BO'LSA BLOK KO'RSATILMAYDI: bitta ustunli "taqqoslash"
- * hech narsani taqqoslamaydi, umumiy ball esa yuqorida allaqachon bor.
+ * ⚠️ BITTA FANLI TESTDA HAM BLOK CHIQADI. Ilgari u "taqqoslash yo'q"
+ * deb yashirilardi; lekin blok taqqoslash emas, har fandan ANIQLIK va
+ * SAVOLLAR SONI — bitta fanda ham o'quvchiga "20 savoldan 16 tasi"
+ * degan ma'lumot beradi (umumiy ball buni aytmaydi).
+ *
+ * Kengroq ekranda fanlar yonma-yon (manba loyihadagidek), telefonda
+ * ustma-ust.
  */
 const SubjectBars = ({ subjects = [] }) => {
-  // ⚠️ Bitta fanli testda TAQQOSLASH bo'lmaydi (umumiy ball yuqorida
-  // allaqachon bor), lekin blok baribir ko'rinadi — sababi bilan.
-  if (subjects.length < 2) {
+  if (subjects.length === 0) {
     return (
       <EmptyBlock
         title="Fanlar bo'yicha natija"
-        hint="Bu testda bitta fan bo'lgan. Fanlarni taqqoslash uchun aralash test kerak."
+        hint="Fan kesimi test yakunlangach hisoblanadi."
       />
     );
   }
 
   return (
-    <Card title="Fanlar bo'yicha natija">
-      <div className="mt-3 space-y-3">
-        {subjects.map((row) => (
-          <div key={row.subjectId || row.subject}>
-            <div className="flex items-center justify-between gap-2 text-sm">
-              <span className="min-w-0 truncate font-medium text-gray-900">
-                {row.subject}
-              </span>
-              <span className="shrink-0 tabular-nums text-gray-500">
-                {row.correct}/{row.questions} ·{" "}
-                <span className="font-semibold text-gray-900">{row.score}%</span>
-              </span>
+    <Card>
+      <SectionHeader
+        icon={Target}
+        title="Fanlar bo'yicha natija"
+        subtitle="Har fan bo'yicha aniqlik"
+      />
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        {subjects.map((row) => {
+          const value = Math.min(100, Math.max(0, row.score ?? 0));
+          return (
+            <div key={row.subjectId || row.subject}>
+              <div className="flex items-center justify-between gap-2 text-sm">
+                <span className="min-w-0 truncate font-medium text-gray-900">
+                  {row.subject}
+                </span>
+                <span
+                  className="shrink-0 font-semibold tabular-nums"
+                  style={{ color: scoreColor(row.score) }}
+                >
+                  {row.score}%
+                </span>
+              </div>
+
+              <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-gray-100">
+                <div
+                  className="h-full rounded-full transition-[width] duration-700 motion-reduce:transition-none"
+                  style={{ width: `${value}%`, backgroundColor: scoreColor(row.score) }}
+                />
+              </div>
+
+              {/* ⚠️ Maxraj foiz yonida turadi — "79%" 24 savoldanmi yoki
+                  4 savoldanmi, bu ishonchlilikni butunlay o'zgartiradi. */}
+              <p className="mt-1 text-xs text-gray-400">
+                {row.questions} savol · {row.correct} to'g'ri
+              </p>
             </div>
-            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-gray-100">
-              <div
-                className="h-full rounded-full transition-[width] duration-700 motion-reduce:transition-none"
-                style={{
-                  width: `${Math.min(100, Math.max(0, row.score))}%`,
-                  backgroundColor: scoreColor(row.score),
-                }}
-              />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </Card>
   );
