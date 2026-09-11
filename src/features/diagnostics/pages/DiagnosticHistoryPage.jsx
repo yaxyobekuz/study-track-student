@@ -46,10 +46,11 @@ import { formatDateUz } from "@/shared/utils/date.utils";
  * natijam qancha" degan savolga javob ekrandagi filtrga qarab
  * o'zgarib turardi.
  *
- * ⚠️ JADVAL EMAS, KARTALAR RO'YXATI. Panel Telegram ilovasi ichida,
- * ~400px enida ochiladi: sakkiz ustunli jadval u yerda gorizontal
- * skroll bo'lib qolardi. Ma'lumot va amallar admin paneldagi jadval
- * bilan AYNI — faqat joylashuvi telefon uchun.
+ * ⚠️ IKKI KO'RINISH, BITTA MA'LUMOT. Kengroq ekranda (≥640px) ro'yxat
+ * manba loyihadagidek saralanadigan ustunli JADVAL; telefonda esa
+ * (Telegram ilovasi, ~400px) o'sha maydonlar ixcham qatorga yig'iladi —
+ * sakkiz ustun u yerda gorizontal skrollga aylanardi. Ikkala ko'rinish
+ * ham AYNI `rows` va AYNI `open()` dan foydalanadi.
  */
 
 const SORTS = [
@@ -121,6 +122,18 @@ const DiagnosticHistoryPage = () => {
 
   if (isLoading) return <LoaderCard />;
 
+  /**
+   * Urinishni ochish — tugallanmagani davom ettiriladi, tugallangani
+   * tahlilga olib boradi. Bitta joyda: jadval va telefon qatori ikkalasi
+   * ham shuni chaqiradi, aks holda ikkisi turli sahifaga olib ketardi.
+   */
+  const open = (row) =>
+    navigate(
+      row.status === "in_progress"
+        ? `/diagnostics/take/${row.id}`
+        : `/diagnostics/result/${row.id}`,
+    );
+
   return (
     <div className="min-h-screen pb-28 animate__animated animate__fadeIn">
       <div className="container space-y-4 pt-4">
@@ -133,7 +146,12 @@ const DiagnosticHistoryPage = () => {
           Diagnostikaga qaytish
         </button>
 
-        <h1 className="text-xl font-bold text-gray-900">Test tarixi</h1>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">Test tarixi</h1>
+          <p className="mt-0.5 text-sm text-gray-500">
+            Barcha imtihonlaringiz va ularning tahlili.
+          </p>
+        </div>
 
         {/* ── KO'RSATKICHLAR ────────────────── */}
         <div className="grid grid-cols-2 gap-3">
@@ -163,157 +181,274 @@ const DiagnosticHistoryPage = () => {
           />
         </div>
 
-        {/* ── FILTRLAR ──────────────────────── */}
-        <Card className="space-y-3">
-          <div>
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-              Fan
-            </p>
-            <Select
-              value={subject}
-              onChange={setSubject}
-              options={subjectOptions}
-              placeholder="Barcha fanlar"
-            />
-          </div>
+        {/* ── FILTRLAR + JADVAL — BITTA KARTADA ── */}
+        {/* ⚠️ Filtr va ro'yxat bir kartada: filtr NIMANI toraytirayotgani
+            ko'z oldida turadi. Alohida kartalarda bo'lsa, filtr qo'yilgan-u
+            ro'yxat "nega qisqardi" degan savol tug'ilardi. */}
+        <Card className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-[minmax(0,180px)_minmax(0,1fr)]">
+            <div>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                Fan
+              </p>
+              <Select
+                value={subject}
+                onChange={setSubject}
+                options={subjectOptions}
+                placeholder="Barcha fanlar"
+              />
+            </div>
 
-          <div>
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-              Qidiruv
-            </p>
-            <div className="relative">
-              <Search
-                size={16}
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Fan yoki test nomi…"
-                className="pl-9"
-              />
+            <div>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                Qidiruv
+              </p>
+              <div className="relative">
+                <Search
+                  size={16}
+                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+                <Input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Fan yoki test nomi…"
+                  className="pl-9"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 border-t border-gray-100 pt-3">
-            <span className="self-center text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-              Saralash
-            </span>
-            {SORTS.map((column) => {
-              const active = sort.key === column.key;
-              const Icon = active
-                ? sort.dir === 1
-                  ? ChevronUp
-                  : ChevronDown
-                : ArrowUpDown;
-              return (
-                <button
-                  key={column.key}
-                  type="button"
-                  onClick={() => toggleSort(column.key)}
-                  aria-pressed={active}
-                  className={cn(
-                    "flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-                    active
-                      ? "bg-gray-900 text-white"
-                      : "bg-gray-100 text-gray-600",
-                  )}
-                >
-                  {column.label}
-                  <Icon size={12} className={active ? "" : "opacity-50"} />
-                </button>
-              );
-            })}
-          </div>
-        </Card>
-
-        {/* ── RO'YXAT ───────────────────────── */}
-        {rows.length === 0 ? (
-          <Card>
-            <p className="py-8 text-center text-sm text-gray-500">
-              {attempts.length === 0
-                ? "Hali test topshirilmagan."
-                : "Bu shartlarga mos test topilmadi."}
-            </p>
-          </Card>
-        ) : (
-          <div className="space-y-3">
-            {rows.map((row) => (
-              <div key={row.id} className="rounded-2xl bg-white p-4 xs:p-5">
-                <div className="flex items-start gap-3">
-                  <span
-                    className="flex size-12 shrink-0 items-center justify-center rounded-xl text-sm font-bold tabular-nums"
-                    style={{
-                      backgroundColor: `${scoreColor(row.score)}1A`,
-                      color: scoreColor(row.score),
-                    }}
-                  >
-                    {row.score != null ? `${Math.round(row.score)}%` : "—"}
-                  </span>
-
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold text-gray-900">
-                      {row.subjectName || row.testTitle || "Diagnostika"}
-                    </p>
-                    <p className="mt-0.5 text-xs text-gray-400">
-                      {formatDateUz(row.submittedAt || row.createdAt)}
-                    </p>
-                  </div>
-
-                  {row.grade && (
-                    <span
-                      className={cn(
-                        "shrink-0 rounded-full px-2 py-1 text-xs font-medium",
-                        GRADE_BADGE[row.grade],
-                      )}
-                    >
-                      {GRADE_LABELS[row.grade]}
-                    </span>
-                  )}
-                </div>
-
-                <div className="mt-3 flex items-center gap-3 border-t border-gray-100 pt-3 text-xs">
-                  <span className="text-gray-500">
-                    Savollar:{" "}
-                    <span className="font-semibold text-gray-900">
-                      {row.totalQuestions ?? 0}
-                    </span>
-                  </span>
-                  <span className="text-gray-500">
-                    To'g'ri:{" "}
-                    <span className="font-semibold text-emerald-600">
-                      {row.correctCount ?? 0}
-                    </span>
-                  </span>
-                  <span className="text-gray-500">
-                    Noto'g'ri:{" "}
-                    <span className="font-semibold text-rose-600">
-                      {row.wrongCount ?? 0}
-                    </span>
-                  </span>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      navigate(
-                        row.status === "in_progress"
-                          ? `/diagnostics/take/${row.id}`
-                          : `/diagnostics/result/${row.id}`,
-                      )
-                    }
-                    className="ml-auto shrink-0 rounded-lg bg-gray-900 px-3 py-1.5 font-semibold text-white"
-                  >
-                    {row.status === "in_progress" ? "Davom etish" : "Tahlil"}
-                  </button>
-                </div>
-              </div>
+          {/* ⚠️ Telefonda jadval sarlavhasi yo'q — saralash shu tugmalarda.
+              Kengroq ekranda esa ustun sarlavhasining o'zi bosiladi. */}
+          <div className="flex flex-wrap gap-2 sm:hidden">
+            {SORTS.map((column) => (
+              <SortPill
+                key={column.key}
+                column={column}
+                sort={sort}
+                onToggle={toggleSort}
+              />
             ))}
           </div>
-        )}
+
+          {rows.length === 0 ? (
+            <p className="py-8 text-center text-sm text-gray-500">
+              {attempts.length === 0
+                ? "Hali test topshirilmagan. Birinchi diagnostikadan keyin natijalaringiz shu yerda tahlili bilan chiqadi."
+                : "Bu shartlarga mos test topilmadi."}
+            </p>
+          ) : (
+            <div className="overflow-hidden rounded-xl border border-gray-100">
+              {/* ── SARLAVHA (faqat keng ekranda) ── */}
+              <div
+                className={cn(
+                  "hidden items-center gap-1.5 bg-gray-50/80 px-2 py-2.5 text-[11px] font-semibold text-gray-500 sm:grid",
+                  TABLE_GRID,
+                )}
+              >
+                <SortHeader column={SORTS[0]} sort={sort} onToggle={toggleSort} />
+                <SortHeader column={SORTS[1]} sort={sort} onToggle={toggleSort} />
+                <span className="text-right">Savollar</span>
+                <span className="text-right">To'g'ri</span>
+                <span className="text-right">Noto'g'ri</span>
+                <SortHeader
+                  column={SORTS[2]}
+                  sort={sort}
+                  onToggle={toggleSort}
+                  align="right"
+                />
+                <span className="text-center">Daraja</span>
+                <span />
+              </div>
+
+              <div className="divide-y divide-gray-100">
+                {rows.map((row) => {
+                  const name = row.subjectName || row.testTitle || "Diagnostika";
+                  const date = formatDateUz(row.submittedAt || row.createdAt);
+                  const score = row.score != null ? `${Math.round(row.score)}%` : "—";
+                  const action = row.status === "in_progress" ? "Davom etish" : "Tahlil";
+
+                  return (
+                    <div key={row.id}>
+                      {/* ── KENG EKRAN: jadval qatori ── */}
+                      <div
+                        className={cn(
+                          "hidden items-center gap-1.5 px-2 py-3 text-sm sm:grid",
+                          TABLE_GRID,
+                        )}
+                      >
+                        <span className="text-xs text-gray-600">{date}</span>
+                        <span
+                          className="truncate text-[13px] font-semibold text-gray-900"
+                          title={name}
+                        >
+                          {name}
+                        </span>
+                        <span className="text-right tabular-nums text-gray-700">
+                          {row.totalQuestions ?? 0}
+                        </span>
+                        <span className="text-right font-semibold tabular-nums text-emerald-600">
+                          {row.correctCount ?? 0}
+                        </span>
+                        <span className="text-right font-semibold tabular-nums text-rose-600">
+                          {row.wrongCount ?? 0}
+                        </span>
+                        <span
+                          className="text-right font-bold tabular-nums"
+                          style={{ color: scoreColor(row.score) }}
+                        >
+                          {score}
+                        </span>
+                        <span className="flex justify-center">
+                          {row.grade ? (
+                            <span
+                              className={cn(
+                                "rounded-full px-2 py-0.5 text-[11px] font-medium",
+                                GRADE_BADGE[row.grade],
+                              )}
+                            >
+                              {GRADE_LABELS[row.grade]}
+                            </span>
+                          ) : (
+                            <span className="text-gray-300">—</span>
+                          )}
+                        </span>
+                        <span className="flex justify-end">
+                          {/* ⚠️ Jadvalda "Davom" — "Davom etish" 52px ustunga
+                              sig'masdi. Telefon qatorida to'liq so'z qoladi. */}
+                          <button
+                            type="button"
+                            onClick={() => open(row)}
+                            className="rounded-lg bg-gray-900 px-2.5 py-1.5 text-xs font-semibold text-white"
+                          >
+                            {row.status === "in_progress" ? "Davom" : "Tahlil"}
+                          </button>
+                        </span>
+                      </div>
+
+                      {/* ── TELEFON: o'sha ma'lumot, ixcham ── */}
+                      <div className="flex items-start gap-3 p-3 sm:hidden">
+                        <span
+                          className="flex size-11 shrink-0 items-center justify-center rounded-xl text-sm font-bold tabular-nums"
+                          style={{
+                            backgroundColor: `${scoreColor(row.score)}1A`,
+                            color: scoreColor(row.score),
+                          }}
+                        >
+                          {score}
+                        </span>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="truncate font-semibold text-gray-900">{name}</p>
+                            {row.grade && (
+                              <span
+                                className={cn(
+                                  "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium",
+                                  GRADE_BADGE[row.grade],
+                                )}
+                              >
+                                {GRADE_LABELS[row.grade]}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-400">{date}</p>
+
+                          <div className="mt-2 flex items-center gap-3 text-xs">
+                            <span className="text-gray-500">
+                              Savol{" "}
+                              <b className="text-gray-900">{row.totalQuestions ?? 0}</b>
+                            </span>
+                            <span className="text-gray-500">
+                              To'g'ri{" "}
+                              <b className="text-emerald-600">{row.correctCount ?? 0}</b>
+                            </span>
+                            <span className="text-gray-500">
+                              Xato <b className="text-rose-600">{row.wrongCount ?? 0}</b>
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() => open(row)}
+                              className="ml-auto shrink-0 rounded-lg bg-gray-900 px-3 py-1.5 font-semibold text-white"
+                            >
+                              {action}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </Card>
       </div>
 
       <BottomNavbar />
     </div>
+  );
+};
+
+/**
+ * JADVAL USTUNLARI — sarlavha va qatorlar AYNI shablonni ishlatadi.
+ *
+ * ⚠️ HAR PIKSEL HISOBLANGAN. Panel konteyneri `max-w-xl` — kompyuterda
+ * ham jadvalga ~504px qoladi (karta va qator ichki chegaralaridan
+ * keyin). Birinchi versiyada qat'iy ustunlar hammasini yeb qo'ydi va
+ * FAN ustuniga ~10px qoldi: "Ingliz tili" o'rniga "I." ko'rinardi.
+ *
+ *   80 + 84(fan, kamida) + 44 + 40 + 50 + 44 + 52 + 52 = 446
+ *   + 7 ta oraliq × 6px (42) + ichki chegara 2 × 8px (16) = 504
+ *
+ * Fan ustuni `minmax(84px, 1fr)` — kamida "Matematika" sig'adi, joy
+ * bo'lsa kengayadi. Shablon ikki joyda alohida yozilsa, sarlavha va
+ * raqamlar bir-biridan siljib ketardi.
+ */
+const TABLE_GRID =
+  "grid-cols-[80px_minmax(84px,1fr)_44px_40px_50px_44px_52px_52px]";
+
+/** Saralanadigan ustun sarlavhasi — rasmdagidek o'q belgisi bilan. */
+const SortHeader = ({ column, sort, onToggle, align = "left" }) => {
+  const active = sort.key === column.key;
+  const Icon = active ? (sort.dir === 1 ? ChevronUp : ChevronDown) : ArrowUpDown;
+
+  return (
+    <button
+      type="button"
+      onClick={() => onToggle(column.key)}
+      aria-pressed={active}
+      className={cn(
+        "flex items-center gap-1 transition-colors hover:text-gray-900",
+        align === "right" && "justify-end",
+        active && "text-gray-900",
+      )}
+    >
+      {column.label}
+      <Icon size={12} className={active ? "" : "opacity-50"} />
+    </button>
+  );
+};
+
+/** Telefondagi saralash tugmasi — sarlavha yo'q joyda uning o'rnini bosadi. */
+const SortPill = ({ column, sort, onToggle }) => {
+  const active = sort.key === column.key;
+  const Icon = active ? (sort.dir === 1 ? ChevronUp : ChevronDown) : ArrowUpDown;
+
+  return (
+    <button
+      type="button"
+      onClick={() => onToggle(column.key)}
+      aria-pressed={active}
+      className={cn(
+        "flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+        active ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600",
+      )}
+    >
+      {column.label}
+      <Icon size={12} className={active ? "" : "opacity-50"} />
+    </button>
   );
 };
 

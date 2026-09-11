@@ -114,30 +114,46 @@ const DiagnosticsListPage = () => {
 
   return (
     <div className="space-y-4">
-      {/* ── BOSH SAHIFAGA O'TISH ──────────── */}
-      {/* ⚠️ HAVOLA HAR DOIM KO'RINADI. Ilgari u faqat testi bor
-          o'quvchiga chiqardi — ya'ni tizimda diagnostika borligini
-          birinchi testni topshirmaguncha bilib bo'lmasdi. Bosh sahifaning
-          o'zi endi bo'sh holatni tushuntiradi. */}
-      <Link
-        to="/diagnostics"
-        className="flex items-center gap-3 rounded-2xl bg-white p-4 transition-colors active:bg-gray-50 xs:p-5"
-      >
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-          <LayoutDashboard size={20} strokeWidth={1.5} />
-        </span>
-
-        <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold text-gray-900">
-            Umumiy natijalarim
+      {/* ── BO'LIMLAR: UMUMIY + TARIX ─────── */}
+      {/* ⚠️ IKKALASI HAM HAR DOIM KO'RINADI. Manba loyihada "Dashboard"
+          va "Test tarixi" — asosiy menyu bandlari. Bizda ular ilgari
+          ro'yxat oxiridagi kichik matnli havola edi (u ham faqat natija
+          bo'lsa chiqardi) va o'quvchi tahlil sahifasini topa olmasdi. */}
+      <div className="grid grid-cols-2 gap-3">
+        <Link
+          to="/diagnostics"
+          className="flex flex-col gap-2 rounded-2xl bg-white p-4 transition-colors active:bg-gray-50 xs:p-5"
+        >
+          <span className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+            <LayoutDashboard size={20} strokeWidth={1.5} />
           </span>
-          <span className="block text-xs text-gray-400">
-            O'rtacha, dinamika va fanlar kesimi
+          <span>
+            <span className="block text-sm font-semibold text-gray-900">
+              Umumiy natijalarim
+            </span>
+            <span className="block text-xs text-gray-400">
+              Dinamika va fanlar kesimi
+            </span>
           </span>
-        </span>
+        </Link>
 
-        <ChevronRight className="size-4 shrink-0 text-gray-300" strokeWidth={1.5} />
-      </Link>
+        <Link
+          to="/diagnostics/history"
+          className="flex flex-col gap-2 rounded-2xl bg-white p-4 transition-colors active:bg-gray-50 xs:p-5"
+        >
+          <span className="flex size-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+            <History size={20} strokeWidth={1.5} />
+          </span>
+          <span>
+            <span className="block text-sm font-semibold text-gray-900">
+              Test tarixi
+            </span>
+            <span className="block text-xs text-gray-400">
+              Barcha testlar va tahlili
+            </span>
+          </span>
+        </Link>
+      </div>
 
       {/* ── AI TAVSIYASI ──────────────────── */}
       <AiTipBanner
