@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 // Icons
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Trophy, Coins, Medal } from "lucide-react";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -13,6 +13,8 @@ import EmptyBlock from "./EmptyBlock";
 
 // Queries
 import { diagnosticsQueries } from "../queries/diagnostics.queries";
+import { achievementsQueries } from "@/features/achievements/queries/achievements.queries";
+import { coinsQueries } from "@/features/transactions/queries/transactions.queries";
 
 // Data
 import { GRADE_LABELS, scoreColor } from "../data/diagnostics.data";
@@ -29,9 +31,9 @@ import { formatDateUz } from "@/shared/utils/date.utils";
  * So'rov diagnostika ro'yxati sahifasi bilan bir xil kalitda, ya'ni
  * profilga kirish qo'shimcha yuk bermaydi.
  *
- * ⚠️ TEST ISHLAMAGAN O'QUVCHIDA BLOK CHIQMAYDI. Nol bilan to'ldirilgan
- * to'rtta karta "natijang yomon" degan taassurot berardi — aslida hali
- * hech narsa bo'lmagan.
+ * ⚠️ TEST ISHLAMAGAN O'QUVCHIDA HAM BO'LIM KO'RINADI — nol raqamlar
+ * o'rniga bitta tushuntirish jumlasi bilan. Yashirib qo'yish "tizimda
+ * bunday narsa yo'q" degan taassurot berardi.
  */
 
 const GRADE_ORDER = ["GOOD", "MEDIUM", "BAD"];
@@ -47,6 +49,52 @@ const StatBox = ({ label, value, hint = null }) => (
     </p>
     <p className="mt-1 truncate text-lg font-bold text-gray-900">{value}</p>
     {hint && <p className="truncate text-xs text-gray-500">{hint}</p>}
+  </div>
+);
+
+/**
+ * "FANLAR BO'YICHA O'ZLASHTIRISH" — ustunli diagramma.
+ *
+ * ⚠️ USTUN BALANDLIGI 0–100 SHKALASIDA, eng katta qiymatga nisbatan
+ * EMAS. Aks holda 79% va 77% olgan ikki fan deyarli teng ustun berardi-yu,
+ * biri to'la, ikkinchisi yarim ko'rinardi — ko'z bilan o'qiladigan
+ * diagramma yolg'on farq ko'rsatib qo'yardi.
+ *
+ * ⚠️ Fan nomi ustun ostida, gorizontal: mobil ekranda burchak bilan
+ * yozilgan matn o'qilmaydi.
+ */
+const SubjectColumns = ({ subjects }) => (
+  <div
+    className="mt-4 flex items-end justify-around gap-2"
+    style={{ height: 150 }}
+  >
+    {subjects.map((row) => {
+      const value = Math.max(0, Math.min(100, row.averageScore ?? 0));
+      return (
+        <div
+          key={row.subjectId || row.subject}
+          className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2"
+        >
+          <span className="text-xs font-semibold tabular-nums text-gray-700">
+            {pct(row.averageScore)}
+          </span>
+
+          <div
+            className="w-7 rounded-full transition-all xs:w-9"
+            style={{
+              // Eng kichik qiymat ham ko'rinib tursin (4px) — nolinchi
+              // balandlikdagi ustun "ma'lumot yo'q" bilan chalkashardi.
+              height: `${Math.max(4, (value / 100) * 100)}%`,
+              backgroundColor: scoreColor(row.averageScore),
+            }}
+          />
+
+          <span className="w-full truncate text-center text-[11px] text-gray-500">
+            {row.subject}
+          </span>
+        </div>
+      );
+    })}
   </div>
 );
 
@@ -77,7 +125,10 @@ const DistributionRing = ({ counts, total }) => {
           length: (count / total) * circumference,
         });
       }
-      return { items: acc.items, used: acc.used + (count / total) * circumference };
+      return {
+        items: acc.items,
+        used: acc.used + (count / total) * circumference,
+      };
     },
     { items: [], used: 0 },
   ).items;
@@ -135,7 +186,14 @@ const DistributionRing = ({ counts, total }) => {
 };
 
 const DiagnosticProfileCards = () => {
-  const { data: dashboard, isLoading } = useQuery(diagnosticsQueries.dashboard());
+  const { data: dashboard, isLoading } = useQuery(
+    diagnosticsQueries.dashboard(),
+  );
+  const { data: achievementsPage } = useQuery(achievementsQueries.mine(5));
+  const { data: coins } = useQuery(coinsQueries.balance());
+
+  const achievements = achievementsPage?.data ?? [];
+  const achievementCount = achievementsPage?.pagination?.total ?? 0;
 
   if (isLoading || !dashboard) return null;
 
@@ -143,18 +201,12 @@ const DiagnosticProfileCards = () => {
   const subjects = dashboard.subjects ?? [];
   const trend = dashboard.trend ?? [];
 
-  // ⚠️ TESTI YO'Q O'QUVCHIDA HAM BO'LIM KO'RINADI. Ilgari butun
-  // diagnostika qismi yashirinardi va profil "hech narsa qo'shilmagan"
-  // bo'lib turardi. Endi nol raqamlar o'rniga BITTA aniq jumla chiqadi:
-  // nima qilinsa bu yer to'lishi aytiladi.
-  if (!summary.attempts) {
-    return (
-      <EmptyBlock
-        title="Diagnostika"
-        hint="Hali diagnostika topshirmagansiz. Birinchi testdan keyin bu yerda o'rtacha natijangiz, fanlar kesimi va testlar tarixi chiqadi."
-      />
-    );
-  }
+  // ⚠️ TESTI YO'Q O'QUVCHIDA BO'LIM BUTUNLAY QAYTIB KETMAYDI.
+  // Diagnostika bloklari (ko'rsatkichlar, fanlar, taqsimot, tarix)
+  // o'rniga bitta tushuntirish chiqadi, LEKIN tanga, yutuq va mukofot
+  // bloklari baribir ko'rinadi: ular diagnostikaga bog'liq emas va
+  // test ishlamagan o'quvchida ham ma'lumoti bo'lishi mumkin.
+  const hasAttempts = Boolean(summary.attempts);
 
   const counts = trend.reduce((acc, row) => {
     if (row.grade) acc[row.grade] = (acc[row.grade] || 0) + 1;
@@ -168,32 +220,91 @@ const DiagnosticProfileCards = () => {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3">
-        <StatBox label="Testlar" value={summary.attempts} />
-        <StatBox
-          label="O'rtacha"
-          value={pct(summary.averageScore)}
-          hint={summary.gradeLabel || null}
-        />
-        <StatBox
-          label="Eng kuchli"
-          value={summary.bestSubject?.subject || "—"}
-          hint={
-            summary.bestSubject ? pct(summary.bestSubject.averageScore) : null
-          }
-        />
-        <StatBox
-          label="Eng kuchsiz"
-          value={summary.worstSubject?.subject || "—"}
-          hint={
-            summary.worstSubject ? pct(summary.worstSubject.averageScore) : null
-          }
-        />
+      {/* ── UCH KO'RSATKICH ────────────────── */}
+      {/* ⚠️ XP / STREAK / LIGA EMAS. Manba loyihada shu uchta katak
+          bor, lekin bizning tizimda bunday tushunchalar YO'Q va nol
+          yozib qo'yish hech qachon o'zgarmaydigan soxta raqam bo'lardi.
+          Uning o'rniga AYNI shakldagi kartada bizda HAQIQATAN bor uchta
+          son turadi: tanga balansi, yutuqlar soni va daraja. */}
+      <div className="grid grid-cols-3 gap-px overflow-hidden rounded-2xl bg-white/10 bg-gray-900">
+        <div className="bg-gray-900 p-3 text-center">
+          <Coins className="mx-auto size-4 text-amber-400" strokeWidth={1.5} />
+          <p className="mt-1 text-base font-bold text-white">
+            {coins?.coinBalance ?? 0}
+          </p>
+          <p className="text-[10px] uppercase tracking-wide text-white/50">
+            Tanga
+          </p>
+        </div>
+
+        <div className="bg-gray-900 p-3 text-center">
+          <Medal className="mx-auto size-4 text-sky-400" strokeWidth={1.5} />
+          <p className="mt-1 text-base font-bold text-white">
+            {achievementCount}
+          </p>
+          <p className="text-[10px] uppercase tracking-wide text-white/50">
+            Yutuq
+          </p>
+        </div>
+
+        <div className="bg-gray-900 p-3 text-center">
+          <Trophy
+            className="mx-auto size-4 text-emerald-400"
+            strokeWidth={1.5}
+          />
+          <p className="mt-1 text-base font-bold text-white">
+            {summary.gradeLabel || "—"}
+          </p>
+          <p className="text-[10px] uppercase tracking-wide text-white/50">
+            Daraja
+          </p>
+        </div>
       </div>
 
-      {subjects.length > 0 && (
+      {!hasAttempts && (
+        <EmptyBlock
+          title="Diagnostika"
+          hint="Hali diagnostika topshirmagansiz. Birinchi testdan keyin bu yerda o'rtacha natijangiz, fanlar kesimi va testlar tarixi chiqadi."
+        />
+      )}
+
+      {hasAttempts && (
+        <div className="grid grid-cols-2 gap-3">
+          <StatBox label="Testlar" value={summary.attempts} />
+          <StatBox
+            label="O'rtacha"
+            value={pct(summary.averageScore)}
+            hint={summary.gradeLabel || null}
+          />
+          <StatBox
+            label="Eng kuchli"
+            value={summary.bestSubject?.subject || "—"}
+            hint={
+              summary.bestSubject ? pct(summary.bestSubject.averageScore) : null
+            }
+          />
+          <StatBox
+            label="Eng kuchsiz"
+            value={summary.worstSubject?.subject || "—"}
+            hint={
+              summary.worstSubject
+                ? pct(summary.worstSubject.averageScore)
+                : null
+            }
+          />
+        </div>
+      )}
+
+      {hasAttempts && subjects.length > 0 && (
         <Card title="Fanlar bo'yicha o'zlashtirish">
-          <p className="text-xs text-gray-400">Har fandan o'rtacha</p>
+          <p className="text-xs text-gray-400">Har fandan o'rtacha (%)</p>
+          <SubjectColumns subjects={subjects} />
+        </Card>
+      )}
+
+      {hasAttempts && subjects.length > 0 && (
+        <Card title="Fanlar">
+          <p className="text-xs text-gray-400">O'rtacha natija</p>
 
           <div className="mt-3 space-y-3">
             {subjects.map((row) => (
@@ -227,14 +338,14 @@ const DiagnosticProfileCards = () => {
         </Card>
       )}
 
-      {graded > 0 && (
+      {hasAttempts && graded > 0 && (
         <Card title="Natijalar taqsimoti">
           <p className="mb-3 text-xs text-gray-400">Testlar darajasi</p>
           <DistributionRing counts={counts} total={graded} />
         </Card>
       )}
 
-      {recent.length > 0 && (
+      {hasAttempts && recent.length > 0 && (
         <Card title="Testlar tarixi">
           <p className="text-xs text-gray-400">
             Ustiga bosib natijani batafsil ko'ring
@@ -284,6 +395,64 @@ const DiagnosticProfileCards = () => {
           </Link>
         </Card>
       )}
+
+      {/* ── MUKOFOTLAR ─────────────────────── */}
+      {/* ⚠️ MANBA HAQIQIY: olimpiada va musobaqa yutuqlari
+          (`StudentAchievement`) — ularni ma'muriyat kiritadi. Server
+          `studentId` ni MAJBURAN `req.user.id` ga almashtiradi, ya'ni
+          bu yerdan boshqa o'quvchining yutug'ini ko'rib bo'lmaydi. */}
+      <Card
+        title="Mukofotlar"
+        icon={<Trophy className="size-4 text-amber-500" strokeWidth={1.5} />}
+      >
+        <p className="text-xs text-gray-400">Yutuqlar</p>
+
+        {achievements.length === 0 ? (
+          <p className="py-4 text-center text-sm text-gray-400">
+            Hali mukofot yo'q. Olimpiada va musobaqa natijalari shu yerda
+            chiqadi.
+          </p>
+        ) : (
+          <div className="mt-3 space-y-2">
+            {achievements.map((row) => (
+              <div
+                key={row.id}
+                className="flex items-start gap-3 rounded-xl bg-amber-50/60 p-3"
+              >
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                  <Medal className="size-4" strokeWidth={1.5} />
+                </span>
+
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-medium text-gray-900">
+                    {row.title}
+                  </span>
+                  <span className="block text-xs text-gray-500">
+                    {[row.levelLabel, row.placeLabel]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </span>
+                  <span className="block text-xs text-gray-400">
+                    {/* ⚠️ `date` — `@db.Date`, UTC yarim tunida yotadi.
+                        Bu panelda `formatDateUz` da `utc` bayrog'i YO'Q
+                        (u faqat serverda bor), lekin Toshkent +5 bo'lgani
+                        uchun UTC yarim tuni o'sha kunning 05:00 iga
+                        tushadi va kun SILJIMAYDI. Manfiy zonada bu
+                        noto'g'ri bo'lardi — tizim esa faqat Toshkentda. */}
+                    {formatDateUz(row.date)}
+                  </span>
+                </span>
+              </div>
+            ))}
+
+            {achievementCount > achievements.length && (
+              <p className="pt-1 text-center text-xs text-gray-400">
+                Jami {achievementCount} ta yutuq
+              </p>
+            )}
+          </div>
+        )}
+      </Card>
     </>
   );
 };
