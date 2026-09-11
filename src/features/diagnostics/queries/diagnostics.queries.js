@@ -28,15 +28,45 @@ export const diagnosticsQueries = {
   dashboard: () =>
     queryOptions({
       queryKey: [...diagnosticsKeys.all, "dashboard"],
-      queryFn: () => diagnosticsAPI.dashboard().then((r) => r.data.data),
+      // ⚠️ RO'YXAT MAYDONLARI MASSIVGA KELTIRILADI. Bu javob uchta ekranni
+      // (bosh sahifa, profil, diagnostika tabi) boqadi va ularning
+      // hammasi `filter`/`map` chaqiradi — bitta noto'g'ri turdagi maydon
+      // uchala ekranni birdan yiqitardi.
+      queryFn: () =>
+        diagnosticsAPI.dashboard().then((r) => {
+          const data = r.data?.data ?? {};
+          const list = (value) => (Array.isArray(value) ? value : []);
+          return {
+            ...data,
+            summary: data.summary ?? {},
+            trend: list(data.trend),
+            subjects: list(data.subjects),
+            strongTopics: list(data.strongTopics),
+            weakTopics: list(data.weakTopics),
+          };
+        }),
       staleTime: 60 * 1000,
     }),
 
-  /** O'z urinishlari tarixi. */
+  /**
+   * O'z urinishlari tarixi.
+   *
+   * ⚠️ HAR DOIM MASSIV QAYTARADI. Iste'molchilar (`filter`, `map`,
+   * `reduce`) massivga tayanadi; javob kutilgan shaklda kelmasa
+   * (masalan server va panel versiyalari mos kelmay qolsa), ilgari
+   * `attempts.filter is not a function` bilan butun sahifa oq bo'lib
+   * qolardi. Shaklni BITTA joyda — shu yerda — tekshiramiz.
+   */
   myAttempts: (limit) =>
     queryOptions({
       queryKey: [...diagnosticsKeys.all, "my-attempts", limit ?? null],
-      queryFn: () => diagnosticsAPI.myAttempts(limit).then((r) => r.data.data),
+      queryFn: () =>
+        diagnosticsAPI.myAttempts(limit).then((r) => {
+          const rows = r.data?.data;
+          if (Array.isArray(rows)) return rows;
+          console.warn("[diagnostics] my-attempts massiv emas:", rows);
+          return [];
+        }),
     }),
 
   /**

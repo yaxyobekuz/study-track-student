@@ -9,6 +9,7 @@ import useTelegram from "@/shared/hooks/useTelegram";
 
 // Components
 import BugReport from "../components/layout/BugReport";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 // API + queries
 import { authQueries } from "@/features/auth/queries/auth.queries";
@@ -46,7 +47,11 @@ const RootLayout = () => {
 
   return (
     <div className="bg-gray-100">
-      <Outlet />
+      {/* ⚠️ Faqat sahifa o'raladi, `BugReport` TASHQARIDA: sahifa
+          yiqilganda ham xato haqida xabar yuborish tugmasi qolishi kerak. */}
+      <ErrorBoundary>
+        <Outlet />
+      </ErrorBoundary>
       <BugReport />
     </div>
   );
