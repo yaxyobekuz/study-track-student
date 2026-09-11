@@ -53,6 +53,20 @@ import { formatDateUz } from "@/shared/utils/date.utils";
  * ham AYNI `rows` va AYNI `open()` dan foydalanadi.
  */
 
+/**
+ * "BARCHA FANLAR" QIYMATI — BO'SH SATR EMAS.
+ *
+ * ⚠️ Radix Select bo'sh satrli `<Select.Item>` ni TAQIQLAYDI va xato
+ * tashlaydi ("must have a value prop that is not an empty string") —
+ * bo'sh satr uning uchun "tanlov tozalandi" degani. Bu xato ishlab
+ * turgan saytda test tarixi sahifasini BUTUNLAY OQ qilib qo'ygan edi.
+ *
+ * Lokalda takrorlanmadi, chunki `package-lock.json` git'da yo'q:
+ * serverda Radix'ning eskiroq (tekshiruvi bor) versiyasi, lokalda esa
+ * yangisi turibdi. Maxsus qiymat IKKALA versiyada ham ishlaydi.
+ */
+const ALL_SUBJECTS = "__all__";
+
 const SORTS = [
   { key: "date", label: "Sana", value: (r) => r.submittedAt || r.createdAt || "" },
   { key: "subject", label: "Fan", value: (r) => r.subjectName || r.testTitle || "" },
@@ -63,7 +77,7 @@ const DiagnosticHistoryPage = () => {
   const navigate = useNavigate();
   const { data, isLoading } = useQuery(diagnosticsQueries.myAttempts(100));
 
-  const [subject, setSubject] = useState("");
+  const [subject, setSubject] = useState(ALL_SUBJECTS);
   const [query, setQuery] = useState("");
   // ⚠️ Sukut bo'yicha sana bo'yicha KAMAYISH tartibida — server ham
   // shunday qaytaradi, ya'ni birinchi ko'rinish "eng yangisi tepada".
@@ -86,7 +100,7 @@ const DiagnosticHistoryPage = () => {
   const subjectOptions = useMemo(() => {
     const names = [...new Set(attempts.map((a) => a.subjectName).filter(Boolean))];
     return [
-      { value: "", label: "Barcha fanlar" },
+      { value: ALL_SUBJECTS, label: "Barcha fanlar" },
       ...names.sort().map((name) => ({ value: name, label: name })),
     ];
   }, [attempts]);
@@ -94,7 +108,7 @@ const DiagnosticHistoryPage = () => {
   const rows = useMemo(() => {
     const needle = query.trim().toLowerCase();
     const filtered = attempts.filter((a) => {
-      if (subject && a.subjectName !== subject) return false;
+      if (subject !== ALL_SUBJECTS && a.subjectName !== subject) return false;
       if (!needle) return true;
       // Qidiruv fan VA test nomi bo'yicha — o'quvchi ko'pincha testni
       // nomi bilan eslaydi, fan nomi bilan emas.
