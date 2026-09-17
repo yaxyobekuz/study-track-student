@@ -1,5 +1,11 @@
 // Icons
-import { Coins, Gamepad2, TriangleAlert, Wallet } from "lucide-react";
+import {
+  CalendarCheck,
+  Coins,
+  Gamepad2,
+  TriangleAlert,
+  Wallet,
+} from "lucide-react";
 
 // Bosh sahifadagi asosiy kartalar
 const topNavItems = [
@@ -10,6 +16,14 @@ const topNavItems = [
     icon: Wallet,
     gradientFrom: "from-blue-400",
     gradientTo: "to-blue-700",
+  },
+  {
+    to: "/attendance",
+    label: "Davomatim",
+    description: "Kelgan va kelmagan kunlaringiz",
+    icon: CalendarCheck,
+    gradientFrom: "from-emerald-400",
+    gradientTo: "to-emerald-700",
   },
   {
     to: "/penalties",

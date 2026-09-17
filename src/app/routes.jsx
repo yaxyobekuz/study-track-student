@@ -35,6 +35,9 @@ import TransactionsPage from "@/features/transactions/pages/TransactionsPage";
 // Finance page (tarif, o'quv yili va oylik to'lov majburiyatlari)
 import MyFinancePage from "@/features/finance/pages/MyFinancePage";
 
+// Attendance page (o'quvchining o'z davomati)
+import MyAttendancePage from "@/features/attendance/pages/MyAttendancePage";
+
 // Market pages
 import MarketProductsPage from "@/features/market/pages/MarketProductsPage";
 import MarketMyOrdersPage from "@/features/market/pages/MarketMyOrdersPage";
@@ -100,6 +103,7 @@ const Routes = () => {
           <Route path="/profile/edit" element={<ProfileEditPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/finance" element={<MyFinancePage />} />
+          <Route path="/attendance" element={<MyAttendancePage />} />
 
           {/* Statistics */}
           <Route path="/statistics" element={<StatisticsLayout />}>
