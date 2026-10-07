@@ -18,7 +18,7 @@ import { formatUzDate } from "@/shared/utils/formatDate";
 
 // Data
 import {
-  debitTransactionTypes,
+  isDebitTransaction,
   transactionTypeLabels,
 } from "@/features/transactions/data/transactionTypes.data";
 
@@ -40,32 +40,23 @@ const TransactionsPage = () => {
 
   const transactions = data?.data ?? [];
 
-  const transactionItems = transactions.map((tx) => ({
-    key: tx.id,
-    icon: debitTransactionTypes.includes(tx.type)
-      ? ArrowUpRight
-      : ArrowDownLeft,
-    title: tx.description || transactionTypeLabels[tx.type],
-    gradientTo: debitTransactionTypes.includes(tx.type)
-      ? "to-red-700"
-      : "to-green-700",
-    gradientFrom: debitTransactionTypes.includes(tx.type)
-      ? "from-red-400"
-      : "from-green-400",
-    description: formatUzDate(tx.date),
-    trailing: (
-      <p
-        className={`font-bold text-sm ${
-          debitTransactionTypes.includes(tx.type)
-            ? "text-red-600"
-            : "text-green-600"
-        }`}
-      >
-        {debitTransactionTypes.includes(tx.type) ? "-" : "+"}
-        {tx.amount}
-      </p>
-    ),
-  }));
+  const transactionItems = transactions.map((tx) => {
+    const isDebit = isDebitTransaction(tx);
+    return {
+      key: tx.id,
+      icon: isDebit ? ArrowUpRight : ArrowDownLeft,
+      title: tx.description || transactionTypeLabels[tx.type],
+      gradientTo: isDebit ? "to-red-700" : "to-green-700",
+      gradientFrom: isDebit ? "from-red-400" : "from-green-400",
+      description: formatUzDate(tx.date),
+      trailing: (
+        <p className={`font-bold text-sm ${isDebit ? "text-red-600" : "text-green-600"}`}>
+          {isDebit ? "-" : "+"}
+          {Math.abs(tx.amount)}
+        </p>
+      ),
+    };
+  });
 
   return (
     <div className="min-h-screen pb-28 bg-gray-100 animate__animated animate__fadeIn">
