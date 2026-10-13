@@ -22,3 +22,19 @@ export const useSubmitTaskCompletion = (taskId) => {
     },
   });
 };
+
+/**
+ * Submit a task from the LIST (the task id comes with the payload, not from
+ * the hook): the executor checks a task off without leaving "Topshiriqlarim".
+ * Invalidates the whole tasks namespace — both the list and that task's
+ * detail change status at once.
+ */
+export const useSubmitTaskFromList = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, formData }) => tasksAPI.submitCompletion(id, formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: tasksKeys.all });
+    },
+  });
+};

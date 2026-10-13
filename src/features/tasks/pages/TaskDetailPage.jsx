@@ -15,7 +15,17 @@ import { tasksQueries } from "@/features/tasks/queries/tasks.queries";
 import { useSubmitTaskCompletion } from "@/features/tasks/queries/tasks.mutations";
 
 // Data
-import { taskStatusLabels, taskStatusColors, SUBMITTABLE_STATUSES } from "../data/tasks.data";
+import {
+  taskStatusLabels,
+  taskStatusColors,
+  SUBMITTABLE_STATUSES,
+  kindMeta,
+  stateMeta,
+  resolveTimeState,
+} from "../data/tasks.data";
+
+// Hooks
+import useNow from "../hooks/useNow";
 
 // Utils
 import { formatDateTimeUz } from "@/shared/utils/date.utils";
@@ -24,8 +34,11 @@ import { formatDateTimeUz } from "@/shared/utils/date.utils";
 import Card from "@/shared/components/ui/Card";
 import BackHeader from "@/shared/components/layout/BackHeader";
 import TaskSubmitForm from "../components/TaskSubmitForm";
+import TaskWindowBar from "../components/TaskWindowBar";
+import TaskLinksList from "../components/TaskLinksList";
 
 const TaskDetailPage = () => {
+  const now = useNow();
   const { taskId } = useParams();
 
   const [showSubmitForm, setShowSubmitForm] = useState(false);
@@ -59,9 +72,11 @@ const TaskDetailPage = () => {
 
   if (!task) return null;
 
-  const isOverdue =
-    new Date(task.dueDate) < new Date() &&
-    !["completed", "stopped"].includes(task.status);
+  // Vaqt holati JONLI hisoblanadi (`taskWindow.helpers.js` bilan AYNI qoida)
+  const state = resolveTimeState(task, now);
+  const meta = stateMeta(state);
+  const kind = kindMeta(task.kind);
+  const isOverdue = state === "missed";
 
   const canSubmit = SUBMITTABLE_STATUSES.includes(task.status);
 
@@ -70,9 +85,12 @@ const TaskDetailPage = () => {
       <BackHeader href="/tasks" title="Topshiriq tafsilotlari" />
 
       <div className="container pt-4 space-y-3">
-        {/* Status banner */}
-        <div className={`px-4 py-3 rounded-xl text-sm font-medium text-center ${taskStatusColors[task.status]}`}>
-          {taskStatusLabels[task.status]}
+        {/* Vaqt holati — "hozir bajarilish vaqti" / "bajarilmadi" / ... */}
+        <div className={`rounded-xl px-4 py-3 text-center text-sm font-medium ${meta.chip}`}>
+          {meta.label}
+          <span className="ml-1.5 text-xs font-normal opacity-80">
+            · {taskStatusLabels[task.status]}
+          </span>
         </div>
 
         {/* Main info */}
@@ -81,12 +99,23 @@ const TaskDetailPage = () => {
           {task.description && (
             <p className="text-sm text-gray-600 whitespace-pre-wrap">{task.description}</p>
           )}
+          <div className={`rounded-xl p-3 ${isOverdue || state === "active" ? "bg-red-50" : "bg-gray-50"}`}>
+            <p className="mb-1.5 text-xs font-medium text-gray-600">
+              {task.startDate ? "Bajarish vaqti" : "Ijro muddati"}
+            </p>
+            <TaskWindowBar task={task} now={now} state={state} />
+            {state === "active" && (
+              <p className="mt-2 text-xs font-medium text-red-700">
+                Hozir shu topshiriqni bajarish vaqti
+              </p>
+            )}
+          </div>
+
           <div className="space-y-1.5 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-gray-500">Ijro muddati</span>
-              <span className={isOverdue ? "text-red-600 font-semibold" : "text-gray-800"}>
-                {formatDateTimeUz(task.dueDate)}
-                {isOverdue && <span className="ml-1 text-xs">(o'tgan)</span>}
+              <span className="text-gray-500">Turi</span>
+              <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${kind.chip}`}>
+                {kind.label}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -99,6 +128,13 @@ const TaskDetailPage = () => {
             </div>
           </div>
         </Card>
+
+        {/* Havolalar */}
+        {task.links?.length > 0 && (
+          <Card>
+            <TaskLinksList links={task.links} />
+          </Card>
+        )}
 
         {/* Owner attachments */}
         {task.attachments?.length > 0 && (
