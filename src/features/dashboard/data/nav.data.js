@@ -3,6 +3,7 @@ import {
   CalendarCheck,
   Coins,
   Gamepad2,
+  GraduationCap,
   TriangleAlert,
   Wallet,
 } from "lucide-react";
@@ -32,6 +33,14 @@ const topNavItems = [
     icon: TriangleAlert,
     gradientFrom: "from-orange-400",
     gradientTo: "to-orange-700",
+  },
+  {
+    to: "/certificates",
+    label: "Sertifikatlarim",
+    description: "Topshirish muddati va mavzu progressi",
+    icon: GraduationCap,
+    gradientFrom: "from-violet-400",
+    gradientTo: "to-violet-700",
   },
   {
     to: "/transactions",

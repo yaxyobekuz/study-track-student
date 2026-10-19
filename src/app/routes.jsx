@@ -46,6 +46,9 @@ import MarketProductDetailPage from "@/features/market/pages/MarketProductDetail
 // Penalties
 import MyPenaltiesPage from "@/features/penalties/pages/MyPenaltiesPage";
 
+// Sertifikatlar — o'z rejalari, muddatlari va mavzu progressi
+import MyCertificatesPage from "@/features/certificates/pages/MyCertificatesPage";
+
 // Tasks
 import MyTasksPage from "@/features/tasks/pages/MyTasksPage";
 import TaskDetailPage from "@/features/tasks/pages/TaskDetailPage";
@@ -118,6 +121,9 @@ const Routes = () => {
 
           {/* Penalties */}
           <Route path="/penalties" element={<MyPenaltiesPage />} />
+
+          {/* Sertifikatlarim — muddat va mavzu progressi */}
+          <Route path="/certificates" element={<MyCertificatesPage />} />
 
           {/* Tasks */}
           <Route path="/tasks" element={<MyTasksPage />} />
