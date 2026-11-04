@@ -20,6 +20,17 @@ export const coinsQueries = {
       queryFn: () => coinsAPI.getBalance().then((res) => res.data.data),
     }),
 
+  /**
+   * TANGA CHEKLOVI holati: `{ isBlocked }` yoki sabab bilan to'liq qator.
+   * Balans bilan AYNI kalit oilasida — cheklov qo'yilganda boshqa
+   * bo'limlardagi invalidatsiya bu so'rovni ham yangilaydi.
+   */
+  myBlock: () =>
+    queryOptions({
+      queryKey: [...coinsKeys.all, "block"], // ["coins", "block"]
+      queryFn: () => coinsAPI.getMyBlock().then((res) => res.data.data),
+    }),
+
   /** Paginated coin transactions `{ data, pagination }`. */
   transactions: (page) =>
     queryOptions({

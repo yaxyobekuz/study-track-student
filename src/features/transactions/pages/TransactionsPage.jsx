@@ -5,6 +5,7 @@ import {
   ChevronRight,
   ArrowUpRight,
   ArrowDownLeft,
+  Ban,
 } from "lucide-react";
 
 // React
@@ -35,6 +36,10 @@ const TransactionsPage = () => {
   const [page, setPage] = useState(1);
 
   const { data: balanceData } = useQuery(coinsQueries.balance());
+
+  // TANGA CHEKLOVI — qarzdorlik sababli tanga yozilmayotgan bo'lsa,
+  // o'quvchi buni EKRANDA ko'radi: yashirin cheklov yo'q.
+  const { data: block } = useQuery(coinsQueries.myBlock());
 
   const { data, isLoading } = useQuery(coinsQueries.transactions(page));
 
@@ -73,6 +78,23 @@ const TransactionsPage = () => {
             <span className="text-lg text-gray-400 font-medium">tanga</span>
           </div>
         </Card>
+
+        {/* TANGA CHEKLOVI — sababi bilan, balansdan keyin darhol */}
+        {block?.isBlocked && (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
+            <p className="flex items-center gap-2 font-semibold text-red-700">
+              <Ban className="size-4 shrink-0" />
+              Tanga yozilmayapti
+            </p>
+            <p className="mt-1.5 text-sm text-red-900">{block.reason}</p>
+            {block.note && <p className="mt-1 text-xs text-red-800/80">{block.note}</p>}
+            <p className="mt-2 text-xs text-red-800/80">
+              {block.sinceLabel} dan beri yangi tanga qo'shilmaydi. Balansingiz
+              joyida qoladi va uni sarflashingiz mumkin. Qarzdorlik yopilgandan
+              keyin ma'muriyat cheklovni olib tashlaydi.
+            </p>
+          </div>
+        )}
 
         {/* Tranzaksiyalar */}
         {isLoading ? (
