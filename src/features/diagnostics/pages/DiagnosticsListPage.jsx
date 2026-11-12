@@ -11,16 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 // Icons
-import {
-  Brain,
-  Play,
-  Loader2,
-  ChevronRight,
-  CalendarClock,
-  Sparkles,
-  History,
-  LayoutDashboard,
-} from "lucide-react";
+import { Brain, CalendarClock, ChevronRight, History, Info, LayoutDashboard, Loader2, Play, Sparkles } from "lucide-react";
 
 // Components
 import Card from "@/shared/components/ui/Card";
@@ -194,6 +185,19 @@ const DiagnosticsListPage = () => {
                   <p className="flex items-center gap-1.5 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">
                     <CalendarClock size={14} className="shrink-0" />
                     {formatDateUz(test.opensAt)} dan boshlab ochiladi
+                  </p>
+                )}
+
+                {/* ⚠️ "MENGA TEST TUSHMAGAN" HOLATI OCHIQ AYTILADI
+                    (2026-11-12). Har o'quvchiga moslangan testda qamrov
+                    aniqlanmagan bo'lishi mumkin (mavzu rejasi yo'q, hali
+                    oraliqning boshiga yetmagan) — test ro'yxatda QOLADI,
+                    lekin boshlanmaydi. Jim yo'qotilsa, bola buni tizim
+                    nosozligi deb o'ylardi va javob topa olmasdi. */}
+                {!test.canStart && test.blockedReason && (
+                  <p className="flex items-start gap-1.5 rounded-lg bg-gray-100 p-2 text-xs text-gray-700">
+                    <Info size={14} className="mt-0.5 shrink-0" />
+                    {test.blockedReason}
                   </p>
                 )}
 
